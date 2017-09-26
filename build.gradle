@@ -1,0 +1,61 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+    id 'codenarc'
+    id 'com.energizedwork.idea-junit' version '1.2'
+    id 'com.energizedwork.idea-base' version '1.2'
+    id 'com.gradle.plugin-publish' version '0.9.7'
+    id 'com.energizedwork.asl2' version '1.1'
+}
+
+apply from: 'gradle/idea/idea.gradle'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    codenarc('org.codenarc:CodeNarc:1.0') {
+        exclude module: 'GMetrics'
+        exclude group: 'org.codehaus.groovy'
+    }
+    codenarc 'org.codehaus.groovy:groovy-all:2.4.11'
+
+    compile 'org.ysb33r.gradle:grolifant:0.3.2'
+
+    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4', {
+        exclude module: 'groovy-all'
+    }
+}
+
+codenarc.configFile = file('gradle/codenarc/rulesets.groovy')
+
+gradlePlugin {
+    plugins {
+        webdriverBinariesPlugin {
+            id = 'com.energizedwork.webdriver-binaries'
+            implementationClass = 'com.energizedwork.gradle.webdriver.WebDriverBinariesPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    vcsUrl = 'https://github.com/energizedwork/webdriver-binaries-gradle-plugin'
+
+    plugins {
+        webdriverBinariesPlugin {
+            website = 'https://github.com/energizedwork/webdriver-binaries-gradle-plugin/blob/master/README.md'
+            description = 'A plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.'
+            id = 'com.energizedwork.webdriver-binaries'
+            displayName = 'WebDriver Binaries Plugin'
+            tags = ['WebDriver', 'selenium', 'test', 'chromedriver', 'geckodriver']
+        }
+    }
+}
+
+task endToEndTest(type: Test) {
+    options {
+        includeCategories 'com.energizedwork.gradle.webdriver.category.EndToEnd'
+    }
+}
