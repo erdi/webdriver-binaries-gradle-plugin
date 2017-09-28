@@ -44,7 +44,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
             }
 
             webdriverBinaries {
-                downloadRoot(new File('${downloadRoot.root.absolutePath}'))
+                downloadRoot(new File('${downloadRoot.root.absolutePath.replace('\\', '\\\\')}'))
                 $binaryName '$binaryVersion'
             }
 
