@@ -59,3 +59,15 @@ task endToEndTest(type: Test) {
         includeCategories 'com.energizedwork.gradle.webdriver.category.EndToEnd'
     }
 }
+
+tasks.withType(Test) {
+    maxHeapSize = "1g"
+    jvmArgs '-XX:MaxMetaspaceSize=128m'
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+tasks.withType(GroovyCompile) {
+    groovyOptions.forkOptions.memoryMaximumSize = '256m'
+}
