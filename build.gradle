@@ -29,6 +29,8 @@ dependencies {
     }
 }
 
+version = '1.0'
+
 codenarc.configFile = file('gradle/codenarc/rulesets.groovy')
 
 gradlePlugin {
