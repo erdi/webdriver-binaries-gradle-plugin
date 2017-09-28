@@ -3,8 +3,8 @@
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/xg10l6d6x0fant1c?svg=true)](https://ci.appveyor.com/project/erdi/webdriver-binaries-gradle-plugin)
 # WebDriver binaries Gradle plugin
 
-This project contains a Gradle plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.
-The plugin also as configures various aspects of the build to use the downloaded binaries.
+This project contains a Gradle plugin that downloads WebDriver binaries specific to the operating system the build runs on.
+The plugin also as configures various parts of the build to use the downloaded binaries.
 
 ## Installation
 
@@ -20,7 +20,7 @@ This plugin exposes the following optional properties through the extension name
 | --- | --- | --- |
 | `chromedriver` | `String` | The version of ChromeDriver binary to be used by the project. No ChromeDriver binary will be downloaded if this property is not specified. |
 | `geckodriver` | `String` | The version of GeckoDriver binary to be used by the project. No GeckoDriver binary will be downloaded if this property is not specified. |
-| `downloadRoot` |`File`| The location into which the binaries should be downloaded. If not specified the binaries are downloaded into the Gradle user home directory. Should not be specified under normal circumstances to benefit from caching of the binaries between multiple builds. |
+| `downloadRoot` |`File`| The location into which the binaries should be downloaded. If not specified the binaries are downloaded into the Gradle user home directory. Should not be specified under normal circumstances to benefit from caching of the binaries between multiple project builds. |
 
 Example usage:
 
@@ -37,9 +37,10 @@ This plugin adds the following tasks to the project:
 
 There is no need to call the above tasks directly because the plugin interweaves them into the build lifecycle by configuring all `org.gradle.api.tasks.testing.Test` tasks to depend on them.
 
-Note that a configure task for a given driver binary is skipped unless a version of the binary for that particular driver is specified using a `webdriverBinaries` extension property.
+Note that a configure task for a given driver binary is skipped unless a version of the binary for that particular driver is specified using one of the properties of `webdriverBinaries` extension.
 
-When a configuration task it is executed it adds a system property specific for the given driver setting the path to the downloaded binary as its value to all `org.gradle.api.tasks.testing.Test` tasks in the project so that the binary location is picked up when running the tests. 
+When a configuration task is executed it modifies configuration of system properties for all `org.gradle.api.tasks.testing.Test` tasks in the project so that the location of the WebDriver binary location is picked up when the driver is being initialized.
+That is, it adds a system property with a name specific to the given driver and a value being the path to the downloaded binary. 
 
 ### Integration with Idea JUnit plugin (com.energizedwork.idea-junit)
 
