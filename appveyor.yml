@@ -1,0 +1,4 @@
+version: "{build}"
+build_script: ./gradlew --no-daemon endToEndTest
+install:
+  - choco install firefox --version 53.0.3
