@@ -33,6 +33,18 @@ version = '1.0'
 
 codenarc.configFile = file('gradle/codenarc/rulesets.groovy')
 
+tasks.withType(Test) {
+    maxHeapSize = "1g"
+    jvmArgs '-XX:MaxMetaspaceSize=128m'
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+tasks.withType(GroovyCompile) {
+    groovyOptions.forkOptions.memoryMaximumSize = '256m'
+}
+
 gradlePlugin {
     plugins {
         webdriverBinariesPlugin {
