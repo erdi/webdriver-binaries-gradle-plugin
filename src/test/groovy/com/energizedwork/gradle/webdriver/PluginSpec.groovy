@@ -19,7 +19,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.ysb33r.gradle.olifant.OperatingSystem
+import org.ysb33r.grolifant.api.OperatingSystem
 import spock.lang.Specification
 
 class PluginSpec extends Specification {

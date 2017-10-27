@@ -17,7 +17,7 @@ package com.energizedwork.gradle.webdriver
 
 import com.energizedwork.gradle.webdriver.chrome.ChromeDriverDistributionInstaller
 import com.energizedwork.gradle.webdriver.gecko.GeckoDriverDistributionInstaller
-import org.ysb33r.gradle.olifant.OperatingSystem
+import org.ysb33r.grolifant.api.OperatingSystem
 import spock.lang.Unroll
 
 import static BinariesVersions.LATEST_CHROMEDRIVER_VERSION
@@ -33,7 +33,7 @@ class IdeaJUnitPluginIntegrationSpec extends PluginSpec {
         setupProjectName()
         buildScript << """
             import $installerClass.name
-            import org.ysb33r.gradle.olifant.OperatingSystem
+            import org.ysb33r.grolifant.api.OperatingSystem
 
             plugins {
                 id 'com.energizedwork.webdriver-binaries'

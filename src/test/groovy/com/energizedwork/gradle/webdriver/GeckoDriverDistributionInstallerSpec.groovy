@@ -16,10 +16,10 @@
 package com.energizedwork.gradle.webdriver
 
 import com.energizedwork.gradle.webdriver.gecko.GeckoDriverDistributionInstaller
-import org.ysb33r.gradle.olifant.OperatingSystem
-import org.ysb33r.gradle.olifant.internal.os.Linux
-import org.ysb33r.gradle.olifant.internal.os.MacOsX
-import org.ysb33r.gradle.olifant.internal.os.Windows
+import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.os.Linux
+import org.ysb33r.grolifant.api.os.MacOsX
+import org.ysb33r.grolifant.api.os.Windows
 import spock.lang.Unroll
 
 import static BinariesVersions.LATEST_MINOR_GECKODRVIER_VERSION_NUMBER
@@ -31,7 +31,7 @@ class GeckoDriverDistributionInstallerSpec extends PluginSpec {
         given:
         buildScript << """
             import com.energizedwork.gradle.webdriver.gecko.GeckoDriverDistributionInstaller
-            import org.ysb33r.gradle.olifant.internal.os.*
+            import org.ysb33r.grolifant.api.os.*
 
             plugins {
                 id 'com.energizedwork.webdriver-binaries'

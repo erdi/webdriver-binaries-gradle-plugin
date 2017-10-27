@@ -21,8 +21,8 @@ import org.gradle.api.provider.PropertyState
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.ysb33r.gradle.olifant.AbstractDistributionInstaller
-import org.ysb33r.gradle.olifant.OperatingSystem
+import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+import org.ysb33r.grolifant.api.OperatingSystem
 
 abstract class ConfigureBinary extends DefaultTask {
 

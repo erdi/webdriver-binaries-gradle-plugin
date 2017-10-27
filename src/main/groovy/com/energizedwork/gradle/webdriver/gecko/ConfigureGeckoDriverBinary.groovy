@@ -16,8 +16,8 @@
 package com.energizedwork.gradle.webdriver.gecko
 
 import com.energizedwork.gradle.webdriver.task.ConfigureBinary
-import org.ysb33r.gradle.olifant.AbstractDistributionInstaller
-import org.ysb33r.gradle.olifant.OperatingSystem
+import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+import org.ysb33r.grolifant.api.OperatingSystem
 
 class ConfigureGeckoDriverBinary extends ConfigureBinary {
 

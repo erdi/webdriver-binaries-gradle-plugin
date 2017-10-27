@@ -16,10 +16,10 @@
 package com.energizedwork.gradle.webdriver.gecko
 
 import org.gradle.api.Project
-import org.ysb33r.gradle.olifant.AbstractDistributionInstaller
-import org.ysb33r.gradle.olifant.OperatingSystem
-import org.ysb33r.gradle.olifant.internal.os.MacOsX
-import org.ysb33r.gradle.olifant.internal.os.Windows
+import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.os.MacOsX
+import org.ysb33r.grolifant.api.os.Windows
 
 class GeckoDriverDistributionInstaller extends AbstractDistributionInstaller {
 
@@ -42,7 +42,7 @@ class GeckoDriverDistributionInstaller extends AbstractDistributionInstaller {
     }
 
     private String getArchiveExtension() {
-        (os in Windows) ? 'zip' : 'tar.gz'
+        os.windows ? 'zip' : 'tar.gz'
     }
 
     private String getOsUriPart(String version) {

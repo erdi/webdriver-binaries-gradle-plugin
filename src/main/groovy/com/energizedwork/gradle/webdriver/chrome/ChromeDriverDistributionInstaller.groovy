@@ -16,12 +16,12 @@
 package com.energizedwork.gradle.webdriver.chrome
 
 import org.gradle.api.Project
-import org.ysb33r.gradle.olifant.AbstractDistributionInstaller
-import org.ysb33r.gradle.olifant.OperatingSystem
-import org.ysb33r.gradle.olifant.internal.os.MacOsX
-import org.ysb33r.gradle.olifant.internal.os.Windows
+import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.os.MacOsX
+import org.ysb33r.grolifant.api.os.Windows
 
-import static org.ysb33r.gradle.olifant.OperatingSystem.Arch.X86_64
+import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86_64
 
 class ChromeDriverDistributionInstaller extends AbstractDistributionInstaller {
 
