@@ -16,49 +16,24 @@
 package com.energizedwork.gradle.webdriver.task
 
 import com.energizedwork.gradle.webdriver.DriverBinaryAware
-import org.gradle.api.DefaultTask
-import org.gradle.api.provider.PropertyState
-import org.gradle.api.provider.Provider
+import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 import org.ysb33r.grolifant.api.OperatingSystem
 
-abstract class ConfigureBinary extends DefaultTask {
+abstract class ConfigureBinary extends ConventionTask {
 
-    private final PropertyState<File> downloadRoot = project.property(File)
-    private final PropertyState<String> version = project.property(String)
+    @Internal
+    File downloadRoot
+
+    @Internal
+    String version
 
     protected final List<DriverBinaryAware> binaryAwares = []
 
     protected ConfigureBinary() {
         onlyIf { versionConfigured }
-    }
-
-    void setDownloadRoot(Provider<File> downloadRootProvider) {
-        downloadRoot.set(downloadRootProvider)
-    }
-
-    void setDownloadRoot(File downloadRoot) {
-        downloadRoot.set(downloadRoot)
-    }
-
-    @Internal
-    File getDownloadRoot() {
-        downloadRoot.orNull
-    }
-
-    void setVersion(Provider<String> versionProvider) {
-        this.version.set(versionProvider)
-    }
-
-    void setVersion(String version) {
-        this.version.set(version)
-    }
-
-    @Internal
-    String getVersion() {
-        version.get()
     }
 
     void addBinaryAware(DriverBinaryAware aware) {
@@ -81,6 +56,6 @@ abstract class ConfigureBinary extends DefaultTask {
 
     @Internal
     protected boolean isVersionConfigured() {
-        version.present
+        getVersion()
     }
 }

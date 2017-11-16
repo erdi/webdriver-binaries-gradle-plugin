@@ -15,59 +15,10 @@
  */
 package com.energizedwork.gradle.webdriver
 
-import org.gradle.api.Project
-import org.gradle.api.provider.PropertyState
-import org.gradle.api.provider.Provider
-
 class WebDriverBinariesPluginExtension {
 
-    private final Project project
-
-    PropertyState<File> downloadRoot
-    PropertyState<String> chromedriver
-    PropertyState<String> geckodriver
-
-    WebDriverBinariesPluginExtension(Project project) {
-        this.project = project
-        this.downloadRoot = project.property(File)
-        this.chromedriver = project.property(String)
-        this.geckodriver = project.property(String)
-    }
-
-    void getChromedriver() {
-        chromedriver.get()
-    }
-
-    void setChromedriver(String version) {
-        chromedriver.set(version)
-    }
-
-    Provider<String> getChromedriverProvider() {
-        chromedriver
-    }
-
-    void getGeckodriver() {
-        geckodriver.get()
-    }
-
-    void setGeckodriver(String version) {
-        geckodriver.set(version)
-    }
-
-    Provider<String> getGeckodriverProvider() {
-        geckodriver
-    }
-
-    void setDownloadRoot(File downloadRoot) {
-        this.downloadRoot.set(downloadRoot)
-    }
-
-    File getDownloadRoot() {
-        downloadRoot.get()
-    }
-
-    Provider<File> getDownloadRootProvider() {
-        downloadRoot
-    }
+    File downloadRoot
+    String chromedriver
+    String geckodriver
 
 }

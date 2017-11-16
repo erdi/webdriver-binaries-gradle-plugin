@@ -21,7 +21,6 @@ import com.energizedwork.gradle.webdriver.task.ConfigureBinary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.plugins.ide.idea.GenerateIdeaWorkspace
 
@@ -35,24 +34,24 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
     private static final String IDEA_JUNIT_EXTENSION_NAME = 'ideaJunit'
 
     void apply(Project project) {
-        def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension, project)
+        def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension)
         createConfigureChromeDriverBinary(project, extension)
         createConfigureGeckoDriverBinary(project, extension)
     }
 
     ConfigureChromeDriverBinary createConfigureChromeDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        createConfigureDriverBinary(ConfigureChromeDriverBinary, project, extension, extension.chromedriverProvider, CHROMEDRIVER_PATH_SYSTEM_PROPERTY)
+        createConfigureDriverBinary(ConfigureChromeDriverBinary, project, extension, extension.&getChromedriver, CHROMEDRIVER_PATH_SYSTEM_PROPERTY)
     }
 
     ConfigureGeckoDriverBinary createConfigureGeckoDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        createConfigureDriverBinary(ConfigureGeckoDriverBinary, project, extension, extension.geckodriverProvider, GECKODRIVER_PATH_SYSTEM_PROPERTY)
+        createConfigureDriverBinary(ConfigureGeckoDriverBinary, project, extension, extension.&getGeckodriver, GECKODRIVER_PATH_SYSTEM_PROPERTY)
     }
 
     private <T extends ConfigureBinary> T createConfigureDriverBinary(Class<T> taskType, Project project, WebDriverBinariesPluginExtension extension,
-                                                                      Provider<String> versionProvider, String systemPropertyName) {
+                                                                      Closure<String> versionProvider, String systemPropertyName) {
         T configureTask = project.task(taskType.simpleName.uncapitalize(), type: taskType)
-        configureTask.downloadRoot = extension.downloadRootProvider
-        configureTask.version = versionProvider
+        configureTask.conventionMapping.map('downloadRoot') { extension.downloadRoot }
+        configureTask.conventionMapping.map('version', versionProvider)
         configureTestTasksWithWebDriverBinary(project, configureTask, systemPropertyName)
         configureIdeaWithWebDriverBinary(project, configureTask, systemPropertyName)
         configureTask

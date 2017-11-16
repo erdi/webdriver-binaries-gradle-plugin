@@ -74,6 +74,15 @@ task endToEndTest(type: Test) {
     }
 }
 
+task testGradle3_5(type: Test) {
+    options {
+        includeCategories 'com.energizedwork.gradle.webdriver.category.EndToEnd'
+    }
+    systemProperty 'test.gradle.version', '3.5'
+}
+
+check.dependsOn testGradle3_5
+
 tasks.withType(Test) {
     maxHeapSize = "1g"
     jvmArgs '-XX:MaxMetaspaceSize=128m'

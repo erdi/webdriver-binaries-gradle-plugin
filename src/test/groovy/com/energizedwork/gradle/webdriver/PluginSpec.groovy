@@ -65,11 +65,16 @@ class PluginSpec extends Specification {
 
     private BuildResult runBuild(String... arguments) {
         GradleRunner.create()
+            .withGradleVersion(gradleVersion)
             .withProjectDir(testProjectDir.root)
             .withArguments('--stacktrace', *arguments)
             .withPluginClasspath()
             .forwardOutput()
             .build()
+    }
+
+    private String getGradleVersion() {
+        System.getProperty('test.gradle.version', '4.2')
     }
 
     protected File getDistributionRoot() {

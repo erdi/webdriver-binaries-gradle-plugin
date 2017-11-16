@@ -24,7 +24,8 @@ class ConfigureChromeDriverBinary extends ConfigureBinary {
     final String binaryName = 'chromedriver'
 
     @Override
+    @SuppressWarnings('UnnecessaryGetter')
     AbstractDistributionInstaller distributionInstaller() {
-        new ChromeDriverDistributionInstaller(project, downloadRoot, version, OperatingSystem.current())
+        new ChromeDriverDistributionInstaller(project, getDownloadRoot(), getVersion(), OperatingSystem.current())
     }
 }
