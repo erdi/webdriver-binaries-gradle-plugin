@@ -49,12 +49,17 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
 
     private <T extends ConfigureBinary> T createConfigureDriverBinary(Class<T> taskType, Project project, WebDriverBinariesPluginExtension extension,
                                                                       Closure<String> versionProvider, String systemPropertyName) {
-        T configureTask = project.task(taskType.simpleName.uncapitalize(), type: taskType)
+        T configureTask = project.task(configureBinaryTaskName(taskType), type: taskType)
         configureTask.conventionMapping.map('downloadRoot') { extension.downloadRoot }
         configureTask.conventionMapping.map('version', versionProvider)
         configureTestTasksWithWebDriverBinary(project, configureTask, systemPropertyName)
         configureIdeaWithWebDriverBinary(project, configureTask, systemPropertyName)
         configureTask
+    }
+
+    private <T extends ConfigureBinary> String configureBinaryTaskName(Class<T> taskType) {
+        def typeName = taskType.simpleName
+        typeName[0].toLowerCase() + typeName[1..-1]
     }
 
     private void configureTestTasksWithWebDriverBinary(Project project, Task configureTask, String systemPropertyName) {

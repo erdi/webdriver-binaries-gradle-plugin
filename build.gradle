@@ -81,7 +81,14 @@ task testGradle3_5(type: Test) {
     systemProperty 'test.gradle.version', '3.5'
 }
 
-check.dependsOn testGradle3_5
+task testGradle3_0(type: Test) {
+    options {
+        includeCategories 'com.energizedwork.gradle.webdriver.category.EndToEnd'
+    }
+    systemProperty 'test.gradle.version', '3.0'
+}
+
+check.dependsOn testGradle3_5, testGradle3_0
 
 tasks.withType(Test) {
     maxHeapSize = "1g"
