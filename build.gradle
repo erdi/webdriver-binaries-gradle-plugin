@@ -15,6 +15,22 @@ repositories {
     jcenter()
 }
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+plugins.withType(JavaPlugin) {
+
+    project.tasks.withType(JavaCompile) { task ->
+        task.sourceCompatibility = project.sourceCompatibility
+        task.targetCompatibility = project.targetCompatibility
+    }
+
+    project.tasks.withType(GroovyCompile) { task ->
+        task.sourceCompatibility = project.sourceCompatibility
+        task.targetCompatibility = project.targetCompatibility
+    }
+}
+
 dependencies {
     codenarc('org.codenarc:CodeNarc:1.0') {
         exclude module: 'GMetrics'
