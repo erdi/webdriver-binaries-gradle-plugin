@@ -43,8 +43,7 @@ abstract class ConfigureBinary extends ConventionTask {
     @TaskAction
     void configure() {
         def installer = distributionInstaller()
-        def os = OperatingSystem.current()
-        def binaryFile = new File(installer.distributionRoot, os.getExecutableName(binaryName))
+        def binaryFile = new File(installer.distributionRoot, operatingSystem.getExecutableName(binaryName))
         def binaryAbsolutePath = binaryFile.absolutePath
         binaryAwares*.driverBinaryPath = binaryAbsolutePath
     }
@@ -55,7 +54,13 @@ abstract class ConfigureBinary extends ConventionTask {
     protected abstract AbstractDistributionInstaller distributionInstaller()
 
     @Internal
+    protected OperatingSystem getOperatingSystem() {
+        OperatingSystem.current()
+    }
+
+    @Internal
     protected boolean isVersionConfigured() {
         getVersion()
     }
+
 }

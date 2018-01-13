@@ -41,13 +41,14 @@ class PluginSpec extends Specification {
         buildScript = testProjectDir.newFile('build.gradle')
     }
 
-    protected writeOutputBinaryPathTask(Class installerClass, String binaryVersion, String osProvidingCode = 'OperatingSystem.current()') {
+    protected writeOutputBinaryPathTask(Class installerClass, String binaryVersion, String osProvidingCode = null) {
+        def osProvidingArgument = osProvidingCode ? ", $osProvidingCode" : ''
         buildScript << """
             task outputBinaryPath {
                 doLast {
                     buildDir.mkdirs()
                     def distributionVersion = '$binaryVersion'
-                    def installer = new ${installerClass.simpleName}(project, null, distributionVersion, $osProvidingCode)
+                    def installer = new ${installerClass.simpleName}(project, null, distributionVersion$osProvidingArgument)
 
                     new File(buildDir, '$DISTRIBUTION_ROOT_PATH_FILENAME') << installer.distributionRoot.absolutePath
                 }

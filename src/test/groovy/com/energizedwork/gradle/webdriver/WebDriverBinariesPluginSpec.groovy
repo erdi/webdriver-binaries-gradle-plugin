@@ -17,10 +17,13 @@ package com.energizedwork.gradle.webdriver
 
 import com.energizedwork.gradle.webdriver.category.EndToEnd
 import org.junit.experimental.categories.Category
+import org.ysb33r.grolifant.api.OperatingSystem
+import spock.lang.Requires
 import spock.lang.Unroll
 
 import static BinariesVersions.LATEST_CHROMEDRIVER_VERSION
 import static BinariesVersions.LATEST_GECKODRVIER_VERSION
+import static BinariesVersions.LATEST_IEDRIVERSERVER_VERSION
 
 @Category(EndToEnd)
 class WebDriverBinariesPluginSpec extends PluginSpec {
@@ -28,6 +31,37 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
     @Unroll('#binaryName binary is downloaded and test task is configured as per plugin config')
     void 'binary is downloaded and test task is configured as per plugin config'() {
         given:
+        writeBuild(binaryName, binaryVersion, seleniumModule)
+        writeRatpackApplication()
+        writeGebSpec()
+
+        when:
+        runTasks 'test'
+
+        then:
+        noExceptionThrown()
+
+        where:
+        binaryName     | binaryVersion               | seleniumModule
+        'chromedriver' | LATEST_CHROMEDRIVER_VERSION | 'selenium-chrome-driver'
+        'geckodriver'  | LATEST_GECKODRVIER_VERSION  | 'selenium-firefox-driver'
+    }
+
+    @Requires({ OperatingSystem.current().windows })
+    void 'iedriverserver binary is downloaded and test task is configured as per plugin config'() {
+        given:
+        writeBuild('iedriverserver', LATEST_IEDRIVERSERVER_VERSION, 'selenium-ie-driver')
+        writeRatpackApplication()
+        writeGebSpec()
+
+        when:
+        runTasks 'test'
+
+        then:
+        noExceptionThrown()
+    }
+
+    private void writeBuild(String binaryName, String binaryVersion, String seleniumModule) {
         buildScript << """
             plugins {
                 id 'com.energizedwork.webdriver-binaries'
@@ -54,19 +88,6 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
                 }
             }
         """
-        writeRatpackApplication()
-        writeGebSpec()
-
-        when:
-        runTasks 'test'
-
-        then:
-        noExceptionThrown()
-
-        where:
-        binaryName     | binaryVersion               | seleniumModule
-        'chromedriver' | LATEST_CHROMEDRIVER_VERSION | 'selenium-chrome-driver'
-        'geckodriver'  | LATEST_GECKODRVIER_VERSION  | 'selenium-firefox-driver'
     }
 
     private void writeRatpackApplication() {

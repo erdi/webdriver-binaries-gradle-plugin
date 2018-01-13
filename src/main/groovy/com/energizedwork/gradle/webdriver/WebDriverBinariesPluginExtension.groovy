@@ -20,5 +20,6 @@ class WebDriverBinariesPluginExtension {
     File downloadRoot
     String chromedriver
     String geckodriver
+    String iedriverserver
 
 }

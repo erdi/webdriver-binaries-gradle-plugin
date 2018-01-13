@@ -17,6 +17,7 @@ package com.energizedwork.gradle.webdriver
 
 import com.energizedwork.gradle.webdriver.chrome.ConfigureChromeDriverBinary
 import com.energizedwork.gradle.webdriver.gecko.ConfigureGeckoDriverBinary
+import com.energizedwork.gradle.webdriver.ie.ConfigureIeDriverServerBinary
 import com.energizedwork.gradle.webdriver.task.ConfigureBinary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -30,6 +31,7 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
 
     private static final String CHROMEDRIVER_PATH_SYSTEM_PROPERTY = 'webdriver.chrome.driver'
     private static final String GECKODRIVER_PATH_SYSTEM_PROPERTY = 'webdriver.gecko.driver'
+    private static final String IEDRIVERSERVER_PATH_SYSTEM_PROPERTY = 'webdriver.ie.driver'
     private static final String IDEA_JUNIT_PLUGIN_ID = 'com.energizedwork.idea-junit'
     private static final String IDEA_JUNIT_EXTENSION_NAME = 'ideaJunit'
 
@@ -37,6 +39,7 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
         def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension)
         createConfigureChromeDriverBinary(project, extension)
         createConfigureGeckoDriverBinary(project, extension)
+        createConfigureInternetExplorerDriverServerBinary(project, extension)
     }
 
     ConfigureChromeDriverBinary createConfigureChromeDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
@@ -45,6 +48,11 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
 
     ConfigureGeckoDriverBinary createConfigureGeckoDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
         createConfigureDriverBinary(ConfigureGeckoDriverBinary, project, extension, extension.&getGeckodriver, GECKODRIVER_PATH_SYSTEM_PROPERTY)
+    }
+
+    ConfigureIeDriverServerBinary createConfigureInternetExplorerDriverServerBinary(Project project, WebDriverBinariesPluginExtension extension) {
+        createConfigureDriverBinary(ConfigureIeDriverServerBinary, project, extension, extension.&getIedriverserver,
+            IEDRIVERSERVER_PATH_SYSTEM_PROPERTY)
     }
 
     private <T extends ConfigureBinary> T createConfigureDriverBinary(Class<T> taskType, Project project, WebDriverBinariesPluginExtension extension,

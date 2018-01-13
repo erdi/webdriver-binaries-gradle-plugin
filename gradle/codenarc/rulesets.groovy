@@ -40,6 +40,7 @@ ruleset {
         }
         LineLength {
             length = 160
+            doNotApplyToFileNames = '*Spec.groovy'
         }
         SpaceAfterOpeningBrace {
             ignoreEmptyBlock = true

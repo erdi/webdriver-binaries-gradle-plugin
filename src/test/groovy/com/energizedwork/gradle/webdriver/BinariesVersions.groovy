@@ -23,4 +23,7 @@ class BinariesVersions {
     public static final int LATEST_MINOR_GECKODRVIER_VERSION_NUMBER = 18
     public static final String LATEST_GECKODRVIER_VERSION = "0.${LATEST_MINOR_GECKODRVIER_VERSION_NUMBER}.0"
 
+    public static final int LATEST_MINOR_IEDRIVER_VERSION_NUMBER = 8
+    public static final String LATEST_IEDRIVERSERVER_VERSION = "3.${LATEST_MINOR_IEDRIVER_VERSION_NUMBER}.0"
+
 }

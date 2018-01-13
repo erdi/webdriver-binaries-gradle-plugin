@@ -20,6 +20,7 @@ This plugin exposes the following optional properties through the extension name
 | --- | --- | --- |
 | `chromedriver` | `String` | The version of ChromeDriver binary to be used by the project. No ChromeDriver binary will be downloaded if this property is not specified. |
 | `geckodriver` | `String` | The version of GeckoDriver binary to be used by the project. No GeckoDriver binary will be downloaded if this property is not specified. |
+| `iedriverserver` | `String` | The version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
 | `downloadRoot` |`File`| The location into which the binaries should be downloaded. If not specified the binaries are downloaded into the Gradle user home directory. Should not be specified under normal circumstances to benefit from caching of the binaries between multiple project builds. |
 
 Example usage:
@@ -27,6 +28,7 @@ Example usage:
     webdriverBinaries {
         chromedriver '2.32'
         geckodriver '0.19.0'
+        iedriverserver '3.8.0'
     }
 
 ### Tasks
@@ -34,6 +36,7 @@ Example usage:
 This plugin adds the following tasks to the project:
  * `configureChromeDriverBinary` - downloads, caches and configures the build to use a ChromeDriver binary
  * `configureGeckoDriverBinary` - downloads, caches and configures the build to use a GeckoDriver binary
+ * `configureIeDriverServerBinary` - downloads, caches and configures the build to use a IEDriverServer binary
 
 There is no need to call the above tasks directly because the plugin interweaves them into the build lifecycle by configuring all `org.gradle.api.tasks.testing.Test` tasks to depend on them.
 
@@ -45,7 +48,7 @@ That is, it adds a system property with a name specific to the given driver and 
 ### Integration with Idea JUnit plugin (com.energizedwork.idea-junit)
 
 If [Idea JUnit plugin](https://github.com/energizedwork/idea-gradle-plugins#idea-junit-plugin) is applied to the project together with this plugin it will do the following:
-* configure the `ideaWorkspace` task added to the build by [ Gradle's built-in IDEA plugin](https://docs.gradle.org/current/userguide/idea_plugin.html) to depend on `configureChromeDriverBinary` and `configureGeckoDriverBinary` tasks
+* configure the `ideaWorkspace` task added to the build by [Gradle's built-in IDEA plugin](https://docs.gradle.org/current/userguide/idea_plugin.html) to depend on `configureChromeDriverBinary`, `configureGeckoDriverBinary` and `configureIeDriverServerBinary` tasks
 * add system properties specific for the drivers setting the path to the downloaded binaries as their values to default default JUnit run configuration in IntelliJ when the configuration tasks are executed
 
 The above will ensure that locations of driver binaries are picked up when running tests from IntelliJ.   
