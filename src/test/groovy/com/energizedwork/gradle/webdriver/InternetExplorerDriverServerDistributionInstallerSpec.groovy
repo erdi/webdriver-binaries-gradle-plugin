@@ -15,7 +15,6 @@
  */
 package com.energizedwork.gradle.webdriver
 
-import com.energizedwork.gradle.webdriver.ie.InternetExplorerDriverServerDistributionInstaller
 import org.ysb33r.grolifant.api.os.Windows
 import spock.lang.Unroll
 
@@ -29,6 +28,7 @@ class InternetExplorerDriverServerDistributionInstallerSpec extends PluginSpec {
         buildScript << """
             import com.energizedwork.gradle.webdriver.ie.InternetExplorerDriverServerDistributionInstaller
             import org.ysb33r.grolifant.api.os.*
+            import org.ysb33r.grolifant.api.OperatingSystem.Arch
 
             plugins {
                 id 'com.energizedwork.webdriver-binaries'
@@ -38,7 +38,9 @@ class InternetExplorerDriverServerDistributionInstallerSpec extends PluginSpec {
                 downloadRoot(new File('${downloadRoot.root.absolutePath}'))
             }
         """
-        writeOutputBinaryPathTask(InternetExplorerDriverServerDistributionInstaller, version)
+
+        and:
+        writeOutputBinaryPathTask "new InternetExplorerDriverServerDistributionInstaller(project, null, '$version', Arch.X86)"
 
         when:
         runTasks 'outputBinaryPath'

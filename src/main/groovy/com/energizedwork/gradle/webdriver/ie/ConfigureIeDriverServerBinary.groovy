@@ -16,18 +16,23 @@
 package com.energizedwork.gradle.webdriver.ie
 
 import com.energizedwork.gradle.webdriver.task.ConfigureBinary
+import org.gradle.api.tasks.Internal
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.OperatingSystem.Arch
 import org.ysb33r.grolifant.api.os.Windows
 
 class ConfigureIeDriverServerBinary extends ConfigureBinary {
 
     final String binaryName = 'IEDriverServer'
 
+    @Internal
+    Arch architecture
+
     @Override
     @SuppressWarnings('UnnecessaryGetter')
     protected AbstractDistributionInstaller distributionInstaller() {
-        new InternetExplorerDriverServerDistributionInstaller(project, getDownloadRoot(), getVersion())
+        new InternetExplorerDriverServerDistributionInstaller(project, getDownloadRoot(), getVersion(), getArchitecture())
     }
 
     @Override

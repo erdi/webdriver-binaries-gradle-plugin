@@ -35,7 +35,10 @@ class IdeaJUnitPluginIntegrationSpec extends PluginSpec {
         given:
         setupProjectName()
         buildScript << """
-            import $installerClass.name
+            import com.energizedwork.gradle.webdriver.chrome.ChromeDriverDistributionInstaller
+            import com.energizedwork.gradle.webdriver.gecko.GeckoDriverDistributionInstaller
+            import com.energizedwork.gradle.webdriver.ie.InternetExplorerDriverServerDistributionInstaller
+            import org.ysb33r.grolifant.api.OperatingSystem.Arch
             import org.ysb33r.grolifant.api.OperatingSystem
 
             plugins {
@@ -45,9 +48,12 @@ class IdeaJUnitPluginIntegrationSpec extends PluginSpec {
 
             webdriverBinaries {
                 ${binaryName.toLowerCase()} '$binaryVersion'
+                iedriverserver {
+                    architecture = 'X86'
+                }
             }
         """
-        writeOutputBinaryPathTask(installerClass, binaryVersion, osProvidingCode)
+        writeOutputBinaryPathTask(installerConstructorCode)
 
         when:
         runTasksWithUniqueGradleHomeDir 'ideaWorkspace', 'outputBinaryPath'
@@ -57,10 +63,10 @@ class IdeaJUnitPluginIntegrationSpec extends PluginSpec {
         junitConfVmParams == "-D$systemProperty=$binaryFile.absolutePath"
 
         where:
-        binaryName       | binaryVersion                 | systemProperty            | installerClass                                    | os                        | osProvidingCode
-        'chromedriver'   | LATEST_CHROMEDRIVER_VERSION   | 'webdriver.chrome.driver' | ChromeDriverDistributionInstaller                 | OperatingSystem.current() | 'OperatingSystem.current()'
-        'geckodriver'    | LATEST_GECKODRVIER_VERSION    | 'webdriver.gecko.driver'  | GeckoDriverDistributionInstaller                  | OperatingSystem.current() | 'OperatingSystem.current()'
-        'IEDriverServer' | LATEST_IEDRIVERSERVER_VERSION | 'webdriver.ie.driver'     | InternetExplorerDriverServerDistributionInstaller | Windows.INSTANCE          | null
+        binaryName       | binaryVersion                 | systemProperty            | os                        | installerConstructorCode
+        'chromedriver'   | LATEST_CHROMEDRIVER_VERSION   | 'webdriver.chrome.driver' | OperatingSystem.current() | "new ChromeDriverDistributionInstaller(project, null, '$binaryVersion', OperatingSystem.current())"
+        'geckodriver'    | LATEST_GECKODRVIER_VERSION    | 'webdriver.gecko.driver'  | OperatingSystem.current() | "new GeckoDriverDistributionInstaller(project, null, '$binaryVersion', OperatingSystem.current())"
+        'IEDriverServer' | LATEST_IEDRIVERSERVER_VERSION | 'webdriver.ie.driver'     | Windows.INSTANCE          | "new InternetExplorerDriverServerDistributionInstaller(project, null, '$binaryVersion', Arch.X86)"
     }
 
     private void setupProjectName() {

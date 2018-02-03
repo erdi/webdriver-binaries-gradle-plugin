@@ -15,7 +15,6 @@
  */
 package com.energizedwork.gradle.webdriver
 
-import com.energizedwork.gradle.webdriver.chrome.ChromeDriverDistributionInstaller
 import org.ysb33r.grolifant.api.OperatingSystem
 import org.ysb33r.grolifant.api.os.Linux
 import org.ysb33r.grolifant.api.os.MacOsX
@@ -42,7 +41,9 @@ class ChromeDriverDistributionInstallerSpec extends PluginSpec {
                 chromedriver '$version'
             }
         """
-        writeOutputBinaryPathTask(ChromeDriverDistributionInstaller, version, "${os.class.simpleName}.INSTANCE")
+
+        and:
+        writeOutputBinaryPathTask "new ChromeDriverDistributionInstaller(project, null, '$version', ${os.class.simpleName}.INSTANCE)"
 
         when:
         runTasks 'outputBinaryPath'

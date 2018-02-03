@@ -36,7 +36,7 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
     private static final String IDEA_JUNIT_EXTENSION_NAME = 'ideaJunit'
 
     void apply(Project project) {
-        def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension)
+        def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension, project)
         createConfigureChromeDriverBinary(project, extension)
         createConfigureGeckoDriverBinary(project, extension)
         createConfigureInternetExplorerDriverServerBinary(project, extension)
@@ -51,8 +51,10 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
     }
 
     ConfigureIeDriverServerBinary createConfigureInternetExplorerDriverServerBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        createConfigureDriverBinary(ConfigureIeDriverServerBinary, project, extension, extension.&getIedriverserver,
+        def configureTask = createConfigureDriverBinary(ConfigureIeDriverServerBinary, project, extension, extension.ieDriverServerConfiguration.&getVersion,
             IEDRIVERSERVER_PATH_SYSTEM_PROPERTY)
+        configureTask.conventionMapping.map('architecture', extension.ieDriverServerConfiguration.&getArchitecture)
+        configureTask
     }
 
     private <T extends ConfigureBinary> T createConfigureDriverBinary(Class<T> taskType, Project project, WebDriverBinariesPluginExtension extension,

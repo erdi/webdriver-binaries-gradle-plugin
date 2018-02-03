@@ -15,11 +15,35 @@
  */
 package com.energizedwork.gradle.webdriver
 
+import org.gradle.api.Project
+
 class WebDriverBinariesPluginExtension {
+
+    private final Project project
+
+    final IeDriverServerConfiguration ieDriverServerConfiguration = new IeDriverServerConfiguration()
 
     File downloadRoot
     String chromedriver
     String geckodriver
-    String iedriverserver
 
+    WebDriverBinariesPluginExtension(Project project) {
+        this.project = project
+    }
+
+    void iedriverserver(String configuredVersion) {
+        iedriverserver {
+            version = configuredVersion
+        }
+    }
+
+    void setIedriverserver(String configuredVersion) {
+        iedriverserver {
+            version = configuredVersion
+        }
+    }
+
+    void iedriverserver(@DelegatesTo(IeDriverServerConfiguration) Closure configuration) {
+        project.configure(ieDriverServerConfiguration, configuration)
+    }
 }

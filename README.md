@@ -31,6 +31,25 @@ Example usage:
         iedriverserver '3.8.0'
     }
 
+### Extension methods
+
+Additionally to properties, the plugin exposes an `iedriverserver()` configuration method through the the extension named `webdriverBinaries`.
+The method takes a closure which delegates to an object with the following properties: 
+
+| Name | Type | Description | 
+| --- | --- | --- |
+| `version` | String | The version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
+| `architecture` | String | The architecture of the IEDriverServer binary to be used. The allowed values are `X86` and `X86_64`. Defaults to the architecture of the OS running the build. |
+
+Example usage:
+
+    webdriverBinaries {
+        iedriverserver {
+            version = '3.8.0'
+            architecture = 'X86'
+        }
+    }
+
 ### Tasks
 
 This plugin adds the following tasks to the project:

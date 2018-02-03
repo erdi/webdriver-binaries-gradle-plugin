@@ -17,13 +17,16 @@ package com.energizedwork.gradle.webdriver.ie
 
 import org.gradle.api.Project
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.OperatingSystem.Arch
 
 class InternetExplorerDriverServerDistributionInstaller extends AbstractDistributionInstaller {
 
-    InternetExplorerDriverServerDistributionInstaller(Project project, File downloadRoot, String distributionVersion) {
+    private final Arch architecture
+
+    InternetExplorerDriverServerDistributionInstaller(Project project, File downloadRoot, String distributionVersion, Arch architecture) {
         super('InternetExplorerDriverServer', distributionVersion, "webdriver/iedriverserver/$distributionVersion", project)
         this.downloadRoot = downloadRoot
+        this.architecture = architecture
     }
 
     @Override
@@ -41,11 +44,10 @@ class InternetExplorerDriverServerDistributionInstaller extends AbstractDistribu
     }
 
     private getArchPart() {
-        def arch = OperatingSystem.current().arch
-        switch (arch) {
-            case OperatingSystem.Arch.X86_64:
+        switch (architecture) {
+            case Arch.X86_64:
                 return 'x64'
-            case OperatingSystem.Arch.X86:
+            case Arch.X86:
                 return 'Win32'
             default:
                 throw new IllegalStateException("Unsupported architecture: $arch")
