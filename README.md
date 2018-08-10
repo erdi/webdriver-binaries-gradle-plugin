@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/license-ASL2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Linux Build status](https://circleci.com/gh/energizedwork/webdriver-binaries-gradle-plugin.svg?style=shield&circle-token=a992594ce0896410bbf5533eff72746f983f0ae2)](https://circleci.com/gh/energizedwork/webdriver-binaries-gradle-plugin)
+[![Linux Build status](https://circleci.com/gh/erdi/webdriver-binaries-gradle-plugin.svg?style=shield&circle-token=a992594ce0896410bbf5533eff72746f983f0ae2)](https://circleci.com/gh/erdi/webdriver-binaries-gradle-plugin)
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/xg10l6d6x0fant1c?svg=true)](https://ci.appveyor.com/project/erdi/webdriver-binaries-gradle-plugin)
 # WebDriver binaries Gradle plugin
 
