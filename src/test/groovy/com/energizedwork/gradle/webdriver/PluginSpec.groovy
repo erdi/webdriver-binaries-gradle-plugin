@@ -73,7 +73,7 @@ class PluginSpec extends Specification {
     }
 
     private String getGradleVersion() {
-        System.getProperty('test.gradle.version', '4.2')
+        System.getProperty('test.gradle.version', '4.8.1')
     }
 
     protected File getDistributionRoot() {
