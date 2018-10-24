@@ -16,19 +16,26 @@
 package com.energizedwork.gradle.webdriver
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 
 class WebDriverBinariesPluginExtension {
 
     private final Project project
+    private final Property<File> downloadRoot
+    private final Property<String> chromedriver
+    private final Property<String> geckodriver
 
-    final IeDriverServerConfiguration ieDriverServerConfiguration = new IeDriverServerConfiguration()
-
-    File downloadRoot
-    String chromedriver
-    String geckodriver
+    final IeDriverServerConfiguration ieDriverServerConfiguration
 
     WebDriverBinariesPluginExtension(Project project) {
         this.project = project
+
+        def objectFactory = project.objects
+        this.downloadRoot = objectFactory.property(File)
+        this.chromedriver = objectFactory.property(String)
+        this.geckodriver = objectFactory.property(String)
+        this.ieDriverServerConfiguration = new IeDriverServerConfiguration(project)
     }
 
     void iedriverserver(String configuredVersion) {
@@ -45,5 +52,41 @@ class WebDriverBinariesPluginExtension {
 
     void iedriverserver(@DelegatesTo(IeDriverServerConfiguration) Closure configuration) {
         project.configure(ieDriverServerConfiguration, configuration)
+    }
+
+    void getChromedriver() {
+        chromedriver.get()
+    }
+
+    void setChromedriver(String version) {
+        chromedriver.set(version)
+    }
+
+    Provider<String> getChromedriverProvider() {
+        chromedriver
+    }
+
+    void getGeckodriver() {
+        geckodriver.get()
+    }
+
+    void setGeckodriver(String version) {
+        geckodriver.set(version)
+    }
+
+    Provider<String> getGeckodriverProvider() {
+        geckodriver
+    }
+
+    void setDownloadRoot(File downloadRoot) {
+        this.downloadRoot.set(downloadRoot)
+    }
+
+    File getDownloadRoot() {
+        downloadRoot.get()
+    }
+
+    Provider<File> getDownloadRootProvider() {
+        downloadRoot
     }
 }

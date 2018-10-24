@@ -24,9 +24,8 @@ class ConfigureGeckoDriverBinary extends ConfigureBinary {
     final String binaryName = 'geckodriver'
 
     @Override
-    @SuppressWarnings('UnnecessaryGetter')
     protected AbstractDistributionInstaller distributionInstaller() {
-        new GeckoDriverDistributionInstaller(project, getDownloadRoot(), getVersion(), OperatingSystem.current())
+        new GeckoDriverDistributionInstaller(project, downloadRoot, version, OperatingSystem.current())
     }
 
 }
