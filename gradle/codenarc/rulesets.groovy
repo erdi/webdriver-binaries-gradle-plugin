@@ -24,7 +24,11 @@ ruleset {
             enabled = false
         }
     }
-    ruleset("rulesets/design.xml")
+    ruleset("rulesets/design.xml") {
+        Instanceof {
+            ignoreTypeNames = "Map,List,String"
+        }
+    }
     ruleset("rulesets/dry.xml") {
         DuplicateStringLiteral {
             doNotApplyToClassNames = '*Spec'

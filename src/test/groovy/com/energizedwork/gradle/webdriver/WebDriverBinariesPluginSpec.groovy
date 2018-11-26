@@ -21,9 +21,9 @@ import org.ysb33r.grolifant.api.OperatingSystem
 import spock.lang.Requires
 import spock.lang.Unroll
 
-import static BinariesVersions.LATEST_CHROMEDRIVER_VERSION
-import static BinariesVersions.LATEST_GECKODRVIER_VERSION
-import static BinariesVersions.LATEST_IEDRIVERSERVER_VERSION
+import static BinariesVersions.TESTED_CHROMEDRIVER_VERSION
+import static BinariesVersions.TESTED_GECKODRVIER_VERSION
+import static BinariesVersions.TESTED_IEDRIVERSERVER_VERSION
 
 @Category(EndToEnd)
 class WebDriverBinariesPluginSpec extends PluginSpec {
@@ -43,14 +43,14 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
 
         where:
         binaryName     | binaryVersion               | seleniumModule
-        'chromedriver' | LATEST_CHROMEDRIVER_VERSION | 'selenium-chrome-driver'
-        'geckodriver'  | LATEST_GECKODRVIER_VERSION  | 'selenium-firefox-driver'
+        'chromedriver' | TESTED_CHROMEDRIVER_VERSION | 'selenium-chrome-driver'
+        'geckodriver'  | TESTED_GECKODRVIER_VERSION  | 'selenium-firefox-driver'
     }
 
     @Requires({ OperatingSystem.current().windows })
     void 'iedriverserver binary is downloaded and test task is configured as per plugin config'() {
         given:
-        writeBuild('iedriverserver', LATEST_IEDRIVERSERVER_VERSION, 'selenium-ie-driver')
+        writeBuild('iedriverserver', TESTED_IEDRIVERSERVER_VERSION, 'selenium-ie-driver')
         writeRatpackApplication()
         writeGebSpec()
 

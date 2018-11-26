@@ -22,7 +22,6 @@ import com.energizedwork.gradle.webdriver.task.ConfigureBinary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.plugins.ide.idea.GenerateIdeaWorkspace
 
@@ -44,25 +43,25 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
     }
 
     ConfigureChromeDriverBinary createConfigureChromeDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        createConfigureDriverBinary(ConfigureChromeDriverBinary, project, extension, extension.chromedriverProvider, CHROMEDRIVER_PATH_SYSTEM_PROPERTY)
+        createConfigureDriverBinary(ConfigureChromeDriverBinary, project, extension, extension.chromedriverConfiguration, CHROMEDRIVER_PATH_SYSTEM_PROPERTY)
     }
 
     ConfigureGeckoDriverBinary createConfigureGeckoDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        createConfigureDriverBinary(ConfigureGeckoDriverBinary, project, extension, extension.geckodriverProvider, GECKODRIVER_PATH_SYSTEM_PROPERTY)
+        createConfigureDriverBinary(ConfigureGeckoDriverBinary, project, extension, extension.geckodriverConfiguration, GECKODRIVER_PATH_SYSTEM_PROPERTY)
     }
 
     ConfigureIeDriverServerBinary createConfigureInternetExplorerDriverServerBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        def configureTask = createConfigureDriverBinary(ConfigureIeDriverServerBinary, project, extension,
-            extension.ieDriverServerConfiguration.versionProvider, IEDRIVERSERVER_PATH_SYSTEM_PROPERTY)
-        configureTask.conventionMapping.map('architecture', extension.ieDriverServerConfiguration.&getArchitecture)
-        configureTask
+        createConfigureDriverBinary(ConfigureIeDriverServerBinary, project, extension, extension.ieDriverServerConfiguration,
+            IEDRIVERSERVER_PATH_SYSTEM_PROPERTY)
     }
 
     private <T extends ConfigureBinary> T createConfigureDriverBinary(Class<T> taskType, Project project, WebDriverBinariesPluginExtension extension,
-                                                                      Provider<String> versionProvider, String systemPropertyName) {
+                                                                      DriverConfiguration driverConfiguration, String systemPropertyName) {
         T configureTask = project.task(taskType.simpleName.uncapitalize(), type: taskType)
         configureTask.downloadRoot = extension.downloadRootProvider
-        configureTask.version = versionProvider
+        configureTask.driverUrlsConfiguration = extension.driverUrlsConfigurationProvider
+        configureTask.version = driverConfiguration.versionProvider
+        configureTask.architecture = driverConfiguration.architectureProvider
         configureTestTasksWithWebDriverBinary(project, configureTask, systemPropertyName)
         configureIdeaWithWebDriverBinary(project, configureTask, systemPropertyName)
         configureTask

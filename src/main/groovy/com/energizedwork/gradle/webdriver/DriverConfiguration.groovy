@@ -20,12 +20,12 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.ysb33r.grolifant.api.OperatingSystem
 
-class IeDriverServerConfiguration {
+class DriverConfiguration {
 
     private final Property<String> version
     private final Property<OperatingSystem.Arch> architecture
 
-    IeDriverServerConfiguration(Project project) {
+    DriverConfiguration(Project project) {
         def objectFactory = project.objects
         this.version = objectFactory.property(String)
         this.architecture = objectFactory.property(OperatingSystem.Arch)
@@ -41,6 +41,10 @@ class IeDriverServerConfiguration {
 
     OperatingSystem.Arch getArchitecture() {
         architecture.get()
+    }
+
+    Provider<OperatingSystem.Arch> getArchitectureProvider() {
+        architecture
     }
 
     String getVersion() {

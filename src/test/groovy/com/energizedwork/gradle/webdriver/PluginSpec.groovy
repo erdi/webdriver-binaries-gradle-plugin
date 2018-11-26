@@ -15,12 +15,18 @@
  */
 package com.energizedwork.gradle.webdriver
 
+import com.energizedwork.gradle.webdriver.repository.DriverUrlsConfiguration
+import groovy.json.JsonOutput
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.ysb33r.grolifant.api.OperatingSystem
 import spock.lang.Specification
+
+import java.nio.charset.StandardCharsets
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class PluginSpec extends Specification {
 
@@ -34,6 +40,9 @@ class PluginSpec extends Specification {
 
     @Rule
     protected TemporaryFolder downloadRoot
+
+    @Rule
+    protected TemporaryFolder driverRepository
 
     protected File buildScript
 
@@ -80,10 +89,42 @@ class PluginSpec extends Specification {
         new File(distributionRoot, operatingSystem.getExecutableName(binaryName))
     }
 
-    protected static <T> List<T> pickRandomly(int count, List<T> items) {
-        def copy = items.toList()
-        Collections.shuffle(copy)
-        copy.take(count)
+    protected Repository setupRepository(
+        String name, String binaryName = name, String version, OperatingSystem operatingSystem = OperatingSystem.current(),
+        OperatingSystem.Arch arch = OperatingSystem.current().arch
+    ) {
+        String driverFileContents = "${name}_${operatingSystem.class.simpleName}_${arch.name()}_$version"
+        def driverZip = writeDriverZip(operatingSystem.getExecutableName(binaryName), driverFileContents)
+
+        def configurationFile = driverRepository.newFile('repository.json') << JsonOutput.toJson(
+            drivers: [
+                [
+                    name: name,
+                    platform: DriverUrlsConfiguration.PLATFORMS[operatingSystem],
+                    bit: DriverUrlsConfiguration.BITS[arch],
+                    version: version,
+                    url: driverZip.toURI().toString()
+                ]
+            ]
+        )
+
+        new Repository(configurationFile: configurationFile, driverFileContents: driverFileContents)
     }
 
+    private File writeDriverZip(String driverFilename, String driverFileContents) {
+        def zipFile = driverRepository.newFile("${driverFileContents}.zip")
+
+        new ZipOutputStream(new FileOutputStream(zipFile)).withCloseable { stream ->
+            stream.putNextEntry(new ZipEntry(driverFilename))
+            stream.write(driverFileContents.getBytes(StandardCharsets.UTF_8))
+            stream.closeEntry()
+        }
+
+        zipFile
+    }
+
+    protected static class Repository {
+        File configurationFile
+        String driverFileContents
+    }
 }

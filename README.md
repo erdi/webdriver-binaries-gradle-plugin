@@ -22,6 +22,7 @@ This plugin exposes the following optional properties through the extension name
 | `geckodriver` | `String` | The version of GeckoDriver binary to be used by the project. No GeckoDriver binary will be downloaded if this property is not specified. |
 | `iedriverserver` | `String` | The version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
 | `downloadRoot` |`File`| The location into which the binaries should be downloaded. If not specified the binaries are downloaded into the Gradle user home directory. Should not be specified under normal circumstances to benefit from caching of the binaries between multiple project builds. |
+| `driverUrlsConfiguration` |`org.gradle.api.resources.TextResource`| The text resource which contains mapping from a binary version to a URL. If not specified then the default is to use [WebDriver Extensions Maven Plugin's `package.json` file](https://github.com/webdriverextensions/webdriverextensions-maven-plugin-repository/blob/master/repository-3.0.json) from `https://raw.githubusercontent.com/webdriverextensions/webdriverextensions-maven-plugin-repository/master/repository-3.0.json`. |
 
 Example usage:
 
@@ -33,17 +34,25 @@ Example usage:
 
 ### Extension methods
 
-Additionally to properties, the plugin exposes an `iedriverserver()` configuration method through the the extension named `webdriverBinaries`.
-The method takes a closure which delegates to an object with the following properties: 
+Additionally to properties, the plugin exposes `chromedriver()`, `geckodriver()` and `iedriverserver()` configuration methods through the the extension named `webdriverBinaries`.
+Each method takes a closure which delegates to an object with the following properties: 
 
 | Name | Type | Description | 
 | --- | --- | --- |
-| `version` | String | The version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
-| `architecture` | String | The architecture of the IEDriverServer binary to be used. The allowed values are `X86` and `X86_64`. Defaults to the architecture of the OS running the build. |
+| `version` | String | The version of binary to be used by the project. No binary will be downloaded if this property is not specified. |
+| `architecture` | String | The architecture of the binary to be used. The allowed values are `X86` and `X86_64`. Defaults to the architecture of the OS running the build. |
 
 Example usage:
 
     webdriverBinaries {
+        chromedriver {
+            version = '2.32'
+            architecture = 'X86'
+        }
+        geckodriver {
+            version = '0.19.0'
+            architecture = 'X86'
+        }
         iedriverserver {
             version = '3.8.0'
             architecture = 'X86'
@@ -63,6 +72,22 @@ Note that a configure task for a given driver binary is skipped unless a version
 
 When a configuration task is executed it modifies configuration of system properties for all `org.gradle.api.tasks.testing.Test` tasks in the project so that the location of the WebDriver binary location is picked up when the driver is being initialized.
 That is, it adds a system property with a name specific to the given driver and a value being the path to the downloaded binary. 
+
+### Configuring download URLs
+
+By default, the plugin uses information from [WebDriver Extensions Maven Plugin's `package.json` file](https://github.com/webdriverextensions/webdriverextensions-maven-plugin-repository/blob/master/repository-3.0.json) to determine what URL should a given binary be downloaded from.
+
+If a version of a binary you would like to download using the plugin is not listed in the aforementioned file you can do one of the following:
+* provide a pull request to [WebDriver Extensions Maven Plugin Repository 3.0](https://github.com/webdriverextensions/webdriverextensions-maven-plugin-repository) which adds the version in question to the file - the URL you add will be visible to the plugin as soon as the PR gets merged
+* author an own version of the `package.json` file and configure the plugin to use it
+
+If you'd like to use the latter then after authoring your own version of `package.json` and dropping it, for example, in the root directory of your build you need to configure the plugin to use it:
+
+    webdriverBinaries {
+        driverUrlsConfiguration = resources.text.fromFile('package.json')
+    }
+    
+Note that the `driverUrlsConfiguration` property is a `org.gradle.api.resources.TextResource` and can be configured with a text resource from various sources - see [javadoc for `org.gradle.api.resources.TextResourceFactory`](https://docs.gradle.org/current/javadoc/org/gradle/api/resources/TextResourceFactory.html) for more examples.  
 
 ### Integration with Idea JUnit plugin (com.energizedwork.idea-junit)
 

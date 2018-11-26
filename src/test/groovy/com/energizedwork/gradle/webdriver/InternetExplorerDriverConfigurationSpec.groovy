@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.energizedwork.gradle.webdriver.ie
+package com.energizedwork.gradle.webdriver
 
-import com.energizedwork.gradle.webdriver.task.ConfigureBinary
-import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+class InternetExplorerDriverConfigurationSpec extends AbstractDriverConfigurationSpec {
 
-class ConfigureIeDriverServerBinary extends ConfigureBinary {
+    final String driverName = 'internetexplorerdriver'
 
-    final String binaryName = 'IEDriverServer'
+    final String driverConfigurationBlockName = 'iedriverserver'
 
-    @Override
-    protected AbstractDistributionInstaller distributionInstaller() {
-        new InternetExplorerDriverServerDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture)
-    }
+    final String driverExecutableName = 'IEDriverServer'
 
 }

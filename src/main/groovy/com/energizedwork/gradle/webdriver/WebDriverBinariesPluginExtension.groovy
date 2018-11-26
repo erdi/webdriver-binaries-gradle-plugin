@@ -18,24 +18,32 @@ package com.energizedwork.gradle.webdriver
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.resources.TextResource
 
 class WebDriverBinariesPluginExtension {
 
+    public static final String DRIVER_URLS_CONFIG_URL =
+        'https://raw.githubusercontent.com/webdriverextensions/webdriverextensions-maven-plugin-repository/master/repository-3.0.json'
+
     private final Project project
     private final Property<File> downloadRoot
-    private final Property<String> chromedriver
-    private final Property<String> geckodriver
+    private final Property<TextResource> driverUrlsConfiguration
 
-    final IeDriverServerConfiguration ieDriverServerConfiguration
+    final DriverConfiguration ieDriverServerConfiguration
+    final DriverConfiguration chromedriverConfiguration
+    final DriverConfiguration geckodriverConfiguration
 
     WebDriverBinariesPluginExtension(Project project) {
         this.project = project
 
         def objectFactory = project.objects
+        this.driverUrlsConfiguration = objectFactory.property(TextResource)
         this.downloadRoot = objectFactory.property(File)
-        this.chromedriver = objectFactory.property(String)
-        this.geckodriver = objectFactory.property(String)
-        this.ieDriverServerConfiguration = new IeDriverServerConfiguration(project)
+        this.ieDriverServerConfiguration = new DriverConfiguration(project)
+        this.chromedriverConfiguration = new DriverConfiguration(project)
+        this.geckodriverConfiguration = new DriverConfiguration(project)
+
+        this.driverUrlsConfiguration.set(project.resources.text.fromUri(DRIVER_URLS_CONFIG_URL))
     }
 
     void iedriverserver(String configuredVersion) {
@@ -45,37 +53,39 @@ class WebDriverBinariesPluginExtension {
     }
 
     void setIedriverserver(String configuredVersion) {
-        iedriverserver {
+        iedriverserver(configuredVersion)
+    }
+
+    void iedriverserver(@DelegatesTo(DriverConfiguration) Closure configuration) {
+        project.configure(ieDriverServerConfiguration, configuration)
+    }
+
+    void chromedriver(String configuredVersion) {
+        chromedriver {
             version = configuredVersion
         }
     }
 
-    void iedriverserver(@DelegatesTo(IeDriverServerConfiguration) Closure configuration) {
-        project.configure(ieDriverServerConfiguration, configuration)
+    void setChromedriver(String configuredVersion) {
+        chromedriver(configuredVersion)
     }
 
-    void getChromedriver() {
-        chromedriver.get()
+    void chromedriver(@DelegatesTo(DriverConfiguration) Closure configuration) {
+        project.configure(chromedriverConfiguration, configuration)
     }
 
-    void setChromedriver(String version) {
-        chromedriver.set(version)
+    void geckodriver(String configuredVersion) {
+        geckodriver {
+            version = configuredVersion
+        }
     }
 
-    Provider<String> getChromedriverProvider() {
-        chromedriver
+    void setGeckodriver(String configuredVersion) {
+        geckodriver(configuredVersion)
     }
 
-    void getGeckodriver() {
-        geckodriver.get()
-    }
-
-    void setGeckodriver(String version) {
-        geckodriver.set(version)
-    }
-
-    Provider<String> getGeckodriverProvider() {
-        geckodriver
+    void geckodriver(@DelegatesTo(DriverConfiguration) Closure configuration) {
+        project.configure(geckodriverConfiguration, configuration)
     }
 
     void setDownloadRoot(File downloadRoot) {
@@ -88,5 +98,17 @@ class WebDriverBinariesPluginExtension {
 
     Provider<File> getDownloadRootProvider() {
         downloadRoot
+    }
+
+    void setDriverUrlsConfiguration(TextResource driverUrlsConfiguration) {
+        this.driverUrlsConfiguration.set(driverUrlsConfiguration)
+    }
+
+    TextResource getDriverUrlsConfiguration() {
+        driverUrlsConfiguration.get()
+    }
+
+    Provider<TextResource> getDriverUrlsConfigurationProvider() {
+        driverUrlsConfiguration
     }
 }

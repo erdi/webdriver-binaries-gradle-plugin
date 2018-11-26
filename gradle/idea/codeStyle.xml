@@ -4,6 +4,9 @@
             <option name="USE_SAME_INDENTS" value="true"/>
             <option name="IGNORE_SAME_INDENTS_FOR_LANGUAGES" value="true" />
             <option name="RIGHT_MARGIN" value="160"/>
+            <GroovyCodeStyleSettings>
+                <option name="ALIGN_NAMED_ARGS_IN_MAP" value="false" />
+            </GroovyCodeStyleSettings>
             <editorconfig>
                 <option name="ENABLED" value="false" />
             </editorconfig>

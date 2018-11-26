@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.energizedwork.gradle.webdriver.gecko
+package com.energizedwork.gradle.webdriver
 
-import com.energizedwork.gradle.webdriver.task.ConfigureBinary
-import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+class ChromeDriverConfigurationSpec extends AbstractDriverConfigurationSpec {
 
-class ConfigureGeckoDriverBinary extends ConfigureBinary {
+    final String driverName = 'chromedriver'
 
-    final String binaryName = 'geckodriver'
-
-    @Override
-    protected AbstractDistributionInstaller distributionInstaller() {
-        new GeckoDriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture)
-    }
 }

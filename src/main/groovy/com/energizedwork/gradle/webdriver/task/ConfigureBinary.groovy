@@ -19,15 +19,19 @@ import com.energizedwork.gradle.webdriver.DriverBinaryAware
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.OperatingSystem.Arch
 
 abstract class ConfigureBinary extends DefaultTask {
 
-    private final Property<File> downloadRoot = project.objects.property(File)
-    private final Property<String> version = project.objects.property(String)
+    private final Property<TextResource> driverUrlsConfigurationProperty = project.objects.property(TextResource)
+    private final Property<File> downloadRootProperty = project.objects.property(File)
+    private final Property<String> versionProperty = project.objects.property(String)
+    private final Property<Arch> architectureProperty = project.objects.property(Arch)
 
     protected final List<DriverBinaryAware> binaryAwares = []
 
@@ -36,7 +40,7 @@ abstract class ConfigureBinary extends DefaultTask {
     }
 
     void setDownloadRoot(Provider<File> downloadRootProvider) {
-        downloadRoot.set(downloadRootProvider)
+        downloadRootProperty.set(downloadRootProvider)
     }
 
     void setDownloadRoot(File downloadRoot) {
@@ -45,20 +49,46 @@ abstract class ConfigureBinary extends DefaultTask {
 
     @Internal
     File getDownloadRoot() {
-        downloadRoot.orNull
+        downloadRootProperty.orNull
     }
 
     void setVersion(Provider<String> versionProvider) {
-        this.version.set(versionProvider)
+        this.versionProperty.set(versionProvider)
     }
 
     void setVersion(String version) {
-        this.version.set(version)
+        this.versionProperty.set(version)
     }
 
     @Internal
     String getVersion() {
-        version.get()
+        versionProperty.get()
+    }
+
+    void setArchitecture(Provider<Arch> architectureProvider) {
+        this.architectureProperty.set(architectureProvider)
+    }
+
+    void setArchitecture(Arch architecture) {
+        this.architectureProperty.set(architecture)
+    }
+
+    @Internal
+    Arch getArchitecture() {
+        architectureProperty.get()
+    }
+
+    void setDriverUrlsConfiguration(Provider<TextResource> driverUrlsConfiguration) {
+        this.driverUrlsConfigurationProperty.set(driverUrlsConfiguration)
+    }
+
+    void setDriverUrlsConfiguration(TextResource driverUrlsConfiguration) {
+        this.driverUrlsConfigurationProperty.set(driverUrlsConfiguration)
+    }
+
+    @Internal
+    TextResource getDriverUrlsConfiguration() {
+        driverUrlsConfigurationProperty.get()
     }
 
     void addBinaryAware(DriverBinaryAware aware) {
@@ -85,7 +115,7 @@ abstract class ConfigureBinary extends DefaultTask {
 
     @Internal
     protected boolean isVersionConfigured() {
-        version.present
+        versionProperty.present
     }
 
 }

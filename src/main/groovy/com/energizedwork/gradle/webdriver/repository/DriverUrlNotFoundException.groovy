@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.energizedwork.gradle.webdriver.ie
+package com.energizedwork.gradle.webdriver.repository
 
-import com.energizedwork.gradle.webdriver.task.ConfigureBinary
-import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+import groovy.transform.builder.Builder
 
-class ConfigureIeDriverServerBinary extends ConfigureBinary {
+class DriverUrlNotFoundException extends Exception {
 
-    final String binaryName = 'IEDriverServer'
-
-    @Override
-    protected AbstractDistributionInstaller distributionInstaller() {
-        new InternetExplorerDriverServerDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture)
+    @Builder
+    private DriverUrlNotFoundException(String name, String version, String platform, String bit) {
+        super(/Driver url not found for name: "$name", version: "$version", platform: "$platform", bit: "$bit"/)
     }
-
 }

@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.energizedwork.gradle.webdriver.chrome
+package com.energizedwork.gradle.webdriver.repository
 
-import com.energizedwork.gradle.webdriver.DriverDistributionInstaller
-import org.gradle.api.Project
-import org.gradle.api.resources.TextResource
-import org.ysb33r.grolifant.api.OperatingSystem
 import org.ysb33r.grolifant.api.OperatingSystem.Arch
 
-class ChromeDriverDistributionInstaller extends DriverDistributionInstaller {
+class UnsupportedArchitectureException extends Exception {
 
-    ChromeDriverDistributionInstaller(Project project, TextResource repositoryResource, File downloadRoot, String distributionVersion, OperatingSystem os,
-                                      Arch arch) {
-        super(project, 'chromedriver', repositoryResource, downloadRoot, distributionVersion, os, arch)
+    UnsupportedArchitectureException(Arch arch) {
+        super(arch.name())
     }
-
 }

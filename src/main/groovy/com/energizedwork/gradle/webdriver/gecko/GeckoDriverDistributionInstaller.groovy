@@ -15,44 +15,16 @@
  */
 package com.energizedwork.gradle.webdriver.gecko
 
+import com.energizedwork.gradle.webdriver.DriverDistributionInstaller
 import org.gradle.api.Project
-import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+import org.gradle.api.resources.TextResource
 import org.ysb33r.grolifant.api.OperatingSystem
-import org.ysb33r.grolifant.api.os.MacOsX
-import org.ysb33r.grolifant.api.os.Windows
+import org.ysb33r.grolifant.api.OperatingSystem.Arch
 
-class GeckoDriverDistributionInstaller extends AbstractDistributionInstaller {
+class GeckoDriverDistributionInstaller extends DriverDistributionInstaller {
 
-    private final OperatingSystem os
-
-    GeckoDriverDistributionInstaller(Project project, File downloadRoot, String distributionVersion, OperatingSystem os) {
-        super('GeckoDriver', distributionVersion, "webdriver/geckodriver/$distributionVersion", project)
-        this.downloadRoot = downloadRoot
-        this.os = os
-    }
-
-    @Override
-    URI uriFromVersion(String version) {
-        "https://github.com/mozilla/geckodriver/releases/download/v$version/geckodriver-v$version-${getOsUriPart(version)}.$archiveExtension".toURI()
-    }
-
-    @Override
-    protected File getAndVerifyDistributionRoot(File distDir, String distributionDescription) {
-        distDir
-    }
-
-    private String getArchiveExtension() {
-        os.windows ? 'zip' : 'tar.gz'
-    }
-
-    private String getOsUriPart(String version) {
-        switch (os) {
-            case MacOsX:
-                return version == '0.9.0' ? 'mac' : 'macos'
-            case Windows:
-                return 'win64'
-            default:
-                return 'linux64'
-        }
+    GeckoDriverDistributionInstaller(Project project, TextResource repositoryResource, File downloadRoot, String distributionVersion, OperatingSystem os,
+                                     Arch arch) {
+        super(project, 'geckodriver', repositoryResource, downloadRoot, distributionVersion, os, arch)
     }
 }

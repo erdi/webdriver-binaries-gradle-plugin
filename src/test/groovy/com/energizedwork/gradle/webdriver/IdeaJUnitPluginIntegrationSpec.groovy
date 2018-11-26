@@ -15,58 +15,61 @@
  */
 package com.energizedwork.gradle.webdriver
 
-import com.energizedwork.gradle.webdriver.chrome.ChromeDriverDistributionInstaller
-import com.energizedwork.gradle.webdriver.gecko.GeckoDriverDistributionInstaller
-import com.energizedwork.gradle.webdriver.ie.InternetExplorerDriverServerDistributionInstaller
-import org.ysb33r.grolifant.api.OperatingSystem
-import org.ysb33r.grolifant.api.os.Windows
 import spock.lang.Unroll
-
-import static BinariesVersions.LATEST_CHROMEDRIVER_VERSION
-import static BinariesVersions.LATEST_GECKODRVIER_VERSION
-import static com.energizedwork.gradle.webdriver.BinariesVersions.LATEST_IEDRIVERSERVER_VERSION
 
 class IdeaJUnitPluginIntegrationSpec extends PluginSpec {
 
+    private final static String BINARY_PATH_FILENAME = 'binaryPath.txt'
+
     static final String TEST_PROJECT_NAME = 'idea-test'
 
-    @Unroll('default JUnit run configuration in IntelliJ is configured with the downloaded #binaryName binary')
+    @Unroll('default JUnit run configuration in IntelliJ is configured with the downloaded #driverConfigurationBlockName binary')
     def "default JUnit run configuration in IntelliJ is configured with the downloaded webdriver binary"() {
         given:
+        def repository = setupRepository(driverName, binaryName, version)
         setupProjectName()
-        buildScript << """
-            import com.energizedwork.gradle.webdriver.chrome.ChromeDriverDistributionInstaller
-            import com.energizedwork.gradle.webdriver.gecko.GeckoDriverDistributionInstaller
-            import com.energizedwork.gradle.webdriver.ie.InternetExplorerDriverServerDistributionInstaller
-            import org.ysb33r.grolifant.api.OperatingSystem.Arch
-            import org.ysb33r.grolifant.api.OperatingSystem
+        writeBuildScript(configureTask)
 
+        and:
+        buildScript << """
+            webdriverBinaries {
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                $driverConfigurationBlockName '$version'
+            }
+        """
+
+        when:
+        runTasksWithUniqueGradleHomeDir 'ideaWorkspace'
+
+        then:
+        pluginDownloadedBinaryPath
+
+        and:
+        junitConfVmParams == "-D$systemProperty=$pluginDownloadedBinaryPath"
+
+        where:
+        driverConfigurationBlockName | driverName               | binaryName       | systemProperty            | configureTask
+        'chromedriver'               | 'chromedriver'           | 'chromedriver'   | 'webdriver.chrome.driver' | 'configureChromeDriverBinary'
+        'geckodriver'                | 'geckodriver'            | 'geckodriver'    | 'webdriver.gecko.driver'  | 'configureGeckoDriverBinary'
+        'iedriverserver'             | 'internetexplorerdriver' | 'IEDriverServer' | 'webdriver.ie.driver'     | 'configureIeDriverServerBinary'
+
+        version = '1.2.3'
+    }
+
+    private void writeBuildScript(String configureTask) {
+        buildScript << """
             plugins {
                 id 'com.energizedwork.webdriver-binaries'
                 id 'com.energizedwork.idea-junit' version '1.2'
             }
 
-            webdriverBinaries {
-                ${binaryName.toLowerCase()} '$binaryVersion'
-                iedriverserver {
-                    architecture = 'X86'
+            $configureTask {
+                addBinaryAware { binaryPath ->
+                    buildDir.mkdirs()
+                    new File(buildDir, '$BINARY_PATH_FILENAME') << binaryPath
                 }
             }
         """
-        writeOutputBinaryPathTask(installerConstructorCode)
-
-        when:
-        runTasksWithUniqueGradleHomeDir 'ideaWorkspace', 'outputBinaryPath'
-        def binaryFile = downloadedBinaryFile(binaryName, os)
-
-        then:
-        junitConfVmParams == "-D$systemProperty=$binaryFile.absolutePath"
-
-        where:
-        binaryName       | binaryVersion                 | systemProperty            | os                        | installerConstructorCode
-        'chromedriver'   | LATEST_CHROMEDRIVER_VERSION   | 'webdriver.chrome.driver' | OperatingSystem.current() | "new ChromeDriverDistributionInstaller(project, null, '$binaryVersion', OperatingSystem.current())"
-        'geckodriver'    | LATEST_GECKODRVIER_VERSION    | 'webdriver.gecko.driver'  | OperatingSystem.current() | "new GeckoDriverDistributionInstaller(project, null, '$binaryVersion', OperatingSystem.current())"
-        'IEDriverServer' | LATEST_IEDRIVERSERVER_VERSION | 'webdriver.ie.driver'     | Windows.INSTANCE          | "new InternetExplorerDriverServerDistributionInstaller(project, null, '$binaryVersion', Arch.X86)"
     }
 
     private void setupProjectName() {
@@ -83,6 +86,10 @@ class IdeaJUnitPluginIntegrationSpec extends PluginSpec {
 
     private String getJunitConfVmParams() {
         parseJunitConf().option.find { it.@name == 'VM_PARAMETERS' }.@value
+    }
+
+    private String getPluginDownloadedBinaryPath() {
+        new File(testProjectDir.root, "build/$BINARY_PATH_FILENAME").text
     }
 
 }

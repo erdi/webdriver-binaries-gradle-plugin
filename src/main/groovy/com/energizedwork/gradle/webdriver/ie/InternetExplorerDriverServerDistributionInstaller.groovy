@@ -15,43 +15,16 @@
  */
 package com.energizedwork.gradle.webdriver.ie
 
+import com.energizedwork.gradle.webdriver.DriverDistributionInstaller
 import org.gradle.api.Project
-import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+import org.gradle.api.resources.TextResource
+import org.ysb33r.grolifant.api.OperatingSystem
 import org.ysb33r.grolifant.api.OperatingSystem.Arch
 
-class InternetExplorerDriverServerDistributionInstaller extends AbstractDistributionInstaller {
+class InternetExplorerDriverServerDistributionInstaller extends DriverDistributionInstaller {
 
-    private final Arch architecture
-
-    InternetExplorerDriverServerDistributionInstaller(Project project, File downloadRoot, String distributionVersion, Arch architecture) {
-        super('InternetExplorerDriverServer', distributionVersion, "webdriver/iedriverserver/$distributionVersion", project)
-        this.downloadRoot = downloadRoot
-        this.architecture = architecture
+    InternetExplorerDriverServerDistributionInstaller(Project project, TextResource repositoryResource, File downloadRoot, String distributionVersion,
+                                                      OperatingSystem operatingSystem, Arch architecture) {
+        super(project, 'internetexplorerdriver', repositoryResource, downloadRoot, distributionVersion, operatingSystem, architecture)
     }
-
-    @Override
-    URI uriFromVersion(String version) {
-        "http://selenium-release.storage.googleapis.com/${stripMinorVersion(version)}/IEDriverServer_${archPart}_${version}.zip".toURI()
-    }
-
-    @Override
-    protected File getAndVerifyDistributionRoot(File distDir, String distributionDescription) {
-        distDir
-    }
-
-    private String stripMinorVersion(String version) {
-        version[0..<version.lastIndexOf('.')]
-    }
-
-    private getArchPart() {
-        switch (architecture) {
-            case Arch.X86_64:
-                return 'x64'
-            case Arch.X86:
-                return 'Win32'
-            default:
-                throw new IllegalStateException("Unsupported architecture: $arch")
-        }
-    }
-
 }
