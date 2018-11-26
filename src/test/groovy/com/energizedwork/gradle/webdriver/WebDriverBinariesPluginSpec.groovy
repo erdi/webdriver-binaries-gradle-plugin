@@ -79,7 +79,10 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
 
             webdriverBinaries {
                 downloadRoot(new File('${downloadRoot.root.absolutePath.replace('\\', '\\\\')}'))
-                $binaryName '$binaryVersion'
+                $binaryName {
+                    version = '$binaryVersion'
+                    ${architectureCode(binaryName)}
+                }
             }
 
             test {
@@ -88,6 +91,14 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
                 }
             }
         """
+    }
+
+    private String architectureCode(String binaryName) {
+        if (binaryName == 'chromedriver' && OperatingSystem.current().isWindows()) {
+            'architecture = "X86"'
+        } else {
+            ''
+        }
     }
 
     private void writeRatpackApplication() {
