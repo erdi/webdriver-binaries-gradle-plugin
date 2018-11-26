@@ -8,7 +8,7 @@ The plugin also as configures various parts of the build to use the downloaded b
 
 ## Installation
 
-For installation instructions please see [this plugin's page on Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.energizedwork.webdriver-binaries).
+For installation instructions please see [this plugin's page on Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.github.erdi.webdriver-binaries).
 
 ## Usage
 

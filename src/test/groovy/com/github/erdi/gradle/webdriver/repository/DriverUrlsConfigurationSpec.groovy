@@ -1,0 +1,324 @@
+/*
+ * Copyright 2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.github.erdi.gradle.webdriver.repository
+
+import groovy.json.JsonException
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
+import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.os.FreeBSD
+import org.ysb33r.grolifant.api.os.GenericUnix
+import org.ysb33r.grolifant.api.os.Linux
+import org.ysb33r.grolifant.api.os.MacOsX
+import org.ysb33r.grolifant.api.os.NetBSD
+import org.ysb33r.grolifant.api.os.Solaris
+import org.ysb33r.grolifant.api.os.Windows
+import spock.lang.Specification
+import spock.lang.Unroll
+
+import static groovy.json.JsonOutput.toJson
+import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86
+import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86_64
+
+class DriverUrlsConfigurationSpec extends Specification {
+
+    private static final List<String> DRIVER_NAMES = ['chromedriver', 'geckodriver', 'internetexplorerdriver']
+    private static final List<String> DRIVER_VERSIONS = ['0.22.0', '2.42.0']
+
+    @Rule
+    TemporaryFolder temporaryFolder
+
+    File configurationFile
+
+    void setup() {
+        configurationFile = temporaryFolder.newFile('repository.json')
+    }
+
+    def 'an exception is raised when configuration file is not valid json'() {
+        given:
+        configuration '%&^%&^*'
+
+        when:
+        parseConfiguration()
+
+        then:
+        InvalidDriverUrlsConfigurationException e = thrown()
+
+        and:
+        e.cause in JsonException
+    }
+
+    def 'an exception is raised when configuration file contains a json list'() {
+        given:
+        configuration([])
+
+        when:
+        parseConfiguration()
+
+        then:
+        InvalidDriverUrlsConfigurationException e = thrown()
+
+        and:
+        e.message == 'Driver urls configuration file should contain a json object'
+    }
+
+    def 'an exception is raised when configuration file does not contain a top level drivers key'() {
+        given:
+        configuration([:])
+
+        when:
+        parseConfiguration()
+
+        then:
+        InvalidDriverUrlsConfigurationException e = thrown()
+
+        and:
+        e.message == '''Driver urls configuration file should contain a json object with 'drivers' key'''
+    }
+
+    def 'an exception is raised when configuration top level drivers key does not contain a list'() {
+        given:
+        configuration(drivers: [:])
+
+        when:
+        parseConfiguration()
+
+        then:
+        InvalidDriverUrlsConfigurationException e = thrown()
+
+        and:
+        e.message == '\'drivers\' key in driver urls configuration file should contain a list'
+    }
+
+    def 'an exception is raised when not all driver entries are json objects'() {
+        given:
+        configuration(drivers: ['not an object'])
+
+        when:
+        parseConfiguration()
+
+        then:
+        InvalidDriverUrlsConfigurationException e = thrown()
+
+        and:
+        e.message == 'Each driver entry in driver urls configuration file should be a json object'
+    }
+
+    def 'an exception is raised when not all driver entries contain a url key'() {
+        given:
+        configuration(drivers: [[:]])
+
+        when:
+        parseConfiguration()
+
+        then:
+        InvalidDriverUrlsConfigurationException e = thrown()
+
+        and:
+        e.message == '''Each driver entry in driver urls configuration file should contain 'url' key'''
+    }
+
+    @Unroll
+    def 'an exception is raised when not all driver entries contain a non null url key'() {
+        given:
+        configuration(drivers: [[url: url]])
+
+        when:
+        parseConfiguration()
+
+        then:
+        InvalidDriverUrlsConfigurationException e = thrown()
+
+        and:
+        e.message == 'Each driver entry in driver urls configuration file should contain a \'url\' key with a string value'
+
+        where:
+        url << [null, 2]
+    }
+
+    @Unroll
+    def 'an exception is raised when a url for a driver cannot be found'() {
+        given:
+        emptyConfiguration()
+
+        when:
+        parseConfiguration().uriFor(name, version, os, arch)
+
+        then:
+        DriverUrlNotFoundException e = thrown()
+
+        and:
+        e.message == /Driver url not found for name: "$name", version: "$version", platform: "$platform", bit: "$bit"/
+
+        where:
+        name                     | version  | os               | platform  | arch   | bit
+        'chromedriver'           | '2.42.0' | Linux.INSTANCE   | 'linux'   | X86    | '32'
+        'geckodriver'            | '0.22.0' | MacOsX.INSTANCE  | 'mac'     | X86_64 | '64'
+        'internetexplorerdriver' | '3.14.0' | Windows.INSTANCE | 'windows' | X86_64 | '64'
+    }
+
+    @Unroll
+    def 'an exception is raised when searching for a url for an unsupported operating system'() {
+        given:
+        emptyConfiguration()
+
+        when:
+        parseConfiguration().uriFor(null, null, unsupportedOs, X86)
+
+        then:
+        UnsupportedOperatingSystemException e = thrown()
+
+        and:
+        e.message == unsupportedOs.class.simpleName
+
+        where:
+        unsupportedOs << [NetBSD.INSTANCE, FreeBSD.INSTANCE, Solaris.INSTANCE, GenericUnix.INSTANCE]
+    }
+
+    @Unroll
+    def 'an exception is raised when searching for a url for an unsupported architecture'() {
+        given:
+        emptyConfiguration()
+
+        when:
+        parseConfiguration().uriFor(null, null, Linux.INSTANCE, unsupportedArch)
+
+        then:
+        UnsupportedArchitectureException e = thrown()
+
+        and:
+        e.message == unsupportedArch.name()
+
+        where:
+        unsupportedArch << (OperatingSystem.Arch.values() - [X86, X86_64])
+    }
+
+    @Unroll
+    def 'urls are searched based on driver name'() {
+        given:
+        def drivers = DRIVER_NAMES.collect { name ->
+            baseDriverProperties + [name: name, url: "http://${name}.com"]
+        }
+
+        and:
+        configuration(drivers: drivers)
+
+        expect:
+        parseConfiguration().uriFor(driverName, version, os, arch).toString() == "http://${driverName}.com"
+
+        where:
+        driverName << DRIVER_NAMES
+        version = '2.41.0'
+        os = Linux.INSTANCE
+        arch = X86
+        baseDriverProperties = [
+            version: version,
+            platform: DriverUrlsConfiguration.PLATFORMS[os],
+            bit: DriverUrlsConfiguration.BITS[arch]
+        ]
+    }
+
+    @Unroll
+    def 'urls are searched based on driver version'() {
+        given:
+        def drivers = DRIVER_VERSIONS.collect { version ->
+            baseDriverProperties + [version: version, url: "http://${version}.com"]
+        }
+
+        and:
+        configuration(drivers: drivers)
+
+        expect:
+        parseConfiguration().uriFor(name, driverVersion, os, arch).toString() == "http://${driverVersion}.com"
+
+        where:
+        driverVersion << DRIVER_VERSIONS
+        name = 'chromedriver'
+        os = Linux.INSTANCE
+        arch = X86
+        baseDriverProperties = [
+            name: name,
+            platform: DriverUrlsConfiguration.PLATFORMS[os],
+            bit: DriverUrlsConfiguration.BITS[arch]
+        ]
+    }
+
+    @Unroll
+    def 'urls are searched based on operation system'() {
+        given:
+        def drivers = DriverUrlsConfiguration.PLATFORMS.values().collect { platform ->
+            baseDriverProperties + [platform: platform, url: "http://${platform}.com"]
+        }
+
+        and:
+        configuration(drivers: drivers)
+
+        expect:
+        parseConfiguration().uriFor(name, version, os, arch).toString() == "http://${DriverUrlsConfiguration.PLATFORMS[os]}.com"
+
+        where:
+        os << DriverUrlsConfiguration.PLATFORMS.keySet()
+        name = 'chromedriver'
+        version = '2.42.0'
+        arch = X86
+        baseDriverProperties = [
+            name: name,
+            version: version,
+            bit: DriverUrlsConfiguration.BITS[arch]
+        ]
+    }
+
+    @Unroll
+    def 'urls are searched based on architecture'() {
+        given:
+        def drivers = DriverUrlsConfiguration.BITS.values().collect { bit ->
+            baseDriverProperties + [bit: bit, url: "http://${bit}.com"]
+        }
+
+        and:
+        configuration(drivers: drivers)
+
+        expect:
+        parseConfiguration().uriFor(name, version, os, arch).toString() == "http://${DriverUrlsConfiguration.BITS[arch]}.com"
+
+        where:
+        arch << DriverUrlsConfiguration.BITS.keySet()
+        name = 'chromedriver'
+        version = '2.42.0'
+        os = Linux.INSTANCE
+        baseDriverProperties = [
+            name: name,
+            version: version,
+            platform: DriverUrlsConfiguration.PLATFORMS[os]
+        ]
+    }
+
+    DriverUrlsConfiguration parseConfiguration() {
+        new DriverUrlsConfiguration(configurationFile)
+    }
+
+    private void configuration(String configuration) {
+        configurationFile.text = configuration
+    }
+
+    private void configuration(Object configuration) {
+        configurationFile.text = toJson(configuration)
+    }
+
+    private void emptyConfiguration() {
+        configuration(drivers: [])
+    }
+}

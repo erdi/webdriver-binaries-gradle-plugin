@@ -48,20 +48,20 @@ tasks.withType(GroovyCompile) {
 gradlePlugin {
     plugins {
         webdriverBinariesPlugin {
-            id = 'com.energizedwork.webdriver-binaries'
-            implementationClass = 'com.energizedwork.gradle.webdriver.WebDriverBinariesPlugin'
+            id = 'com.github.erdi.webdriver-binaries'
+            implementationClass = 'com.github.erdi.gradle.webdriver.WebDriverBinariesPlugin'
         }
     }
 }
 
 pluginBundle {
-    vcsUrl = 'https://github.com/energizedwork/webdriver-binaries-gradle-plugin'
+    vcsUrl = 'https://github.com/erdi/webdriver-binaries-gradle-plugin'
 
     plugins {
         webdriverBinariesPlugin {
-            website = 'https://github.com/energizedwork/webdriver-binaries-gradle-plugin/blob/master/README.md'
+            website = 'https://github.com/erdi/webdriver-binaries-gradle-plugin/blob/master/README.md'
             description = 'A plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.'
-            id = 'com.energizedwork.webdriver-binaries'
+            id = 'com.github.erdi.webdriver-binaries'
             displayName = 'WebDriver Binaries Plugin'
             tags = ['WebDriver', 'selenium', 'test', 'chromedriver', 'geckodriver']
         }
@@ -70,7 +70,7 @@ pluginBundle {
 
 task endToEndTest(type: Test) {
     options {
-        includeCategories 'com.energizedwork.gradle.webdriver.category.EndToEnd'
+        includeCategories 'com.github.erdi.gradle.webdriver.category.EndToEnd'
     }
 }
 
