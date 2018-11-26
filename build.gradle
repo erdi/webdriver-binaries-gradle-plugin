@@ -22,7 +22,7 @@ dependencies {
     }
     codenarc 'org.codehaus.groovy:groovy-all:2.4.11'
 
-    compile 'org.ysb33r.gradle:grolifant:0.5.1'
+    compile 'org.ysb33r.gradle:grolifant:0.10'
 
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4', {
         exclude module: 'groovy-all'
