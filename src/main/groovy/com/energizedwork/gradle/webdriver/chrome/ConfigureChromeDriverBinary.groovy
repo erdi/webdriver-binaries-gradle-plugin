@@ -18,9 +18,13 @@ package com.energizedwork.gradle.webdriver.chrome
 import com.energizedwork.gradle.webdriver.task.ConfigureBinary
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 
+import static com.energizedwork.gradle.webdriver.WebDriverBinaryMetadata.CHROMEDRIVER
+
 class ConfigureChromeDriverBinary extends ConfigureBinary {
 
-    final String binaryName = 'chromedriver'
+    ConfigureChromeDriverBinary() {
+        super(CHROMEDRIVER)
+    }
 
     @Override
     AbstractDistributionInstaller distributionInstaller() {

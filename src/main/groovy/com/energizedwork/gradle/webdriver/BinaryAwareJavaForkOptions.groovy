@@ -15,20 +15,20 @@
  */
 package com.energizedwork.gradle.webdriver
 
-import org.gradle.api.tasks.testing.Test
+import org.gradle.process.JavaForkOptions
 
-class BinaryAwareTest implements DriverBinaryAware {
+class BinaryAwareJavaForkOptions implements DriverBinaryAware {
 
-    private final Test test
+    private final JavaForkOptions javaForkOptions
     private final String systemPropertyName
 
-    BinaryAwareTest(Test test, String systemPropertyName) {
-        this.test = test
+    BinaryAwareJavaForkOptions(JavaForkOptions javaForkOptions, String systemPropertyName) {
+        this.javaForkOptions = javaForkOptions
         this.systemPropertyName = systemPropertyName
     }
 
     @Override
     void setDriverBinaryPath(String binaryPath) {
-        test.systemProperty(systemPropertyName, binaryPath)
+        javaForkOptions.systemProperty(systemPropertyName, binaryPath)
     }
 }

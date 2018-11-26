@@ -34,7 +34,9 @@ Example usage:
 
 ### Extension methods
 
-Additionally to properties, the plugin exposes `chromedriver()`, `geckodriver()` and `iedriverserver()` configuration methods through the the extension named `webdriverBinaries`.
+#### Detailed binaries configuration methods
+
+Additionally to properties which can be used for specifying driver binaries versions, the plugin exposes `chromedriver()`, `geckodriver()` and `iedriverserver()` configuration methods through the the extension named `webdriverBinaries`.
 Each method takes a closure which delegates to an object with the following properties: 
 
 | Name | Type | Description | 
@@ -57,6 +59,20 @@ Example usage:
             version = '3.8.0'
             architecture = 'X86'
         }
+    }
+
+#### Configuring additional tasks with downloaded driver paths
+
+By default the plugin configures all `org.gradle.api.tasks.testing.Test` tasks with locations of the downloaded binaries via system properties but additional tasks can also be configured as along as they implement `org.gradle.process.JavaForkOptions` - `org.gradle.api.tasks.JavaExec` is an example of such task.
+
+Example usage:
+
+    task exec(type: JavaExec) {
+        ...
+    }
+    
+    webdriverBinaries {
+        configureTask(exec)
     }
 
 ### Tasks

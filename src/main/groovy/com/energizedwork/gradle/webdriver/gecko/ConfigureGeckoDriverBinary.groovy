@@ -18,9 +18,13 @@ package com.energizedwork.gradle.webdriver.gecko
 import com.energizedwork.gradle.webdriver.task.ConfigureBinary
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 
+import static com.energizedwork.gradle.webdriver.WebDriverBinaryMetadata.GECKODRIVER
+
 class ConfigureGeckoDriverBinary extends ConfigureBinary {
 
-    final String binaryName = 'geckodriver'
+    ConfigureGeckoDriverBinary() {
+        super(GECKODRIVER)
+    }
 
     @Override
     protected AbstractDistributionInstaller distributionInstaller() {

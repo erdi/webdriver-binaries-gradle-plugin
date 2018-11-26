@@ -16,6 +16,7 @@
 package com.energizedwork.gradle.webdriver.task
 
 import com.energizedwork.gradle.webdriver.DriverBinaryAware
+import com.energizedwork.gradle.webdriver.WebDriverBinaryMetadata
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -35,7 +36,11 @@ abstract class ConfigureBinary extends DefaultTask {
 
     protected final List<DriverBinaryAware> binaryAwares = []
 
-    protected ConfigureBinary() {
+    @Internal
+    final WebDriverBinaryMetadata webDriverBinaryMetadata
+
+    protected ConfigureBinary(WebDriverBinaryMetadata webDriverBinaryMetadata) {
+        this.webDriverBinaryMetadata = webDriverBinaryMetadata
         onlyIf { versionConfigured }
     }
 
@@ -98,13 +103,10 @@ abstract class ConfigureBinary extends DefaultTask {
     @TaskAction
     void configure() {
         def installer = distributionInstaller()
-        def binaryFile = new File(installer.distributionRoot, operatingSystem.getExecutableName(binaryName))
+        def binaryFile = new File(installer.distributionRoot, operatingSystem.getExecutableName(webDriverBinaryMetadata.binaryName))
         def binaryAbsolutePath = binaryFile.absolutePath
         binaryAwares*.driverBinaryPath = binaryAbsolutePath
     }
-
-    @Internal
-    protected abstract String getBinaryName()
 
     protected abstract AbstractDistributionInstaller distributionInstaller()
 

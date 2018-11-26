@@ -15,10 +15,15 @@
  */
 package com.energizedwork.gradle.webdriver
 
+import com.energizedwork.gradle.webdriver.task.ConfigureBinary
+import org.gradle.api.Action
+import org.gradle.api.DomainObjectCollection
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.resources.TextResource
+import org.gradle.process.JavaForkOptions
 
 class WebDriverBinariesPluginExtension {
 
@@ -110,5 +115,22 @@ class WebDriverBinariesPluginExtension {
 
     Provider<TextResource> getDriverUrlsConfigurationProvider() {
         driverUrlsConfiguration
+    }
+
+    public <T extends Task & JavaForkOptions> void configureTask(T task) {
+        configure(task.&each)
+    }
+
+    public <T extends Task & JavaForkOptions> void configureTasks(DomainObjectCollection<T> tasks) {
+        configure(tasks.&all)
+    }
+
+    private <T extends Task & JavaForkOptions> void configure(Action<Action<T>> taskConfigurationAction) {
+        project.tasks.withType(ConfigureBinary) { ConfigureBinary configureBinaryTask ->
+            taskConfigurationAction.execute { T javaForkOptions ->
+                javaForkOptions.dependsOn(configureBinaryTask)
+                configureBinaryTask.addBinaryAware(new BinaryAwareJavaForkOptions(javaForkOptions, configureBinaryTask.webDriverBinaryMetadata.systemProperty))
+            }
+        }
     }
 }

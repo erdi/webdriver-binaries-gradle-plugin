@@ -18,9 +18,13 @@ package com.energizedwork.gradle.webdriver.ie
 import com.energizedwork.gradle.webdriver.task.ConfigureBinary
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 
+import static com.energizedwork.gradle.webdriver.WebDriverBinaryMetadata.IEDRIVERSERVER
+
 class ConfigureIeDriverServerBinary extends ConfigureBinary {
 
-    final String binaryName = 'IEDriverServer'
+    ConfigureIeDriverServerBinary() {
+        super(IEDRIVERSERVER)
+    }
 
     @Override
     protected AbstractDistributionInstaller distributionInstaller() {

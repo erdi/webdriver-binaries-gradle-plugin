@@ -21,7 +21,6 @@ import com.energizedwork.gradle.webdriver.ie.ConfigureIeDriverServerBinary
 import com.energizedwork.gradle.webdriver.task.ConfigureBinary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.tasks.testing.Test
 import org.gradle.plugins.ide.idea.GenerateIdeaWorkspace
 
@@ -29,58 +28,47 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
 
     public static final String EXTENSION_NAME = 'webdriverBinaries'
 
-    private static final String CHROMEDRIVER_PATH_SYSTEM_PROPERTY = 'webdriver.chrome.driver'
-    private static final String GECKODRIVER_PATH_SYSTEM_PROPERTY = 'webdriver.gecko.driver'
-    private static final String IEDRIVERSERVER_PATH_SYSTEM_PROPERTY = 'webdriver.ie.driver'
     private static final String IDEA_JUNIT_PLUGIN_ID = 'com.energizedwork.idea-junit'
     private static final String IDEA_JUNIT_EXTENSION_NAME = 'ideaJunit'
 
     void apply(Project project) {
         def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension, project)
+        extension.configureTasks(project.tasks.withType(Test))
         createConfigureChromeDriverBinary(project, extension)
         createConfigureGeckoDriverBinary(project, extension)
         createConfigureInternetExplorerDriverServerBinary(project, extension)
     }
 
     ConfigureChromeDriverBinary createConfigureChromeDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        createConfigureDriverBinary(ConfigureChromeDriverBinary, project, extension, extension.chromedriverConfiguration, CHROMEDRIVER_PATH_SYSTEM_PROPERTY)
+        createConfigureDriverBinary(ConfigureChromeDriverBinary, project, extension, extension.chromedriverConfiguration)
     }
 
     ConfigureGeckoDriverBinary createConfigureGeckoDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        createConfigureDriverBinary(ConfigureGeckoDriverBinary, project, extension, extension.geckodriverConfiguration, GECKODRIVER_PATH_SYSTEM_PROPERTY)
+        createConfigureDriverBinary(ConfigureGeckoDriverBinary, project, extension, extension.geckodriverConfiguration)
     }
 
     ConfigureIeDriverServerBinary createConfigureInternetExplorerDriverServerBinary(Project project, WebDriverBinariesPluginExtension extension) {
-        createConfigureDriverBinary(ConfigureIeDriverServerBinary, project, extension, extension.ieDriverServerConfiguration,
-            IEDRIVERSERVER_PATH_SYSTEM_PROPERTY)
+        createConfigureDriverBinary(ConfigureIeDriverServerBinary, project, extension, extension.ieDriverServerConfiguration)
     }
 
     private <T extends ConfigureBinary> T createConfigureDriverBinary(Class<T> taskType, Project project, WebDriverBinariesPluginExtension extension,
-                                                                      DriverConfiguration driverConfiguration, String systemPropertyName) {
+                                                                      DriverConfiguration driverConfiguration) {
         T configureTask = project.task(taskType.simpleName.uncapitalize(), type: taskType)
         configureTask.downloadRoot = extension.downloadRootProvider
         configureTask.driverUrlsConfiguration = extension.driverUrlsConfigurationProvider
         configureTask.version = driverConfiguration.versionProvider
         configureTask.architecture = driverConfiguration.architectureProvider
-        configureTestTasksWithWebDriverBinary(project, configureTask, systemPropertyName)
-        configureIdeaWithWebDriverBinary(project, configureTask, systemPropertyName)
+        configureIdeaWithWebDriverBinary(project, configureTask)
         configureTask
     }
 
-    private void configureTestTasksWithWebDriverBinary(Project project, Task configureTask, String systemPropertyName) {
-        project.tasks.withType(Test) { Test test ->
-            test.dependsOn(configureTask)
-            configureTask.addBinaryAware(new BinaryAwareTest(test, systemPropertyName))
-        }
-    }
-
-    private void configureIdeaWithWebDriverBinary(Project project, Task configureTask, String systemPropertyName) {
+    private void configureIdeaWithWebDriverBinary(Project project, ConfigureBinary configureTask) {
         project.pluginManager.withPlugin(IDEA_JUNIT_PLUGIN_ID) {
-            project.tasks.withType(GenerateIdeaWorkspace) { ideaWorkspace ->
+            project.tasks.withType(GenerateIdeaWorkspace) { GenerateIdeaWorkspace ideaWorkspace ->
                 ideaWorkspace.dependsOn(configureTask)
             }
             project.extensions.configure(IDEA_JUNIT_EXTENSION_NAME) { extension ->
-                configureTask.addBinaryAware(new BinaryAwareProperties(extension.systemProperties, systemPropertyName))
+                configureTask.addBinaryAware(new BinaryAwareProperties(extension.systemProperties, configureTask.webDriverBinaryMetadata.systemProperty))
             }
         }
     }
