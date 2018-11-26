@@ -21,15 +21,17 @@ import com.energizedwork.gradle.webdriver.ie.ConfigureIeDriverServerBinary
 import com.energizedwork.gradle.webdriver.task.ConfigureBinary
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.testing.Test
 import org.gradle.plugins.ide.idea.GenerateIdeaWorkspace
+import org.gradle.plugins.ide.idea.model.IdeaModel
 
 class WebDriverBinariesPlugin implements Plugin<Project> {
 
     public static final String EXTENSION_NAME = 'webdriverBinaries'
 
-    private static final String IDEA_JUNIT_PLUGIN_ID = 'com.energizedwork.idea-junit'
-    private static final String IDEA_JUNIT_EXTENSION_NAME = 'ideaJunit'
+    private static final String EXTENDED_IDEA_PLUGIN_ID = 'com.github.erdi.extended-idea'
+    private static final String EXTENDED_IDEA_EXTENSION_NAME = 'extended'
 
     void apply(Project project) {
         def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension, project)
@@ -63,12 +65,13 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
     }
 
     private void configureIdeaWithWebDriverBinary(Project project, ConfigureBinary configureTask) {
-        project.pluginManager.withPlugin(IDEA_JUNIT_PLUGIN_ID) {
+        project.pluginManager.withPlugin(EXTENDED_IDEA_PLUGIN_ID) {
             project.tasks.withType(GenerateIdeaWorkspace) { GenerateIdeaWorkspace ideaWorkspace ->
                 ideaWorkspace.dependsOn(configureTask)
             }
-            project.extensions.configure(IDEA_JUNIT_EXTENSION_NAME) { extension ->
-                configureTask.addBinaryAware(new BinaryAwareProperties(extension.systemProperties, configureTask.webDriverBinaryMetadata.systemProperty))
+            project.extensions.configure(IdeaModel) { ideaModel ->
+                def jUnitSystemProperties = (ideaModel as ExtensionAware).extensions.getByName(EXTENDED_IDEA_EXTENSION_NAME).workspace.junit.systemProperties
+                configureTask.addBinaryAware(new BinaryAwareProperties(jUnitSystemProperties, configureTask.webDriverBinaryMetadata.systemProperty))
             }
         }
     }

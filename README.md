@@ -105,11 +105,11 @@ If you'd like to use the latter then after authoring your own version of `packag
     
 Note that the `driverUrlsConfiguration` property is a `org.gradle.api.resources.TextResource` and can be configured with a text resource from various sources - see [javadoc for `org.gradle.api.resources.TextResourceFactory`](https://docs.gradle.org/current/javadoc/org/gradle/api/resources/TextResourceFactory.html) for more examples.  
 
-### Integration with Idea JUnit plugin (com.energizedwork.idea-junit)
+### Integration with Idea configuration extensions plugin (com.github.erdi.extended-idea)
 
-If [Idea JUnit plugin](https://github.com/energizedwork/idea-gradle-plugins#idea-junit-plugin) is applied to the project together with this plugin it will do the following:
+If [Idea configuration extensions plugin](https://github.com/erdi/idea-gradle-plugins#idea-configuration-extensions-plugin) is applied to the project together with this plugin it will do the following:
 * configure the `ideaWorkspace` task added to the build by [Gradle's built-in IDEA plugin](https://docs.gradle.org/current/userguide/idea_plugin.html) to depend on `configureChromeDriverBinary`, `configureGeckoDriverBinary` and `configureIeDriverServerBinary` tasks
-* add system properties specific for the drivers setting the path to the downloaded binaries as their values to default default JUnit run configuration in IntelliJ when the configuration tasks are executed
+* add system properties specific for the drivers, setting the path to the downloaded binaries as their values, to default default JUnit run configuration in IntelliJ when the configuration tasks are executed
 
 The above will ensure that locations of driver binaries are picked up when running tests from IntelliJ.   
 

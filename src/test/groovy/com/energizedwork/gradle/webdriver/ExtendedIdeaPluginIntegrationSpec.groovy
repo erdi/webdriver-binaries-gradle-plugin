@@ -17,7 +17,7 @@ package com.energizedwork.gradle.webdriver
 
 import spock.lang.Unroll
 
-class IdeaJUnitPluginIntegrationSpec extends PluginSpec {
+class ExtendedIdeaPluginIntegrationSpec extends PluginSpec {
 
     private final static String BINARY_PATH_FILENAME = 'binaryPath.txt'
 
@@ -60,7 +60,7 @@ class IdeaJUnitPluginIntegrationSpec extends PluginSpec {
         buildScript << """
             plugins {
                 id 'com.energizedwork.webdriver-binaries'
-                id 'com.energizedwork.idea-junit' version '1.2'
+                id 'com.github.erdi.extended-idea' version '2.0'
             }
 
             $configureTask {
