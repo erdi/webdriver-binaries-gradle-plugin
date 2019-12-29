@@ -23,6 +23,7 @@ This plugin exposes the following optional properties through the extension name
 | `iedriverserver` | `String` | The version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
 | `downloadRoot` |`File`| The location into which the binaries should be downloaded. If not specified the binaries are downloaded into the Gradle user home directory. Should not be specified under normal circumstances to benefit from caching of the binaries between multiple project builds. |
 | `driverUrlsConfiguration` |`org.gradle.api.resources.TextResource`| The text resource which contains mapping from a binary version to a URL. If not specified then the default is to use [WebDriver Extensions Maven Plugin's `package.json` file](https://github.com/webdriverextensions/webdriverextensions-maven-plugin-repository/blob/master/repository-3.0.json) from `https://raw.githubusercontent.com/webdriverextensions/webdriverextensions-maven-plugin-repository/master/repository-3.0.json`. |
+| `fallbackTo32Bit` |`boolean`| Whether or not to fallback to a 32bit version of drivers if a 64bit version is not found. Defaults to `false`. |
 
 Example usage:
 
@@ -43,6 +44,7 @@ Each method takes a closure which delegates to an object with the following prop
 | --- | --- | --- |
 | `version` | String | The version of binary to be used by the project. No binary will be downloaded if this property is not specified. |
 | `architecture` | String | The architecture of the binary to be used. The allowed values are `X86` and `X86_64`. Defaults to the architecture of the OS running the build. |
+| `fallbackTo32Bit` |`boolean`| Whether or not to fallback to a 32bit version of the driver if a 64bit version is not found. Defaults to `false`. |
 
 Example usage:
 
@@ -58,6 +60,7 @@ Example usage:
         iedriverserver {
             version = '3.8.0'
             architecture = 'X86'
+            fallbackTo32Bit = true
         }
     }
 

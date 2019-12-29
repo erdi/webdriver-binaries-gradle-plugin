@@ -155,7 +155,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(name, version, os, arch)
+        parseConfiguration().uriFor(name, version, os, arch, false)
 
         then:
         DriverUrlNotFoundException e = thrown()
@@ -171,12 +171,32 @@ class DriverUrlsConfigurationSpec extends Specification {
     }
 
     @Unroll
+    def 'an exception is raised when a url for a driver cannot be found when falling back to 32 bit version'() {
+        given:
+        emptyConfiguration()
+
+        when:
+        parseConfiguration().uriFor(name, version, os, arch, true)
+
+        then:
+        DriverUrlNotFoundException e = thrown()
+
+        and:
+        e.message == /Driver url not found for name: "$name", version: "$version", platform: "$platform", bit: "$bit"/
+
+        where:
+        name           | version  | os              | platform | arch   | bit
+        'chromedriver' | '2.42.0' | Linux.INSTANCE  | 'linux'  | X86    | '32'
+        'geckodriver'  | '0.22.0' | MacOsX.INSTANCE | 'mac'    | X86_64 | '64 or 32'
+    }
+
+    @Unroll
     def 'an exception is raised when searching for a url for an unsupported operating system'() {
         given:
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(null, null, unsupportedOs, X86)
+        parseConfiguration().uriFor(null, null, unsupportedOs, X86, false)
 
         then:
         UnsupportedOperatingSystemException e = thrown()
@@ -194,7 +214,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(null, null, Linux.INSTANCE, unsupportedArch)
+        parseConfiguration().uriFor(null, null, Linux.INSTANCE, unsupportedArch, false)
 
         then:
         UnsupportedArchitectureException e = thrown()
@@ -217,7 +237,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(driverName, version, os, arch).toString() == "http://${driverName}.com"
+        parseConfiguration().uriFor(driverName, version, os, arch, false).toString() == "http://${driverName}.com"
 
         where:
         driverName << DRIVER_NAMES
@@ -242,7 +262,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(name, driverVersion, os, arch).toString() == "http://${driverVersion}.com"
+        parseConfiguration().uriFor(name, driverVersion, os, arch, false).toString() == "http://${driverVersion}.com"
 
         where:
         driverVersion << DRIVER_VERSIONS
@@ -267,7 +287,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(name, version, os, arch).toString() == "http://${DriverUrlsConfiguration.PLATFORMS[os]}.com"
+        parseConfiguration().uriFor(name, version, os, arch, false).toString() == "http://${DriverUrlsConfiguration.PLATFORMS[os]}.com"
 
         where:
         os << DriverUrlsConfiguration.PLATFORMS.keySet()
@@ -292,10 +312,54 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(name, version, os, arch).toString() == "http://${DriverUrlsConfiguration.BITS[arch]}.com"
+        parseConfiguration().uriFor(name, version, os, arch, false).toString() == "http://${DriverUrlsConfiguration.BITS[arch]}.com"
 
         where:
         arch << DriverUrlsConfiguration.BITS.keySet()
+        name = 'chromedriver'
+        version = '2.42.0'
+        os = Linux.INSTANCE
+        baseDriverProperties = [
+            name: name,
+            version: version,
+            platform: DriverUrlsConfiguration.PLATFORMS[os]
+        ]
+    }
+
+    def 'urls are searched with fallback to 32 bit'() {
+        given:
+        configuration(drivers: [baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: urlFor32Bit]])
+
+        expect:
+        parseConfiguration().uriFor(name, version, os, X86_64, true).toString() == urlFor32Bit
+
+        where:
+        name = 'chromedriver'
+        version = '2.42.0'
+        os = Linux.INSTANCE
+        baseDriverProperties = [
+            name: name,
+            version: version,
+            platform: DriverUrlsConfiguration.PLATFORMS[os]
+        ]
+        urlFor32Bit = 'http://fallback.com'
+    }
+
+    def 'urls for 32 bit are ignored when searching for 64 bit urls and fallback to 32 bit is not enabled'() {
+        given:
+        configuration(drivers: [baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: 'http://32bit.com']])
+
+        when:
+        parseConfiguration().uriFor(name, version, os, arch, false).toString()
+
+        then:
+        DriverUrlNotFoundException e = thrown()
+
+        and:
+        e.message == /Driver url not found for name: "$name", version: "$version", platform: "${baseDriverProperties.platform}", bit: "${DriverUrlsConfiguration.BITS[arch]}"/
+
+        where:
+        arch = X86_64
         name = 'chromedriver'
         version = '2.42.0'
         os = Linux.INSTANCE

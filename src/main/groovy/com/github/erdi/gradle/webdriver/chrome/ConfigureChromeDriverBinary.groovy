@@ -28,6 +28,6 @@ class ConfigureChromeDriverBinary extends ConfigureBinary {
 
     @Override
     AbstractDistributionInstaller distributionInstaller() {
-        new ChromeDriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture)
+        new ChromeDriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture, fallbackTo32Bit)
     }
 }

@@ -60,6 +60,7 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
         configureTask.driverUrlsConfiguration = extension.driverUrlsConfigurationProvider
         configureTask.version = driverConfiguration.versionProvider
         configureTask.architecture = driverConfiguration.architectureProvider
+        configureTask.fallbackTo32Bit = driverConfiguration.fallbackTo32BitProvider
         configureIdeaWithWebDriverBinary(project, configureTask)
         configureTask
     }

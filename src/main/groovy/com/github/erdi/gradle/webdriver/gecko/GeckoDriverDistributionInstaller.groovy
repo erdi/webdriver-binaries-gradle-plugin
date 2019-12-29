@@ -24,7 +24,7 @@ import org.ysb33r.grolifant.api.OperatingSystem.Arch
 class GeckoDriverDistributionInstaller extends DriverDistributionInstaller {
 
     GeckoDriverDistributionInstaller(Project project, TextResource repositoryResource, File downloadRoot, String distributionVersion, OperatingSystem os,
-                                     Arch arch) {
-        super(project, 'geckodriver', repositoryResource, downloadRoot, distributionVersion, os, arch)
+                                     Arch arch, boolean fallbackTo32Bit) {
+        super(project, 'geckodriver', repositoryResource, downloadRoot, distributionVersion, os, arch, fallbackTo32Bit)
     }
 }

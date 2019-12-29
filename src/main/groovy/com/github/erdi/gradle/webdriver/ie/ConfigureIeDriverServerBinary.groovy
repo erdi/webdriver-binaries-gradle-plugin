@@ -28,7 +28,8 @@ class ConfigureIeDriverServerBinary extends ConfigureBinary {
 
     @Override
     protected AbstractDistributionInstaller distributionInstaller() {
-        new InternetExplorerDriverServerDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture)
+        new InternetExplorerDriverServerDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture,
+            fallbackTo32Bit)
     }
 
 }

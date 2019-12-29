@@ -33,6 +33,7 @@ abstract class ConfigureBinary extends DefaultTask {
     private final Property<File> downloadRootProperty = project.objects.property(File)
     private final Property<String> versionProperty = project.objects.property(String)
     private final Property<Arch> architectureProperty = project.objects.property(Arch)
+    private final Property<Boolean> fallbackTo32Bit = project.objects.property(Boolean)
 
     protected final List<DriverBinaryAware> binaryAwares = []
 
@@ -89,6 +90,19 @@ abstract class ConfigureBinary extends DefaultTask {
 
     void setDriverUrlsConfiguration(TextResource driverUrlsConfiguration) {
         this.driverUrlsConfigurationProperty.set(driverUrlsConfiguration)
+    }
+
+    void setFallbackTo32Bit(Provider<Boolean> fallbackTo32Bit) {
+        this.fallbackTo32Bit.set(fallbackTo32Bit)
+    }
+
+    void setFallbackTo32Bit(boolean fallbackTo32Bit) {
+        this.fallbackTo32Bit.set(fallbackTo32Bit)
+    }
+
+    @Internal
+    boolean getFallbackTo32Bit() {
+        fallbackTo32Bit.get()
     }
 
     @Internal

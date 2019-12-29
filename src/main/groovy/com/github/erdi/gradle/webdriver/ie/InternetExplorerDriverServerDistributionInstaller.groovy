@@ -24,7 +24,7 @@ import org.ysb33r.grolifant.api.OperatingSystem.Arch
 class InternetExplorerDriverServerDistributionInstaller extends DriverDistributionInstaller {
 
     InternetExplorerDriverServerDistributionInstaller(Project project, TextResource repositoryResource, File downloadRoot, String distributionVersion,
-                                                      OperatingSystem operatingSystem, Arch architecture) {
-        super(project, 'internetexplorerdriver', repositoryResource, downloadRoot, distributionVersion, operatingSystem, architecture)
+                                                      OperatingSystem operatingSystem, Arch architecture, boolean fallbackTo32Bit) {
+        super(project, 'internetexplorerdriver', repositoryResource, downloadRoot, distributionVersion, operatingSystem, architecture, fallbackTo32Bit)
     }
 }

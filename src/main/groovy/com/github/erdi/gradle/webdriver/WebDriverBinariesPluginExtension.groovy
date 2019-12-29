@@ -33,6 +33,7 @@ class WebDriverBinariesPluginExtension {
     private final Project project
     private final Property<File> downloadRoot
     private final Property<TextResource> driverUrlsConfiguration
+    private final Property<Boolean> fallbackTo32Bit
 
     final DriverConfiguration ieDriverServerConfiguration
     final DriverConfiguration chromedriverConfiguration
@@ -44,11 +45,13 @@ class WebDriverBinariesPluginExtension {
         def objectFactory = project.objects
         this.driverUrlsConfiguration = objectFactory.property(TextResource)
         this.downloadRoot = objectFactory.property(File)
-        this.ieDriverServerConfiguration = new DriverConfiguration(project)
-        this.chromedriverConfiguration = new DriverConfiguration(project)
-        this.geckodriverConfiguration = new DriverConfiguration(project)
+        this.fallbackTo32Bit = objectFactory.property(Boolean)
+        this.ieDriverServerConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
+        this.chromedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
+        this.geckodriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
 
         this.driverUrlsConfiguration.set(project.resources.text.fromUri(DRIVER_URLS_CONFIG_URL))
+        this.fallbackTo32Bit.set(false)
     }
 
     void iedriverserver(String configuredVersion) {
@@ -132,5 +135,9 @@ class WebDriverBinariesPluginExtension {
                 configureBinaryTask.addBinaryAware(new BinaryAwareJavaForkOptions(javaForkOptions, configureBinaryTask.webDriverBinaryMetadata.systemProperty))
             }
         }
+    }
+
+    void setFallbackTo32Bit(boolean fallbackTo32Bit) {
+        this.fallbackTo32Bit.set(fallbackTo32Bit)
     }
 }

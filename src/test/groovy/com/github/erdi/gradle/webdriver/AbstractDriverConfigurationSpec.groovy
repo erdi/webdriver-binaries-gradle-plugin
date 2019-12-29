@@ -94,6 +94,66 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         os = OperatingSystem.current()
     }
 
+    def 'can globally enable fallback to 32 bit drivers when the 64 bit one is not found'() {
+        given:
+        def repository = setupRepository(driverName, driverExecutableName, version, os, X86)
+
+        and:
+        writeBuildScript()
+
+        and:
+        buildScript << """
+            webdriverBinaries {
+                fallbackTo32Bit = true
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                $driverConfigurationBlockName {
+                    version = '${version}'
+                    architecture = '${X86_64.name()}'
+                }
+            }
+        """
+
+        when:
+        runTasksWithUniqueGradleHomeDir 'configureBinaries'
+
+        then:
+        pluginDownloadedBinaryContents == repository.driverFileContents
+
+        where:
+        version = '2.42.0'
+        os = OperatingSystem.current()
+    }
+
+    def 'can enable fallback to 32 bit driver when the 64 bit one is not found on a per driver basis'() {
+        given:
+        def repository = setupRepository(driverName, driverExecutableName, version, os, X86)
+
+        and:
+        writeBuildScript()
+
+        and:
+        buildScript << """
+            webdriverBinaries {
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                $driverConfigurationBlockName {
+                    version = '${version}'
+                    architecture = '${X86_64.name()}'
+                    fallbackTo32Bit = true
+                }
+            }
+        """
+
+        when:
+        runTasksWithUniqueGradleHomeDir 'configureBinaries'
+
+        then:
+        pluginDownloadedBinaryContents == repository.driverFileContents
+
+        where:
+        version = '2.42.0'
+        os = OperatingSystem.current()
+    }
+
     private File writeBuildScript() {
         buildScript << """
             import com.github.erdi.gradle.webdriver.task.ConfigureBinary

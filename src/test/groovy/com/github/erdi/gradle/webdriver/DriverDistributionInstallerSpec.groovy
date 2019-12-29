@@ -61,7 +61,7 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         buildScript << """
             class TestDriverDistributionInstaller extends DriverDistributionInstaller {
                 TestDriverDistributionInstaller(Project project, TextResource repositoryResource, String distributionVersion, OperatingSystem os, OperatingSystem.Arch arch) {
-                    super(project, "$driverName", repositoryResource, null, distributionVersion, os, arch)
+                    super(project, "$driverName", repositoryResource, null, distributionVersion, os, arch, false)
                 }
             }
         """

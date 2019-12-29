@@ -24,12 +24,15 @@ class DriverConfiguration {
 
     private final Property<String> version
     private final Property<OperatingSystem.Arch> architecture
+    private final Property<Boolean> fallbackTo32Bit
 
-    DriverConfiguration(Project project) {
+    DriverConfiguration(Project project, Provider<Boolean> globalFallbackTo32Bit) {
         def objectFactory = project.objects
         this.version = objectFactory.property(String)
         this.architecture = objectFactory.property(OperatingSystem.Arch)
         this.architecture.set(OperatingSystem.current().arch)
+        this.fallbackTo32Bit = objectFactory.property(Boolean)
+        this.fallbackTo32Bit.set(globalFallbackTo32Bit)
     }
 
     void setArchitecture(String architecture) {
@@ -57,5 +60,13 @@ class DriverConfiguration {
 
     Provider<String> getVersionProvider() {
         version
+    }
+
+    void setFallbackTo32Bit(boolean fallbackTo32Bit) {
+        this.fallbackTo32Bit.set(fallbackTo32Bit)
+    }
+
+    Provider<Boolean> getFallbackTo32BitProvider() {
+        fallbackTo32Bit
     }
 }

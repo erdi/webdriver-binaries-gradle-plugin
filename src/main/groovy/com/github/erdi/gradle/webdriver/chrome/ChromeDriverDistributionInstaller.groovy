@@ -24,8 +24,8 @@ import org.ysb33r.grolifant.api.OperatingSystem.Arch
 class ChromeDriverDistributionInstaller extends DriverDistributionInstaller {
 
     ChromeDriverDistributionInstaller(Project project, TextResource repositoryResource, File downloadRoot, String distributionVersion, OperatingSystem os,
-                                      Arch arch) {
-        super(project, 'chromedriver', repositoryResource, downloadRoot, distributionVersion, os, arch)
+                                      Arch arch, boolean fallbackTo32Bit) {
+        super(project, 'chromedriver', repositoryResource, downloadRoot, distributionVersion, os, arch, fallbackTo32Bit)
     }
 
 }

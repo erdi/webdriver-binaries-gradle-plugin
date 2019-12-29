@@ -43,7 +43,7 @@ class DriverUrlsConfiguration {
         drivers = configuration.drivers
     }
 
-    URI uriFor(String name, String version, OperatingSystem os, OperatingSystem.Arch architecture) {
+    private URI uriForSingleArchitecture(String name, String version, OperatingSystem os, OperatingSystem.Arch architecture) {
         def platform = platform(os)
         def bit = bit(architecture)
 
@@ -51,16 +51,29 @@ class DriverUrlsConfiguration {
             it.name == name && it.version == version && it.platform == platform && it.bit == bit
         }
 
-        if (!driver) {
+        if (driver) {
+            new URI(driver.url)
+        }
+    }
+
+    URI uriFor(String name, String version, OperatingSystem os, OperatingSystem.Arch architecture, boolean fallbackTo32Bit) {
+        def architectures = [architecture] as LinkedHashSet
+        if (fallbackTo32Bit) {
+            architectures << X86
+        }
+
+        def uri = architectures.findResult { uriForSingleArchitecture(name, version, os, it) }
+
+        if (!uri) {
             throw DriverUrlNotFoundException.builder()
                 .name(name)
                 .version(version)
-                .platform(platform)
-                .bit(bit)
+                .platform(platform(os))
+                .bits(architectures.collect(this.&bit))
                 .build()
         }
 
-        new URI(driver.url)
+        uri
     }
 
     private validate(Object configuration) {

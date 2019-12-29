@@ -28,15 +28,17 @@ class DriverDistributionInstaller extends AbstractDistributionInstaller {
     private final TextResource repositoryResource
     private final OperatingSystem os
     private final Arch arch
+    private final boolean fallbackTo32Bit
 
     DriverDistributionInstaller(Project project, String driverName, TextResource repositoryResource, File downloadRoot, String distributionVersion,
-                                OperatingSystem os, Arch arch) {
+                                OperatingSystem os, Arch arch, boolean fallbackTo32Bit) {
         super(driverName, distributionVersion, "webdriver/$driverName/$distributionVersion", project)
         this.driverName = driverName
         this.repositoryResource = repositoryResource
         this.downloadRoot = downloadRoot
         this.os = os
         this.arch = arch
+        this.fallbackTo32Bit = fallbackTo32Bit
     }
 
     @Override
@@ -46,6 +48,6 @@ class DriverDistributionInstaller extends AbstractDistributionInstaller {
 
     @Override
     URI uriFromVersion(String version) {
-        new DriverUrlsConfiguration(repositoryResource.asFile()).uriFor(driverName, version, os, arch)
+        new DriverUrlsConfiguration(repositoryResource.asFile()).uriFor(driverName, version, os, arch, fallbackTo32Bit)
     }
 }

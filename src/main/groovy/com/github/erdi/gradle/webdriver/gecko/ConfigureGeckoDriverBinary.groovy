@@ -28,6 +28,6 @@ class ConfigureGeckoDriverBinary extends ConfigureBinary {
 
     @Override
     protected AbstractDistributionInstaller distributionInstaller() {
-        new GeckoDriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture)
+        new GeckoDriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture, fallbackTo32Bit)
     }
 }
