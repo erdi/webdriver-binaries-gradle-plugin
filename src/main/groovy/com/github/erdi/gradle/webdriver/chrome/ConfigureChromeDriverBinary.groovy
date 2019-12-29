@@ -15,6 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver.chrome
 
+import com.github.erdi.gradle.webdriver.DriverDistributionInstaller
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 
@@ -28,6 +29,6 @@ class ConfigureChromeDriverBinary extends ConfigureBinary {
 
     @Override
     AbstractDistributionInstaller distributionInstaller() {
-        new ChromeDriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture, fallbackTo32Bit)
+        new DriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, downloadSpecForDriverNamed('chromedriver'))
     }
 }

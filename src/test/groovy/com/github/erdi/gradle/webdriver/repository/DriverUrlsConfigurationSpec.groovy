@@ -15,6 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver.repository
 
+import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import groovy.json.JsonException
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -155,7 +156,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(name, version, os, arch, false)
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(version)
+                .os(os)
+                .arch(arch)
+                .build()
+        )
 
         then:
         DriverUrlNotFoundException e = thrown()
@@ -176,7 +184,15 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(name, version, os, arch, true)
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(version)
+                .os(os)
+                .arch(arch)
+                .fallbackTo32Bit(true)
+                .build()
+        )
 
         then:
         DriverUrlNotFoundException e = thrown()
@@ -196,7 +212,12 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(null, null, unsupportedOs, X86, false)
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .os(unsupportedOs)
+                .arch(X86)
+                .build()
+        )
 
         then:
         UnsupportedOperatingSystemException e = thrown()
@@ -214,7 +235,12 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(null, null, Linux.INSTANCE, unsupportedArch, false)
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .os(Linux.INSTANCE)
+                .arch(unsupportedArch)
+                .build()
+        )
 
         then:
         UnsupportedArchitectureException e = thrown()
@@ -237,7 +263,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(driverName, version, os, arch, false).toString() == "http://${driverName}.com"
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .name(driverName)
+                .version(version)
+                .os(os)
+                .arch(arch)
+                .build()
+        ).toString() == "http://${driverName}.com"
 
         where:
         driverName << DRIVER_NAMES
@@ -262,7 +295,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(name, driverVersion, os, arch, false).toString() == "http://${driverVersion}.com"
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(driverVersion)
+                .os(os)
+                .arch(arch)
+                .build()
+        ).toString() == "http://${driverVersion}.com"
 
         where:
         driverVersion << DRIVER_VERSIONS
@@ -287,7 +327,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(name, version, os, arch, false).toString() == "http://${DriverUrlsConfiguration.PLATFORMS[os]}.com"
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(version)
+                .os(os)
+                .arch(arch)
+                .build()
+        ).toString() == "http://${DriverUrlsConfiguration.PLATFORMS[os]}.com"
 
         where:
         os << DriverUrlsConfiguration.PLATFORMS.keySet()
@@ -312,7 +359,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(name, version, os, arch, false).toString() == "http://${DriverUrlsConfiguration.BITS[arch]}.com"
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(version)
+                .os(os)
+                .arch(arch)
+                .build()
+        ).toString() == "http://${DriverUrlsConfiguration.BITS[arch]}.com"
 
         where:
         arch << DriverUrlsConfiguration.BITS.keySet()
@@ -331,7 +385,15 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: [baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: urlFor32Bit]])
 
         expect:
-        parseConfiguration().uriFor(name, version, os, X86_64, true).toString() == urlFor32Bit
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(version)
+                .os(os)
+                .arch(X86_64)
+                .fallbackTo32Bit(true)
+                .build()
+        ).toString() == urlFor32Bit
 
         where:
         name = 'chromedriver'
@@ -350,7 +412,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: [baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: 'http://32bit.com']])
 
         when:
-        parseConfiguration().uriFor(name, version, os, arch, false).toString()
+        parseConfiguration().uriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(version)
+                .os(os)
+                .arch(arch)
+                .build()
+        ).toString()
 
         then:
         DriverUrlNotFoundException e = thrown()

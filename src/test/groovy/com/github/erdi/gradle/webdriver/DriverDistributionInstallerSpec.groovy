@@ -38,11 +38,10 @@ class DriverDistributionInstallerSpec extends PluginSpec {
 
     def 'can successfully install a version of a driver'() {
         given:
-        writeTestDriverDistributionInstallerSource(driverName)
         def repository = setupRepository(driverName, driverName, version, os, arch)
 
         and:
-        writeOutputBinaryPathTask(repository.configurationFile, version, os, arch)
+        writeOutputBinaryPathTask(repository.configurationFile, driverName, version, os, arch)
 
         when:
         runTasksWithUniqueGradleHomeDir 'outputBinaryPath'
@@ -57,21 +56,23 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         arch = X86
     }
 
-    private void writeTestDriverDistributionInstallerSource(String driverName) {
-        buildScript << """
-            class TestDriverDistributionInstaller extends DriverDistributionInstaller {
-                TestDriverDistributionInstaller(Project project, TextResource repositoryResource, String distributionVersion, OperatingSystem os, OperatingSystem.Arch arch) {
-                    super(project, "$driverName", repositoryResource, null, distributionVersion, os, arch, false)
-                }
-            }
-        """
-    }
-
-    private void writeOutputBinaryPathTask(File configurationFile, String version, OperatingSystem os, Arch arch) {
+    private void writeOutputBinaryPathTask(File configurationFile, String driverName, String version, OperatingSystem os, Arch arch) {
         def configurationFilePath = configurationFile.absolutePath
         def osCode = "${os.class.simpleName}.INSTANCE"
         def archCode = "OperatingSystem.Arch.${arch.name()}"
-        def code = "new TestDriverDistributionInstaller(project, resources.text.fromFile('$configurationFilePath'), '$version', $osCode, $archCode)"
+        def code = """
+            new DriverDistributionInstaller(
+                project,
+                resources.text.fromFile('$configurationFilePath'),
+                null,
+                DriverDownloadSpecification.builder()
+                    .name('$driverName')
+                    .version('$version')
+                    .os($osCode)
+                    .arch($archCode)
+                    .build()
+            )
+        """
 
         writeOutputBinaryPathTask(code)
     }

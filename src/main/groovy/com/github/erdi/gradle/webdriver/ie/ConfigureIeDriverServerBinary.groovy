@@ -15,6 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver.ie
 
+import com.github.erdi.gradle.webdriver.DriverDistributionInstaller
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 
@@ -28,8 +29,7 @@ class ConfigureIeDriverServerBinary extends ConfigureBinary {
 
     @Override
     protected AbstractDistributionInstaller distributionInstaller() {
-        new InternetExplorerDriverServerDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture,
-            fallbackTo32Bit)
+        new DriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, downloadSpecForDriverNamed('internetexplorerdriver'))
     }
 
 }

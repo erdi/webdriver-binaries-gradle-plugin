@@ -15,6 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver.repository
 
+import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import groovy.json.JsonException
 import groovy.json.JsonSlurper
 import org.ysb33r.grolifant.api.OperatingSystem
@@ -56,19 +57,19 @@ class DriverUrlsConfiguration {
         }
     }
 
-    URI uriFor(String name, String version, OperatingSystem os, OperatingSystem.Arch architecture, boolean fallbackTo32Bit) {
-        def architectures = [architecture] as LinkedHashSet
-        if (fallbackTo32Bit) {
+    URI uriFor(DriverDownloadSpecification spec) {
+        def architectures = [spec.arch] as LinkedHashSet
+        if (spec.fallbackTo32Bit) {
             architectures << X86
         }
 
-        def uri = architectures.findResult { uriForSingleArchitecture(name, version, os, it) }
+        def uri = architectures.findResult { uriForSingleArchitecture(spec.name, spec.version, spec.os, it) }
 
         if (!uri) {
             throw DriverUrlNotFoundException.builder()
-                .name(name)
-                .version(version)
-                .platform(platform(os))
+                .name(spec.name)
+                .version(spec.version)
+                .platform(platform(spec.os))
                 .bits(architectures.collect(this.&bit))
                 .build()
         }

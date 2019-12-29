@@ -16,6 +16,7 @@
 package com.github.erdi.gradle.webdriver.task
 
 import com.github.erdi.gradle.webdriver.DriverBinaryAware
+import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
@@ -33,7 +34,7 @@ abstract class ConfigureBinary extends DefaultTask {
     private final Property<File> downloadRootProperty = project.objects.property(File)
     private final Property<String> versionProperty = project.objects.property(String)
     private final Property<Arch> architectureProperty = project.objects.property(Arch)
-    private final Property<Boolean> fallbackTo32Bit = project.objects.property(Boolean)
+    private final Property<Boolean> fallbackTo32BitProperty = project.objects.property(Boolean)
 
     protected final List<DriverBinaryAware> binaryAwares = []
 
@@ -93,16 +94,16 @@ abstract class ConfigureBinary extends DefaultTask {
     }
 
     void setFallbackTo32Bit(Provider<Boolean> fallbackTo32Bit) {
-        this.fallbackTo32Bit.set(fallbackTo32Bit)
+        this.fallbackTo32BitProperty.set(fallbackTo32Bit)
     }
 
     void setFallbackTo32Bit(boolean fallbackTo32Bit) {
-        this.fallbackTo32Bit.set(fallbackTo32Bit)
+        this.fallbackTo32BitProperty.set(fallbackTo32Bit)
     }
 
     @Internal
     boolean getFallbackTo32Bit() {
-        fallbackTo32Bit.get()
+        fallbackTo32BitProperty.get()
     }
 
     @Internal
@@ -134,4 +135,13 @@ abstract class ConfigureBinary extends DefaultTask {
         versionProperty.present
     }
 
+    protected DriverDownloadSpecification downloadSpecForDriverNamed(String name) {
+        DriverDownloadSpecification.builder()
+            .name(name)
+            .version(version)
+            .arch(architecture)
+            .os(operatingSystem)
+            .fallbackTo32Bit(fallbackTo32Bit)
+            .build()
+    }
 }

@@ -19,26 +19,17 @@ import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
 import org.gradle.api.Project
 import org.gradle.api.resources.TextResource
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
-import org.ysb33r.grolifant.api.OperatingSystem
-import org.ysb33r.grolifant.api.OperatingSystem.Arch
 
 class DriverDistributionInstaller extends AbstractDistributionInstaller {
 
-    private final String driverName
     private final TextResource repositoryResource
-    private final OperatingSystem os
-    private final Arch arch
-    private final boolean fallbackTo32Bit
+    private final DriverDownloadSpecification spec
 
-    DriverDistributionInstaller(Project project, String driverName, TextResource repositoryResource, File downloadRoot, String distributionVersion,
-                                OperatingSystem os, Arch arch, boolean fallbackTo32Bit) {
-        super(driverName, distributionVersion, "webdriver/$driverName/$distributionVersion", project)
-        this.driverName = driverName
+    DriverDistributionInstaller(Project project, TextResource repositoryResource, File downloadRoot, DriverDownloadSpecification spec) {
+        super(spec.name, spec.version, "webdriver/$spec.name/$spec.version", project)
         this.repositoryResource = repositoryResource
         this.downloadRoot = downloadRoot
-        this.os = os
-        this.arch = arch
-        this.fallbackTo32Bit = fallbackTo32Bit
+        this.spec = spec
     }
 
     @Override
@@ -48,6 +39,6 @@ class DriverDistributionInstaller extends AbstractDistributionInstaller {
 
     @Override
     URI uriFromVersion(String version) {
-        new DriverUrlsConfiguration(repositoryResource.asFile()).uriFor(driverName, version, os, arch, fallbackTo32Bit)
+        new DriverUrlsConfiguration(repositoryResource.asFile()).uriFor(spec)
     }
 }

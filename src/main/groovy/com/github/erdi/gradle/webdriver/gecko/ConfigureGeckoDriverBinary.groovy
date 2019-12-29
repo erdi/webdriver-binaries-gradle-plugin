@@ -15,6 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver.gecko
 
+import com.github.erdi.gradle.webdriver.DriverDistributionInstaller
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 
@@ -28,6 +29,6 @@ class ConfigureGeckoDriverBinary extends ConfigureBinary {
 
     @Override
     protected AbstractDistributionInstaller distributionInstaller() {
-        new GeckoDriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, version, operatingSystem, architecture, fallbackTo32Bit)
+        new DriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, downloadSpecForDriverNamed('geckodriver'))
     }
 }
