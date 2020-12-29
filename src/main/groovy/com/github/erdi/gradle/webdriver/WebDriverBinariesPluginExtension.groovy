@@ -38,6 +38,7 @@ class WebDriverBinariesPluginExtension {
     final DriverConfiguration ieDriverServerConfiguration
     final DriverConfiguration chromedriverConfiguration
     final DriverConfiguration geckodriverConfiguration
+    final DriverConfiguration edgedriverConfiguration
 
     WebDriverBinariesPluginExtension(Project project) {
         this.project = project
@@ -49,6 +50,7 @@ class WebDriverBinariesPluginExtension {
         this.ieDriverServerConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.chromedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.geckodriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
+        this.edgedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
 
         this.driverUrlsConfiguration.set(project.resources.text.fromUri(DRIVER_URLS_CONFIG_URL))
         this.fallbackTo32Bit.set(false)
@@ -94,6 +96,20 @@ class WebDriverBinariesPluginExtension {
 
     void geckodriver(@DelegatesTo(DriverConfiguration) Closure configuration) {
         project.configure(geckodriverConfiguration, configuration)
+    }
+
+    void edgedriver(String configuredVersion) {
+        edgedriver {
+            version = configuredVersion
+        }
+    }
+
+    void setEdgedriver(String configuredVersion) {
+        edgedriver(configuredVersion)
+    }
+
+    void edgedriver(@DelegatesTo(DriverConfiguration) Closure configuration) {
+        project.configure(edgedriverConfiguration, configuration)
     }
 
     void setDownloadRoot(File downloadRoot) {

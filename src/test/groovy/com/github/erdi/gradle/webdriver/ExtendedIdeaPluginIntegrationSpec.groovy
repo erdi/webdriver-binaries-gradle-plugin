@@ -52,6 +52,7 @@ class ExtendedIdeaPluginIntegrationSpec extends PluginSpec {
         'chromedriver'               | 'chromedriver'           | 'chromedriver'   | 'webdriver.chrome.driver' | 'configureChromeDriverBinary'
         'geckodriver'                | 'geckodriver'            | 'geckodriver'    | 'webdriver.gecko.driver'  | 'configureGeckoDriverBinary'
         'iedriverserver'             | 'internetexplorerdriver' | 'IEDriverServer' | 'webdriver.ie.driver'     | 'configureIeDriverServerBinary'
+        'edgedriver'                 | 'edgedriver'             | 'msedgedriver'   | 'webdriver.edge.driver'   | 'configureEdgeDriverBinary'
 
         version = '1.2.3'
     }

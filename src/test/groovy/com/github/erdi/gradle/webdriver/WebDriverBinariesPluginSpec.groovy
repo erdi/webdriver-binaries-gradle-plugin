@@ -24,6 +24,7 @@ import spock.lang.Unroll
 import static BinariesVersions.TESTED_CHROMEDRIVER_VERSION
 import static BinariesVersions.TESTED_GECKODRVIER_VERSION
 import static BinariesVersions.TESTED_IEDRIVERSERVER_VERSION
+import static com.github.erdi.gradle.webdriver.BinariesVersions.TESTED_EDGEDRIVER_VERSION
 
 @Category(EndToEnd)
 class WebDriverBinariesPluginSpec extends PluginSpec {
@@ -48,9 +49,10 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
     }
 
     @Requires({ OperatingSystem.current().windows })
-    void 'iedriverserver binary is downloaded and test task is configured as per plugin config'() {
+    @Unroll('#binaryName binary is downloaded and test task is configured as per plugin config')
+    void 'windows specific binary is downloaded and test task is configured as per plugin config'() {
         given:
-        writeBuild('iedriverserver', TESTED_IEDRIVERSERVER_VERSION, 'selenium-ie-driver')
+        writeBuild(binaryName, binaryVersion, seleniumModule)
         writeRatpackApplication()
         writeGebSpec()
 
@@ -59,6 +61,11 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
 
         then:
         noExceptionThrown()
+
+        where:
+        binaryName       | binaryVersion                 | seleniumModule
+        'iedriverserver' | TESTED_IEDRIVERSERVER_VERSION | 'selenium-ie-driver'
+        'edgedriver'     | TESTED_EDGEDRIVER_VERSION     | 'selenium-edge-driver'
     }
 
     private void writeBuild(String binaryName, String binaryVersion, String seleniumModule) {

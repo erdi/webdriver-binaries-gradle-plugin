@@ -2,4 +2,5 @@ version: "{build}"
 build_script: ./gradlew --no-daemon endToEndTest
 install:
   - choco install firefox --version 66.0.3
-  - choco install googlechrome --version 79.0.3945.88 --ignore-checksums
+  - choco install googlechrome --version 87.0.4280.88 --ignore-checksums
+  - choco install microsoft-edge --version 86.0.622.69 --ignore-checksums

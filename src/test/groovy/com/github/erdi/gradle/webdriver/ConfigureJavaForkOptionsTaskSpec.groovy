@@ -19,6 +19,7 @@ import org.ysb33r.grolifant.api.OperatingSystem
 import spock.lang.Unroll
 
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.CHROMEDRIVER
+import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.EDGEDRIVER
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.GECKODRIVER
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.IEDRIVERSERVER
 
@@ -70,6 +71,7 @@ class ConfigureJavaForkOptionsTaskSpec extends PluginSpec {
         'chromedriver'           | 'chromedriver'       | 'chromedriver'               | CHROMEDRIVER.systemProperty
         'geckodriver'            | 'geckodriver'        | 'geckodriver'                | GECKODRIVER.systemProperty
         'internetexplorerdriver' | 'IEDriverServer'     | 'iedriverserver'             | IEDRIVERSERVER.systemProperty
+        'edgedriver'             | 'msedgedriver'       | 'edgedriver'                 | EDGEDRIVER.systemProperty
 
         version = '2.42.0'
         os = OperatingSystem.current()

@@ -15,18 +15,10 @@
  */
 package com.github.erdi.gradle.webdriver
 
-enum WebDriverBinaryMetadata {
+class EdgeDriverConfigurationSpec extends AbstractDriverConfigurationSpec {
 
-    CHROMEDRIVER('chromedriver', 'webdriver.chrome.driver'),
-    GECKODRIVER('geckodriver', 'webdriver.gecko.driver'),
-    IEDRIVERSERVER('IEDriverServer', 'webdriver.ie.driver'),
-    EDGEDRIVER('msedgedriver', 'webdriver.edge.driver')
+    final String driverName = 'edgedriver'
 
-    final String binaryName
-    final String systemProperty
+    final String driverExecutableName = 'msedgedriver'
 
-    WebDriverBinaryMetadata(String binaryName, String systemProperty) {
-        this.binaryName = binaryName
-        this.systemProperty = systemProperty
-    }
 }

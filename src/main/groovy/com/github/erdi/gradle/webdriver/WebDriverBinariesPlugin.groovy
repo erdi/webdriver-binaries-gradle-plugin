@@ -16,6 +16,7 @@
 package com.github.erdi.gradle.webdriver
 
 import com.github.erdi.gradle.webdriver.chrome.ConfigureChromeDriverBinary
+import com.github.erdi.gradle.webdriver.edge.ConfigureEdgeDriverBinary
 import com.github.erdi.gradle.webdriver.gecko.ConfigureGeckoDriverBinary
 import com.github.erdi.gradle.webdriver.ie.ConfigureIeDriverServerBinary
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
@@ -39,6 +40,7 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
         createConfigureChromeDriverBinary(project, extension)
         createConfigureGeckoDriverBinary(project, extension)
         createConfigureInternetExplorerDriverServerBinary(project, extension)
+        createConfigureEdgeDriverBinary(project, extension)
     }
 
     ConfigureChromeDriverBinary createConfigureChromeDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
@@ -51,6 +53,10 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
 
     ConfigureIeDriverServerBinary createConfigureInternetExplorerDriverServerBinary(Project project, WebDriverBinariesPluginExtension extension) {
         createConfigureDriverBinary(ConfigureIeDriverServerBinary, project, extension, extension.ieDriverServerConfiguration)
+    }
+
+    ConfigureEdgeDriverBinary createConfigureEdgeDriverBinary(Project project, WebDriverBinariesPluginExtension extension) {
+        createConfigureDriverBinary(ConfigureEdgeDriverBinary, project, extension, extension.edgedriverConfiguration)
     }
 
     private <T extends ConfigureBinary> T createConfigureDriverBinary(Class<T> taskType, Project project, WebDriverBinariesPluginExtension extension,

@@ -36,7 +36,7 @@ import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86_64
 
 class DriverUrlsConfigurationSpec extends Specification {
 
-    private static final List<String> DRIVER_NAMES = ['chromedriver', 'geckodriver', 'internetexplorerdriver']
+    private static final List<String> DRIVER_NAMES = ['chromedriver', 'geckodriver', 'internetexplorerdriver', 'edgedriver']
     private static final List<String> DRIVER_VERSIONS = ['0.22.0', '2.42.0']
 
     @Rule

@@ -21,6 +21,7 @@ This plugin exposes the following optional properties through the extension name
 | `chromedriver` | `String` | The version of ChromeDriver binary to be used by the project. No ChromeDriver binary will be downloaded if this property is not specified. |
 | `geckodriver` | `String` | The version of GeckoDriver binary to be used by the project. No GeckoDriver binary will be downloaded if this property is not specified. |
 | `iedriverserver` | `String` | The version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
+| `edgedriver` | `String` | The version of EdgeDriver binary to be used by the project. No EdgeDriver binary will be downloaded if this property is not specified. |
 | `downloadRoot` |`File`| The location into which the binaries should be downloaded. If not specified the binaries are downloaded into the Gradle user home directory. Should not be specified under normal circumstances to benefit from caching of the binaries between multiple project builds. |
 | `driverUrlsConfiguration` |`org.gradle.api.resources.TextResource`| The text resource which contains mapping from a binary version to a URL. If not specified then the default is to use [WebDriver Extensions Maven Plugin's `package.json` file](https://github.com/webdriverextensions/webdriverextensions-maven-plugin-repository/blob/master/repository-3.0.json) from `https://raw.githubusercontent.com/webdriverextensions/webdriverextensions-maven-plugin-repository/master/repository-3.0.json`. |
 | `fallbackTo32Bit` |`boolean`| Whether or not to fallback to a 32bit version of drivers if a 64bit version is not found. Defaults to `false`. |
@@ -31,13 +32,14 @@ Example usage:
         chromedriver '2.32'
         geckodriver '0.19.0'
         iedriverserver '3.8.0'
+        edgedriver '86.0.601.0'
     }
 
 ### Extension methods
 
 #### Detailed binaries configuration methods
 
-Additionally to properties which can be used for specifying driver binaries versions, the plugin exposes `chromedriver()`, `geckodriver()` and `iedriverserver()` configuration methods through the the extension named `webdriverBinaries`.
+Additionally to properties which can be used for specifying driver binaries versions, the plugin exposes `chromedriver()`, `geckodriver()`, `iedriverserver()` and `edgedriver()` configuration methods through the the extension named `webdriverBinaries`.
 Each method takes a closure which delegates to an object with the following properties: 
 
 | Name | Type | Description | 
@@ -59,6 +61,11 @@ Example usage:
         }
         iedriverserver {
             version = '3.8.0'
+            architecture = 'X86'
+            fallbackTo32Bit = true
+        }
+        edgedriver {
+            version = '86.0.601.0'
             architecture = 'X86'
             fallbackTo32Bit = true
         }
@@ -84,6 +91,7 @@ This plugin adds the following tasks to the project:
  * `configureChromeDriverBinary` - downloads, caches and configures the build to use a ChromeDriver binary
  * `configureGeckoDriverBinary` - downloads, caches and configures the build to use a GeckoDriver binary
  * `configureIeDriverServerBinary` - downloads, caches and configures the build to use a IEDriverServer binary
+ * `configureEdgeDriverBinary` - downloads, caches and configures the build to use a EdgeDriver binary
 
 There is no need to call the above tasks directly because the plugin interweaves them into the build lifecycle by configuring all `org.gradle.api.tasks.testing.Test` tasks to depend on them.
 
