@@ -16,19 +16,20 @@
 package com.github.erdi.gradle.webdriver.task
 
 import com.github.erdi.gradle.webdriver.DriverBinaryAware
+import com.github.erdi.gradle.webdriver.DriverDistributionInstaller
 import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata
+import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 import org.ysb33r.grolifant.api.OperatingSystem
 import org.ysb33r.grolifant.api.OperatingSystem.Arch
 
-abstract class ConfigureBinary extends DefaultTask {
+class ConfigureBinary extends DefaultTask {
 
     private final Property<TextResource> driverUrlsConfigurationProperty = project.objects.property(TextResource)
     private final Property<File> downloadRootProperty = project.objects.property(File)
@@ -36,13 +37,16 @@ abstract class ConfigureBinary extends DefaultTask {
     private final Property<Arch> architectureProperty = project.objects.property(Arch)
     private final Property<Boolean> fallbackTo32BitProperty = project.objects.property(Boolean)
 
+    private final String driverName
+
     protected final List<DriverBinaryAware> binaryAwares = []
 
     @Internal
     final WebDriverBinaryMetadata webDriverBinaryMetadata
 
-    protected ConfigureBinary(WebDriverBinaryMetadata webDriverBinaryMetadata) {
+    protected ConfigureBinary(WebDriverBinaryMetadata webDriverBinaryMetadata, String driverName) {
         this.webDriverBinaryMetadata = webDriverBinaryMetadata
+        this.driverName = driverName
         onlyIf { versionConfigured }
     }
 
@@ -117,13 +121,12 @@ abstract class ConfigureBinary extends DefaultTask {
 
     @TaskAction
     void configure() {
-        def installer = distributionInstaller()
+        def versionAndUri = new DriverUrlsConfiguration(driverUrlsConfiguration.asFile()).versionAndUriFor(downloadSpec())
+        def installer = new DriverDistributionInstaller(project, downloadRoot, driverName, versionAndUri)
         def binaryFile = new File(installer.distributionRoot, operatingSystem.getExecutableName(webDriverBinaryMetadata.binaryName))
         def binaryAbsolutePath = binaryFile.absolutePath
-        binaryAwares*.driverBinaryPath = binaryAbsolutePath
+        binaryAwares*.setDriverBinaryPathAndVersion(binaryAbsolutePath, versionAndUri.version)
     }
-
-    protected abstract AbstractDistributionInstaller distributionInstaller()
 
     @Internal
     protected OperatingSystem getOperatingSystem() {
@@ -135,9 +138,9 @@ abstract class ConfigureBinary extends DefaultTask {
         versionProperty.present
     }
 
-    protected DriverDownloadSpecification downloadSpecForDriverNamed(String name) {
+    private DriverDownloadSpecification downloadSpec() {
         DriverDownloadSpecification.builder()
-            .name(name)
+            .name(driverName)
             .version(version)
             .arch(architecture)
             .os(operatingSystem)

@@ -18,10 +18,10 @@ This plugin exposes the following optional properties through the extension name
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `chromedriver` | `String` | The version of ChromeDriver binary to be used by the project. No ChromeDriver binary will be downloaded if this property is not specified. |
-| `geckodriver` | `String` | The version of GeckoDriver binary to be used by the project. No GeckoDriver binary will be downloaded if this property is not specified. |
-| `iedriverserver` | `String` | The version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
-| `edgedriver` | `String` | The version of EdgeDriver binary to be used by the project. No EdgeDriver binary will be downloaded if this property is not specified. |
+| `chromedriver` | `String` | The exact version of ChromeDriver binary to be used by the project. No ChromeDriver binary will be downloaded if this property is not specified. |
+| `geckodriver` | `String` | The exact version of GeckoDriver binary to be used by the project. No GeckoDriver binary will be downloaded if this property is not specified. |
+| `iedriverserver` | `String` | The exact version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
+| `edgedriver` | `String` | The exact version of EdgeDriver binary to be used by the project. No EdgeDriver binary will be downloaded if this property is not specified. |
 | `downloadRoot` |`File`| The location into which the binaries should be downloaded. If not specified the binaries are downloaded into the Gradle user home directory. Should not be specified under normal circumstances to benefit from caching of the binaries between multiple project builds. |
 | `driverUrlsConfiguration` |`org.gradle.api.resources.TextResource`| The text resource which contains mapping from a binary version to a URL. If not specified then the default is to use [WebDriver Extensions Maven Plugin's `package.json` file](https://github.com/webdriverextensions/webdriverextensions-maven-plugin-repository/blob/master/repository-3.0.json) from `https://raw.githubusercontent.com/webdriverextensions/webdriverextensions-maven-plugin-repository/master/repository-3.0.json`. |
 | `fallbackTo32Bit` |`boolean`| Whether or not to fallback to a 32bit version of drivers if a 64bit version is not found. Defaults to `false`. |
@@ -44,7 +44,8 @@ Each method takes a closure which delegates to an object with the following prop
 
 | Name | Type | Description | 
 | --- | --- | --- |
-| `version` | String | The version of binary to be used by the project. No binary will be downloaded if this property is not specified. |
+| `version` | String | The exact version of binary to be used by the project. No binary will be downloaded if neither this nor `versionRegexp` property is specified. |
+| `versionRegexp` | String | The regular expression for the version - the highest matching version of binary will be used by the project. No binary will be downloaded if neither this nor `version` property is specified. |
 | `architecture` | String | The architecture of the binary to be used. The allowed values are `X86` and `X86_64`. Defaults to the architecture of the OS running the build. |
 | `fallbackTo32Bit` |`boolean`| Whether or not to fallback to a 32bit version of the driver if a 64bit version is not found. Defaults to `false`. |
 
@@ -70,6 +71,15 @@ Example usage:
             fallbackTo32Bit = true
         }
     }
+
+Example usage which shows how to configure the plugin to use the latest version of chromedriver:
+
+    webdriverBinaries {
+        chromedriver {
+            versionRegexp = '.*'
+        }
+    }
+
 
 #### Configuring additional tasks with downloaded driver paths
 

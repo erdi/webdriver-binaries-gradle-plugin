@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.erdi.gradle.webdriver.gecko
+package com.github.erdi.gradle.webdriver.repository
 
-import com.github.erdi.gradle.webdriver.task.ConfigureBinary
+class VersionAndUri {
 
-import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.GECKODRIVER
+    final String version
+    final URI uri
 
-class ConfigureGeckoDriverBinary extends ConfigureBinary {
-
-    ConfigureGeckoDriverBinary() {
-        super(GECKODRIVER, 'geckodriver')
+    VersionAndUri(String version, URI uri) {
+        this.version = version
+        this.uri = uri
     }
+
 }

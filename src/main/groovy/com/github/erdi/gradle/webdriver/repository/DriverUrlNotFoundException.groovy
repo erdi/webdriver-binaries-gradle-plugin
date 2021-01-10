@@ -21,6 +21,6 @@ class DriverUrlNotFoundException extends Exception {
 
     @Builder
     private DriverUrlNotFoundException(String name, String version, String platform, Collection<String> bits) {
-        super(/Driver url not found for name: "$name", version: "$version", platform: "$platform", bit: "${bits.join(' or ')}"/)
+        super(/Driver url not found for name: "$name", version regexp: "$version", platform: "$platform", bit: "${bits.join(' or ')}"/)
     }
 }

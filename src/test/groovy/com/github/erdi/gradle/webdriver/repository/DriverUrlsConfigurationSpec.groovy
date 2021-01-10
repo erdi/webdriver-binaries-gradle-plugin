@@ -30,6 +30,8 @@ import org.ysb33r.grolifant.api.os.Windows
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.util.regex.Pattern
+
 import static groovy.json.JsonOutput.toJson
 import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86
 import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86_64
@@ -156,10 +158,10 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(version)
+                .version(Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .build()
@@ -169,7 +171,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         DriverUrlNotFoundException e = thrown()
 
         and:
-        e.message == /Driver url not found for name: "$name", version: "$version", platform: "$platform", bit: "$bit"/
+        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "$platform", bit: "$bit"/
 
         where:
         name                     | version  | os               | platform  | arch   | bit
@@ -184,10 +186,10 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(version)
+                .version(Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .fallbackTo32Bit(true)
@@ -198,7 +200,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         DriverUrlNotFoundException e = thrown()
 
         and:
-        e.message == /Driver url not found for name: "$name", version: "$version", platform: "$platform", bit: "$bit"/
+        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "$platform", bit: "$bit"/
 
         where:
         name           | version  | os              | platform | arch   | bit
@@ -212,7 +214,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .os(unsupportedOs)
                 .arch(X86)
@@ -235,7 +237,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         emptyConfiguration()
 
         when:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .os(Linux.INSTANCE)
                 .arch(unsupportedArch)
@@ -263,14 +265,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(driverName)
-                .version(version)
+                .version(Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .build()
-        ).toString() == "http://${driverName}.com"
+        ).uri.toString() == "http://${driverName}.com"
 
         where:
         driverName << DRIVER_NAMES
@@ -295,17 +297,52 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(driverVersion)
+                .version(Pattern.quote(driverVersion))
                 .os(os)
                 .arch(arch)
                 .build()
-        ).toString() == "http://${driverVersion}.com"
+        ).uri.toString() == "http://${driverVersion}.com"
 
         where:
         driverVersion << DRIVER_VERSIONS
+        name = 'chromedriver'
+        os = Linux.INSTANCE
+        arch = X86
+        baseDriverProperties = [
+            name: name,
+            platform: DriverUrlsConfiguration.PLATFORMS[os],
+            bit: DriverUrlsConfiguration.BITS[arch]
+        ]
+    }
+
+    @Unroll
+    def 'driver version is treated as a regular expression and the configuration with the newest version is used'() {
+        given:
+        def drivers = ['9.0', '19.0', '9.1'].collect { version ->
+            baseDriverProperties + [version: version, url: "http://${version}.com"]
+        }
+
+        and:
+        configuration(drivers: drivers)
+
+        expect:
+        parseConfiguration().versionAndUriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(versionString)
+                .os(os)
+                .arch(arch)
+                .build()
+        ).uri.toString() == "http://${matchingVersion}.com"
+
+        where:
+        versionString | matchingVersion
+        '.*'          | '19.0'
+        /9\..*/       | '9.1'
+
         name = 'chromedriver'
         os = Linux.INSTANCE
         arch = X86
@@ -327,14 +364,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
                 .version(version)
                 .os(os)
                 .arch(arch)
                 .build()
-        ).toString() == "http://${DriverUrlsConfiguration.PLATFORMS[os]}.com"
+        ).uri.toString() == "http://${DriverUrlsConfiguration.PLATFORMS[os]}.com"
 
         where:
         os << DriverUrlsConfiguration.PLATFORMS.keySet()
@@ -359,14 +396,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: drivers)
 
         expect:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(version)
+                .version(Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .build()
-        ).toString() == "http://${DriverUrlsConfiguration.BITS[arch]}.com"
+        ).uri.toString() == "http://${DriverUrlsConfiguration.BITS[arch]}.com"
 
         where:
         arch << DriverUrlsConfiguration.BITS.keySet()
@@ -385,15 +422,15 @@ class DriverUrlsConfigurationSpec extends Specification {
         configuration(drivers: [baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: urlFor32Bit]])
 
         expect:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(version)
+                .version(Pattern.quote(version))
                 .os(os)
                 .arch(X86_64)
                 .fallbackTo32Bit(true)
                 .build()
-        ).toString() == urlFor32Bit
+        ).uri.toString() == urlFor32Bit
 
         where:
         name = 'chromedriver'
@@ -407,25 +444,58 @@ class DriverUrlsConfigurationSpec extends Specification {
         urlFor32Bit = 'http://fallback.com'
     }
 
+    def 'the 64 bit urls are used when urls for both 32 and 64 bits are available and searching with fallback to 32 bit'() {
+        given:
+        def drivers = [
+            baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: 'http://32bit.com'],
+            baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86_64], url: urlFor64Bit]
+        ]
+
+        and:
+        configuration(drivers: drivers)
+
+        expect:
+        parseConfiguration().versionAndUriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(Pattern.quote(version))
+                .os(os)
+                .arch(X86_64)
+                .fallbackTo32Bit(true)
+                .build()
+        ).uri.toString() == urlFor64Bit
+
+        where:
+        name = 'chromedriver'
+        version = '2.42.0'
+        os = Linux.INSTANCE
+        baseDriverProperties = [
+            name: name,
+            version: version,
+            platform: DriverUrlsConfiguration.PLATFORMS[os]
+        ]
+        urlFor64Bit = 'http://64bit.com'
+    }
+
     def 'urls for 32 bit are ignored when searching for 64 bit urls and fallback to 32 bit is not enabled'() {
         given:
         configuration(drivers: [baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: 'http://32bit.com']])
 
         when:
-        parseConfiguration().uriFor(
+        parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(version)
+                .version(Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .build()
-        ).toString()
+        ).uri.toString()
 
         then:
         DriverUrlNotFoundException e = thrown()
 
         and:
-        e.message == /Driver url not found for name: "$name", version: "$version", platform: "${baseDriverProperties.platform}", bit: "${DriverUrlsConfiguration.BITS[arch]}"/
+        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "${baseDriverProperties.platform}", bit: "${DriverUrlsConfiguration.BITS[arch]}"/
 
         where:
         arch = X86_64

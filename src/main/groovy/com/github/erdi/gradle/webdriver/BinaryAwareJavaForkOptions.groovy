@@ -15,27 +15,31 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 import org.gradle.process.JavaForkOptions
 
 class BinaryAwareJavaForkOptions implements DriverBinaryAware {
 
     private final JavaForkOptions javaForkOptions
-    private final ConfigureBinary configureBinaryTask
+    private final String propertyName
 
-    BinaryAwareJavaForkOptions(JavaForkOptions javaForkOptions, ConfigureBinary configureBinaryTask) {
+    BinaryAwareJavaForkOptions(JavaForkOptions javaForkOptions, String propertyName) {
         this.javaForkOptions = javaForkOptions
-        this.configureBinaryTask = configureBinaryTask
+        this.propertyName = propertyName
+    }
+
+    @Override
+    void setDriverBinaryPathAndVersion(String binaryPath, String version) {
+        javaForkOptions.jvmArgumentProviders.add(
+            new DriverBinaryPathCommandLineArgumentProvider(
+                propertyName: propertyName,
+                version: version,
+                path: binaryPath
+            )
+        )
     }
 
     @Override
     void setDriverBinaryPath(String binaryPath) {
-        javaForkOptions.jvmArgumentProviders.add(
-            new DriverBinaryPathCommandLineArgumentProvider(
-                propertyName: configureBinaryTask.webDriverBinaryMetadata.systemProperty,
-                version: configureBinaryTask.version,
-                path: binaryPath
-            )
-        )
+        throw new UnsupportedOperationException()
     }
 }

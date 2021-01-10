@@ -148,7 +148,7 @@ class WebDriverBinariesPluginExtension {
         project.tasks.withType(ConfigureBinary) { ConfigureBinary configureBinaryTask ->
             taskConfigurationAction.execute { T javaForkOptions ->
                 javaForkOptions.dependsOn(configureBinaryTask)
-                configureBinaryTask.addBinaryAware(new BinaryAwareJavaForkOptions(javaForkOptions, configureBinaryTask))
+                configureBinaryTask.addBinaryAware(new BinaryAwareJavaForkOptions(javaForkOptions, configureBinaryTask.webDriverBinaryMetadata.systemProperty))
             }
         }
     }

@@ -27,6 +27,7 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         buildScript << """
             import com.github.erdi.gradle.webdriver.*
             import com.github.erdi.gradle.webdriver.chrome.*
+            import com.github.erdi.gradle.webdriver.repository.*
             import org.ysb33r.grolifant.api.os.*
             import org.ysb33r.grolifant.api.*
 
@@ -60,17 +61,14 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         def configurationFilePath = configurationFile.absolutePath
         def osCode = "${os.class.simpleName}.INSTANCE"
         def archCode = "OperatingSystem.Arch.${arch.name()}"
+        def downloadSpecCode = "DriverDownloadSpecification.builder().name('$driverName').version('$version').os($osCode).arch($archCode).build()"
+        def versionAndUriCode = "new DriverUrlsConfiguration(resources.text.fromFile('$configurationFilePath').asFile()).versionAndUriFor($downloadSpecCode)"
         def code = """
             new DriverDistributionInstaller(
                 project,
-                resources.text.fromFile('$configurationFilePath'),
                 null,
-                DriverDownloadSpecification.builder()
-                    .name('$driverName')
-                    .version('$version')
-                    .os($osCode)
-                    .arch($archCode)
-                    .build()
+                '$driverName',
+                $versionAndUriCode
             )
         """
 

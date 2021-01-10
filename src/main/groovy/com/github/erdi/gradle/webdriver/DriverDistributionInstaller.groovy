@@ -15,21 +15,18 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
+import com.github.erdi.gradle.webdriver.repository.VersionAndUri
 import org.gradle.api.Project
-import org.gradle.api.resources.TextResource
 import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 
 class DriverDistributionInstaller extends AbstractDistributionInstaller {
 
-    private final TextResource repositoryResource
-    private final DriverDownloadSpecification spec
+    private final URI uri
 
-    DriverDistributionInstaller(Project project, TextResource repositoryResource, File downloadRoot, DriverDownloadSpecification spec) {
-        super(spec.name, spec.version, "webdriver/$spec.name/$spec.version", project)
-        this.repositoryResource = repositoryResource
+    DriverDistributionInstaller(Project project, File downloadRoot, String driverName, VersionAndUri versionAndUri) {
+        super(driverName, versionAndUri.version, "webdriver/$driverName/$versionAndUri.version", project)
         this.downloadRoot = downloadRoot
-        this.spec = spec
+        this.uri = versionAndUri.uri
     }
 
     @Override
@@ -39,6 +36,6 @@ class DriverDistributionInstaller extends AbstractDistributionInstaller {
 
     @Override
     URI uriFromVersion(String version) {
-        new DriverUrlsConfiguration(repositoryResource.asFile()).uriFor(spec)
+        uri
     }
 }

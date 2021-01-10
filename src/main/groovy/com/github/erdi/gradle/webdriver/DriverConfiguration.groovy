@@ -20,6 +20,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.ysb33r.grolifant.api.OperatingSystem
 
+import java.util.regex.Pattern
+
 class DriverConfiguration {
 
     private final Property<String> version
@@ -55,6 +57,10 @@ class DriverConfiguration {
     }
 
     void setVersion(String version) {
+        this.version.set(Pattern.quote(version))
+    }
+
+    void setVersionRegexp(String version) {
         this.version.set(version)
     }
 

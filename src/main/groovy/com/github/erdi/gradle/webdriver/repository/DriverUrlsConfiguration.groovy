@@ -18,6 +18,7 @@ package com.github.erdi.gradle.webdriver.repository
 import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import groovy.json.JsonException
 import groovy.json.JsonSlurper
+import org.apache.maven.artifact.versioning.ComparableVersion
 import org.ysb33r.grolifant.api.OperatingSystem
 import org.ysb33r.grolifant.api.os.Linux
 import org.ysb33r.grolifant.api.os.MacOsX
@@ -44,37 +45,38 @@ class DriverUrlsConfiguration {
         drivers = configuration.drivers
     }
 
-    private URI uriForSingleArchitecture(String name, String version, OperatingSystem os, OperatingSystem.Arch architecture) {
-        def platform = platform(os)
-        def bit = bit(architecture)
-
-        def driver = drivers.find {
-            it.name == name && it.version == version && it.platform == platform && it.bit == bit
-        }
-
-        if (driver) {
-            new URI(driver.url)
-        }
-    }
-
-    URI uriFor(DriverDownloadSpecification spec) {
-        def architectures = [spec.arch] as LinkedHashSet
+    VersionAndUri versionAndUriFor(DriverDownloadSpecification spec) {
+        def architectures = [spec.arch] as Set
         if (spec.fallbackTo32Bit) {
             architectures << X86
         }
+        def platform = platform(spec.os)
+        def bits = architectures.collect { bit(it) }
+        def versionPattern = ~spec.version
 
-        def uri = architectures.findResult { uriForSingleArchitecture(spec.name, spec.version, spec.os, it) }
+        def matchingDrivers = drivers.findAll {
+            it.name == spec.name &&
+                it.platform == platform &&
+                versionPattern.matcher(it.version.toString()).matches() &&
+                bits.contains(it.bit)
+        }.sort { left, right ->
+            def leftComparableVersion = new ComparableVersion(left.version.toString())
+            def rightComparableVersion = new ComparableVersion(right.version.toString())
 
-        if (!uri) {
+            rightComparableVersion <=> leftComparableVersion ?: (right.bit <=> left.bit)
+        }
+
+        if (!matchingDrivers) {
             throw DriverUrlNotFoundException.builder()
                 .name(spec.name)
                 .version(spec.version)
-                .platform(platform(spec.os))
-                .bits(architectures.collect(this.&bit))
+                .platform(platform)
+                .bits(bits)
                 .build()
         }
 
-        uri
+        def driver = matchingDrivers.first()
+        new VersionAndUri(driver.version.toString(), new URI(driver.url.toString()))
     }
 
     private validate(Object configuration) {

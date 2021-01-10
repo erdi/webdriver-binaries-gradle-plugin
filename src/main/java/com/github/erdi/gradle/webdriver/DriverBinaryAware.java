@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.erdi.gradle.webdriver
+package com.github.erdi.gradle.webdriver;
 
-interface DriverBinaryAware {
+public interface DriverBinaryAware {
 
-    void setDriverBinaryPath(String binaryPath)
+    default void setDriverBinaryPathAndVersion(String binaryPath, String version) {
+        setDriverBinaryPath(binaryPath);
+    }
+
+    void setDriverBinaryPath(String binaryPath);
 
 }

@@ -15,20 +15,13 @@
  */
 package com.github.erdi.gradle.webdriver.edge
 
-import com.github.erdi.gradle.webdriver.DriverDistributionInstaller
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
-import org.ysb33r.grolifant.api.AbstractDistributionInstaller
 
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.EDGEDRIVER
 
 class ConfigureEdgeDriverBinary extends ConfigureBinary {
 
     ConfigureEdgeDriverBinary() {
-        super(EDGEDRIVER)
-    }
-
-    @Override
-    AbstractDistributionInstaller distributionInstaller() {
-        new DriverDistributionInstaller(project, driverUrlsConfiguration, downloadRoot, downloadSpecForDriverNamed('edgedriver'))
+        super(EDGEDRIVER, 'edgedriver')
     }
 }
