@@ -15,20 +15,27 @@
  */
 package com.github.erdi.gradle.webdriver
 
+import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 import org.gradle.process.JavaForkOptions
 
 class BinaryAwareJavaForkOptions implements DriverBinaryAware {
 
     private final JavaForkOptions javaForkOptions
-    private final String systemPropertyName
+    private final ConfigureBinary configureBinaryTask
 
-    BinaryAwareJavaForkOptions(JavaForkOptions javaForkOptions, String systemPropertyName) {
+    BinaryAwareJavaForkOptions(JavaForkOptions javaForkOptions, ConfigureBinary configureBinaryTask) {
         this.javaForkOptions = javaForkOptions
-        this.systemPropertyName = systemPropertyName
+        this.configureBinaryTask = configureBinaryTask
     }
 
     @Override
     void setDriverBinaryPath(String binaryPath) {
-        javaForkOptions.systemProperty(systemPropertyName, binaryPath)
+        javaForkOptions.jvmArgumentProviders.add(
+            new DriverBinaryPathCommandLineArgumentProvider(
+                propertyName: configureBinaryTask.webDriverBinaryMetadata.systemProperty,
+                version: configureBinaryTask.version,
+                path: binaryPath
+            )
+        )
     }
 }
