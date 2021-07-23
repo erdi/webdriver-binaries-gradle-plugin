@@ -17,6 +17,9 @@ package com.github.erdi.gradle.webdriver
 
 class GeckoDriverConfigurationSpec extends AbstractDriverConfigurationSpec {
 
-    final String driverName = 'geckodriver'
+    @Override
+    String getDriverName() {
+        'geckodriver'
+    }
 
 }

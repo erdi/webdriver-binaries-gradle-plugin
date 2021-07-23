@@ -20,13 +20,13 @@ dependencies {
         exclude module: 'GMetrics'
         exclude group: 'org.codehaus.groovy'
     }
-    codenarc 'org.codehaus.groovy:groovy-all:2.4.11'
+    codenarc 'org.codehaus.groovy:groovy-all:3.0.7'
 
-    compile 'org.ysb33r.gradle:grolifant:0.11'
-    compile 'org.apache.maven:maven-artifact:3.6.3'
+    implementation 'org.ysb33r.gradle:grolifant50:1.1.0'
+    implementation 'org.apache.maven:maven-artifact:3.6.3'
 
-    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4', {
-        exclude module: 'groovy-all'
+    testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0', {
+        exclude module: 'groovy'
     }
 }
 
@@ -34,7 +34,12 @@ version = '2.4'
 
 codenarc.configFile = file('gradle/codenarc/rulesets.groovy')
 
+task endToEndTest(type: Test) {
+    classpath = sourceSets.test.runtimeClasspath + files('src/e2e/resources')
+}
+
 tasks.withType(Test) {
+    useJUnitPlatform()
     maxHeapSize = "1g"
     jvmArgs '-XX:MaxMetaspaceSize=128m'
     testLogging {
@@ -67,22 +72,4 @@ pluginBundle {
             tags = ['WebDriver', 'selenium', 'test', 'chromedriver', 'geckodriver']
         }
     }
-}
-
-task endToEndTest(type: Test) {
-    options {
-        includeCategories 'com.github.erdi.gradle.webdriver.category.EndToEnd'
-    }
-}
-
-tasks.withType(Test) {
-    maxHeapSize = "1g"
-    jvmArgs '-XX:MaxMetaspaceSize=128m'
-    testLogging {
-        exceptionFormat = 'full'
-    }
-}
-
-tasks.withType(GroovyCompile) {
-    groovyOptions.forkOptions.memoryMaximumSize = '256m'
 }

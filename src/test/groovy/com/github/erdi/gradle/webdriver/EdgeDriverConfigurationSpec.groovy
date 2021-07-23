@@ -17,8 +17,14 @@ package com.github.erdi.gradle.webdriver
 
 class EdgeDriverConfigurationSpec extends AbstractDriverConfigurationSpec {
 
-    final String driverName = 'edgedriver'
+    @Override
+    String getDriverName() {
+        'edgedriver'
+    }
 
-    final String driverExecutableName = 'msedgedriver'
+    @Override
+    String getDriverExecutableName() {
+        'msedgedriver'
+    }
 
 }

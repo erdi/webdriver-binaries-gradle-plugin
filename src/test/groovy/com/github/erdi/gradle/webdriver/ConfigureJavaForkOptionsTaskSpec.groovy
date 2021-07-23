@@ -15,7 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 import spock.lang.Unroll
 
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.CHROMEDRIVER
@@ -79,7 +79,9 @@ class ConfigureJavaForkOptionsTaskSpec extends PluginSpec {
     }
 
     private void writeMainClass() {
-        new File(testProjectDir.newFolder('src', 'main', 'java'), 'Main.java') << """
+        def sourceDir = new File(testProjectDir, 'src/main/java')
+        sourceDir.mkdirs()
+        new File(sourceDir, 'Main.java') << """
             import java.nio.file.Files;
             import java.nio.file.Paths;
 
@@ -93,7 +95,7 @@ class ConfigureJavaForkOptionsTaskSpec extends PluginSpec {
     }
 
     private String getPluginDownloadedBinaryContents() {
-        def path = new File(testProjectDir.root, "build/$BINARY_PATH_FILENAME").text
+        def path = new File(testProjectDir, "build/$BINARY_PATH_FILENAME").text
         new File(path).text
     }
 

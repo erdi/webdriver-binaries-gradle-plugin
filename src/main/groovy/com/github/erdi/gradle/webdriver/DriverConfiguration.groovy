@@ -18,7 +18,7 @@ package com.github.erdi.gradle.webdriver
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 
 import java.util.regex.Pattern
 

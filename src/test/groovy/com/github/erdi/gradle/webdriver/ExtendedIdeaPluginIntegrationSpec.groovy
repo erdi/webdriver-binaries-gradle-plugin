@@ -74,14 +74,14 @@ class ExtendedIdeaPluginIntegrationSpec extends PluginSpec {
     }
 
     private void setupProjectName() {
-        testProjectDir.newFile('settings.gradle') << """
+        new File(testProjectDir, 'settings.gradle') << """
             rootProject.name = '$TEST_PROJECT_NAME'
         """
     }
 
     @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     private Node parseJunitConf() {
-        def node = new XmlParser().parse(new File(testProjectDir.root, "${TEST_PROJECT_NAME}.iws"))
+        def node = new XmlParser().parse(new File(testProjectDir, "${TEST_PROJECT_NAME}.iws"))
         def runManager = node.component.find { it.@name == 'RunManager' }
         runManager.configuration.find { it.@default == 'true' && it.'@type' == 'JUnit' }
     }
@@ -92,7 +92,7 @@ class ExtendedIdeaPluginIntegrationSpec extends PluginSpec {
     }
 
     private String getPluginDownloadedBinaryPath() {
-        new File(testProjectDir.root, "build/$BINARY_PATH_FILENAME").text
+        new File(testProjectDir, "build/$BINARY_PATH_FILENAME").text
     }
 
 }

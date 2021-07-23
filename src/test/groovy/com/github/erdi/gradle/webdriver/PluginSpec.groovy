@@ -19,10 +19,9 @@ import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
 import groovy.json.JsonOutput
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 import spock.lang.Specification
+import spock.lang.TempDir
 
 import java.nio.charset.StandardCharsets
 import java.util.zip.ZipEntry
@@ -32,22 +31,22 @@ class PluginSpec extends Specification {
 
     private final static String DISTRIBUTION_ROOT_PATH_FILENAME = 'distributionRootPath.txt'
 
-    @Rule
-    protected TemporaryFolder testProjectDir
+    @TempDir
+    protected File testProjectDir
 
-    @Rule
-    protected TemporaryFolder gradleHomeDir
+    @TempDir
+    protected File gradleHomeDir
 
-    @Rule
-    protected TemporaryFolder downloadRoot
+    @TempDir
+    protected File downloadRoot
 
-    @Rule
-    protected TemporaryFolder driverRepository
+    @TempDir
+    protected File driverRepository
 
     protected File buildScript
 
     void setup() {
-        buildScript = testProjectDir.newFile('build.gradle')
+        buildScript = new File(testProjectDir, 'build.gradle')
     }
 
     protected writeOutputBinaryPathTask(String installerConstructorCode) {
@@ -57,14 +56,14 @@ class PluginSpec extends Specification {
                     buildDir.mkdirs()
                     def installer = $installerConstructorCode
 
-                    new File(buildDir, '$DISTRIBUTION_ROOT_PATH_FILENAME') << installer.distributionRoot.absolutePath
+                    new File(buildDir, '$DISTRIBUTION_ROOT_PATH_FILENAME') << installer.getDistributionRoot(null).get().absolutePath
                 }
             }
         """
     }
 
     protected BuildResult runTasksWithUniqueGradleHomeDir(String... taskNames) {
-        runBuild('--gradle-user-home', gradleHomeDir.root.absolutePath, *taskNames)
+        runBuild('--gradle-user-home', gradleHomeDir.absolutePath, *taskNames)
     }
 
     protected BuildResult runTasks(String... taskNames) {
@@ -73,7 +72,7 @@ class PluginSpec extends Specification {
 
     private BuildResult runBuild(String... arguments) {
         GradleRunner.create()
-            .withProjectDir(testProjectDir.root)
+            .withProjectDir(testProjectDir)
             .withArguments('--stacktrace', *arguments)
             .withPluginClasspath()
             .forwardOutput()
@@ -81,7 +80,7 @@ class PluginSpec extends Specification {
     }
 
     protected File getDistributionRoot() {
-        def distributionPathRootPath = new File(testProjectDir.root, "build/$DISTRIBUTION_ROOT_PATH_FILENAME").text
+        def distributionPathRootPath = new File(testProjectDir, "build/$DISTRIBUTION_ROOT_PATH_FILENAME").text
         new File(distributionPathRootPath)
     }
 
@@ -97,7 +96,7 @@ class PluginSpec extends Specification {
         String driverFileContents = "${name}_${operatingSystem.class.simpleName}_${arch.name()}_$version"
         def driverZip = writeDriverZip(operatingSystem.getExecutableName(binaryName), driverFileContents)
 
-        def configurationFile = driverRepository.newFile('repository.json') << JsonOutput.toJson(
+        def configurationFile = new File(driverRepository, 'repository.json') << JsonOutput.toJson(
             drivers: [
                 [
                     name: name,
@@ -114,7 +113,7 @@ class PluginSpec extends Specification {
 
     @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     private File writeDriverZip(String driverFilename, String driverFileContents) {
-        def zipFile = driverRepository.newFile("${driverFileContents}.zip")
+        def zipFile = new File(driverRepository, "${driverFileContents}.zip")
 
         new ZipOutputStream(new FileOutputStream(zipFile)).withCloseable { stream ->
             stream.putNextEntry(new ZipEntry(driverFilename))

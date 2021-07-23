@@ -17,10 +17,19 @@ package com.github.erdi.gradle.webdriver
 
 class InternetExplorerDriverConfigurationSpec extends AbstractDriverConfigurationSpec {
 
-    final String driverName = 'internetexplorerdriver'
+    @Override
+    String getDriverName() {
+        'internetexplorerdriver'
+    }
 
-    final String driverConfigurationBlockName = 'iedriverserver'
+    @Override
+    String getDriverConfigurationBlockName() {
+        'iedriverserver'
+    }
 
-    final String driverExecutableName = 'IEDriverServer'
+    @Override
+    String getDriverExecutableName() {
+        'IEDriverServer'
+    }
 
 }

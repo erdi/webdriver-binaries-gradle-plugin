@@ -15,18 +15,13 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import com.github.erdi.gradle.webdriver.category.EndToEnd
-import org.junit.experimental.categories.Category
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 import spock.lang.Requires
 import spock.lang.Unroll
 
-import static BinariesVersions.TESTED_CHROMEDRIVER_VERSION
-import static BinariesVersions.TESTED_GECKODRVIER_VERSION
-import static BinariesVersions.TESTED_IEDRIVERSERVER_VERSION
+import static BinariesVersions.*
 import static com.github.erdi.gradle.webdriver.BinariesVersions.TESTED_EDGEDRIVER_VERSION
 
-@Category(EndToEnd)
 class WebDriverBinariesPluginSpec extends PluginSpec {
 
     @Unroll('#binaryName binary is downloaded and test task is configured as per plugin config')
@@ -73,7 +68,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
             plugins {
                 id 'com.github.erdi.webdriver-binaries'
                 id 'groovy'
-                id 'io.ratpack.ratpack-java' version '1.5.0'
+                id 'io.ratpack.ratpack-java' version '1.7.6'
             }
 
             repositories {
@@ -81,11 +76,11 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
             }
 
             dependencies {
-                testCompile 'org.seleniumhq.selenium:$seleniumModule:3.5.3'
+                testImplementation 'org.seleniumhq.selenium:$seleniumModule:3.5.3'
             }
 
             webdriverBinaries {
-                downloadRoot(new File('${downloadRoot.root.absolutePath.replace('\\', '\\\\')}'))
+                downloadRoot(new File('${downloadRoot.absolutePath.replace('\\', '\\\\')}'))
                 $binaryName {
                     version = '$binaryVersion'
                     ${architectureCode(binaryName)}
@@ -111,10 +106,12 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
     private void writeRatpackApplication() {
         buildScript << '''
             dependencies {
-                testCompile ratpack.dependency('test')
+                testImplementation ratpack.dependency('test')
             }
         '''
-        new File(testProjectDir.newFolder('src', 'main', 'java'), 'App.java') << """
+        def sourceDir = new File(testProjectDir, 'src/main/java')
+        sourceDir.mkdirs()
+        new File(sourceDir, 'App.java') << """
             import ratpack.server.RatpackServer;
             import ratpack.http.MediaType;
 
@@ -133,12 +130,14 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
     private void writeGebSpec() {
         buildScript << '''
             dependencies {
-                testCompile 'org.codehaus.groovy:groovy-all:2.4.12'
-                testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
-                testCompile 'org.gebish:geb-spock:1.1.1'
+                testImplementation 'org.codehaus.groovy:groovy-all:2.4.12'
+                testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
+                testImplementation 'org.gebish:geb-spock:1.1.1'
             }
         '''
-        new File(testProjectDir.newFolder('src', 'test', 'groovy'), 'AppSpec.groovy') << '''
+        def testDir = new File(testProjectDir, 'src/test/groovy')
+        testDir.mkdirs()
+        new File(testDir, 'AppSpec.groovy') << '''
             import ratpack.test.MainClassApplicationUnderTest
             import spock.lang.AutoCleanup
             import geb.spock.GebSpec

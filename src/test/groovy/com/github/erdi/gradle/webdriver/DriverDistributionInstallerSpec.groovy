@@ -15,11 +15,11 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import org.ysb33r.grolifant.api.OperatingSystem
-import org.ysb33r.grolifant.api.OperatingSystem.Arch
-import org.ysb33r.grolifant.api.os.MacOsX
+import org.ysb33r.grolifant.api.core.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem.Arch
+import org.ysb33r.grolifant.api.core.os.MacOsX
 
-import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86
 
 class DriverDistributionInstallerSpec extends PluginSpec {
 
@@ -28,8 +28,8 @@ class DriverDistributionInstallerSpec extends PluginSpec {
             import com.github.erdi.gradle.webdriver.*
             import com.github.erdi.gradle.webdriver.chrome.*
             import com.github.erdi.gradle.webdriver.repository.*
-            import org.ysb33r.grolifant.api.os.*
-            import org.ysb33r.grolifant.api.*
+            import org.ysb33r.grolifant.api.core.os.*
+            import org.ysb33r.grolifant.api.core.*
 
             plugins {
                 id 'com.github.erdi.webdriver-binaries'

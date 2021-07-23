@@ -17,6 +17,9 @@ package com.github.erdi.gradle.webdriver
 
 class ChromeDriverConfigurationSpec extends AbstractDriverConfigurationSpec {
 
-    final String driverName = 'chromedriver'
+    @Override
+    String getDriverName() {
+        'chromedriver'
+    }
 
 }
