@@ -30,12 +30,13 @@ class DriverDistributionInstaller extends AbstractDistributionInstaller {
     }
 
     @Override
+    URI uriFromVersion(String version) {
+        uri
+    }
+
+    @Override
     protected File getAndVerifyDistributionRoot(File distDir, String distributionDescription) {
         distDir
     }
 
-    @Override
-    URI uriFromVersion(String version) {
-        uri
-    }
 }

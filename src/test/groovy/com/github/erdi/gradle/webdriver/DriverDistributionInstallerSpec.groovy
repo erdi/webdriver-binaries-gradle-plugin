@@ -74,4 +74,5 @@ class DriverDistributionInstallerSpec extends PluginSpec {
 
         writeOutputBinaryPathTask(code)
     }
+
 }

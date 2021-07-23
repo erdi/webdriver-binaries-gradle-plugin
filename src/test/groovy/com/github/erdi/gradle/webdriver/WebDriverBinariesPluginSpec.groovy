@@ -101,7 +101,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
     }
 
     private String architectureCode(String binaryName) {
-        if (binaryName == 'chromedriver' && OperatingSystem.current().isWindows()) {
+        if (binaryName == 'chromedriver' && OperatingSystem.current().windows) {
             'architecture = "X86"'
         } else {
             ''

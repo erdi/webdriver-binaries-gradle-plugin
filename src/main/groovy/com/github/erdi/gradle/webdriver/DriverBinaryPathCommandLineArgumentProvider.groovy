@@ -31,7 +31,9 @@ class DriverBinaryPathCommandLineArgumentProvider implements CommandLineArgument
     String path
 
     @Override
+    @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     Iterable<String> asArguments() {
         ["-D${propertyName}=${path}"]
     }
+
 }

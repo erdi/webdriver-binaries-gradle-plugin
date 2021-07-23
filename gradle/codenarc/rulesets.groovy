@@ -23,6 +23,21 @@ ruleset {
         TrailingComma {
             enabled = false
         }
+        CompileStatic {
+            enabled = false
+        }
+        ImplicitReturnStatement {
+            enabled = false
+        }
+        VariableTypeRequired {
+            enabled = false
+        }
+        ImplicitClosureParameter {
+            enabled = false
+        }
+        MethodReturnTypeRequired {
+            doNotApplyToClassNames = '*Spec'
+        }
     }
     ruleset("rulesets/design.xml") {
         Instanceof {
@@ -36,9 +51,6 @@ ruleset {
     }
     ruleset("rulesets/exceptions.xml")
     ruleset("rulesets/formatting.xml") {
-        ClassJavadoc {
-            enabled = false
-        }
         SpaceAroundMapEntryColon {
             characterAfterColonRegex = /\s/
         }
@@ -54,7 +66,11 @@ ruleset {
         }
     }
     ruleset("rulesets/generic.xml")
-    ruleset("rulesets/groovyism.xml")
+    ruleset("rulesets/groovyism.xml") {
+        GetterMethodCouldBeProperty {
+            enabled = false
+        }
+    }
     ruleset("rulesets/imports.xml") {
         MisorderedStaticImports {
             comesBefore = false

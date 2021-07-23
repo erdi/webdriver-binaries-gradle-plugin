@@ -17,6 +17,7 @@ package com.github.erdi.gradle.webdriver.repository
 
 import groovy.transform.InheritConstructors
 
+@SuppressWarnings(['ClassEndsWithBlankLine', 'ClassStartsWithBlankLine'])
 @InheritConstructors
 class InvalidDriverUrlsConfigurationException extends Exception {
 }

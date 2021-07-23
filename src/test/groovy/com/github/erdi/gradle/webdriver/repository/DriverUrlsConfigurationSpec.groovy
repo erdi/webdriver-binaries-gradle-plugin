@@ -524,4 +524,5 @@ class DriverUrlsConfigurationSpec extends Specification {
     private void emptyConfiguration() {
         configuration(drivers: [])
     }
+
 }

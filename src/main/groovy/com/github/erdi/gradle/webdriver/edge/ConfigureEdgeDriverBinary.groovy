@@ -24,4 +24,5 @@ class ConfigureEdgeDriverBinary extends ConfigureBinary {
     ConfigureEdgeDriverBinary() {
         super(EDGEDRIVER, 'edgedriver')
     }
+
 }

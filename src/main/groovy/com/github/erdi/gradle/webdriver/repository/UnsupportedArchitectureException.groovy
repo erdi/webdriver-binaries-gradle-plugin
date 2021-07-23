@@ -22,4 +22,5 @@ class UnsupportedArchitectureException extends Exception {
     UnsupportedArchitectureException(Arch arch) {
         super(arch.name())
     }
+
 }

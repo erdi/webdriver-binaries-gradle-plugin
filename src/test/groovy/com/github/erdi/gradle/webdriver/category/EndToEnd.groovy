@@ -15,5 +15,6 @@
  */
 package com.github.erdi.gradle.webdriver.category
 
+@SuppressWarnings(['ClassEndsWithBlankLine', 'ClassStartsWithBlankLine'])
 interface EndToEnd {
 }

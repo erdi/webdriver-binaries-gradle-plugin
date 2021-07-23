@@ -24,4 +24,5 @@ class ConfigureChromeDriverBinary extends ConfigureBinary {
     ConfigureChromeDriverBinary() {
         super(CHROMEDRIVER, 'chromedriver')
     }
+
 }

@@ -75,4 +75,5 @@ class DriverConfiguration {
     Provider<Boolean> getFallbackTo32BitProvider() {
         fallbackTo32Bit
     }
+
 }

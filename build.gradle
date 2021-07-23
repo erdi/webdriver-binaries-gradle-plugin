@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    codenarc('org.codenarc:CodeNarc:1.0') {
+    codenarc('org.codenarc:CodeNarc:2.1.0') {
         exclude module: 'GMetrics'
         exclude group: 'org.codehaus.groovy'
     }

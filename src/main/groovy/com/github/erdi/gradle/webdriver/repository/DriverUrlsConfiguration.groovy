@@ -79,7 +79,7 @@ class DriverUrlsConfiguration {
         new VersionAndUri(driver.version.toString(), new URI(driver.url.toString()))
     }
 
-    private validate(Object configuration) {
+    private void validate(Object configuration) {
         if (!(configuration instanceof Map)) {
             throw new InvalidDriverUrlsConfigurationException('Driver urls configuration file should contain a json object')
         }
@@ -112,4 +112,5 @@ class DriverUrlsConfiguration {
         Optional.ofNullable(PLATFORMS[operatingSystem])
             .orElseThrow { new UnsupportedOperatingSystemException(operatingSystem) }
     }
+
 }

@@ -42,4 +42,5 @@ class BinaryAwareJavaForkOptions implements DriverBinaryAware {
     void setDriverBinaryPath(String binaryPath) {
         throw new UnsupportedOperationException()
     }
+
 }

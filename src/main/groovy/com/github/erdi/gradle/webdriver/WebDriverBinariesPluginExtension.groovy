@@ -144,6 +144,10 @@ class WebDriverBinariesPluginExtension {
         configure(tasks.&all)
     }
 
+    void setFallbackTo32Bit(boolean fallbackTo32Bit) {
+        this.fallbackTo32Bit.set(fallbackTo32Bit)
+    }
+
     private <T extends Task & JavaForkOptions> void configure(Action<Action<T>> taskConfigurationAction) {
         project.tasks.withType(ConfigureBinary) { ConfigureBinary configureBinaryTask ->
             taskConfigurationAction.execute { T javaForkOptions ->
@@ -153,7 +157,4 @@ class WebDriverBinariesPluginExtension {
         }
     }
 
-    void setFallbackTo32Bit(boolean fallbackTo32Bit) {
-        this.fallbackTo32Bit.set(fallbackTo32Bit)
-    }
 }

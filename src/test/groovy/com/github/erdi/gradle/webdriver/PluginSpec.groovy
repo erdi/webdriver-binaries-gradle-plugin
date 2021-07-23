@@ -89,6 +89,7 @@ class PluginSpec extends Specification {
         new File(distributionRoot, operatingSystem.getExecutableName(binaryName))
     }
 
+    @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     protected Repository setupRepository(
         String name, String binaryName = name, String version, OperatingSystem operatingSystem = OperatingSystem.current(),
         OperatingSystem.Arch arch = OperatingSystem.current().arch
@@ -111,6 +112,7 @@ class PluginSpec extends Specification {
         new Repository(configurationFile: configurationFile, driverFileContents: driverFileContents)
     }
 
+    @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     private File writeDriverZip(String driverFilename, String driverFileContents) {
         def zipFile = driverRepository.newFile("${driverFileContents}.zip")
 
@@ -124,7 +126,10 @@ class PluginSpec extends Specification {
     }
 
     protected static class Repository {
+
         File configurationFile
         String driverFileContents
+
     }
+
 }

@@ -29,4 +29,5 @@ enum WebDriverBinaryMetadata {
         this.binaryName = binaryName
         this.systemProperty = systemProperty
     }
+
 }

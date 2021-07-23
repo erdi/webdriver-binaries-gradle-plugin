@@ -22,4 +22,5 @@ class UnsupportedOperatingSystemException extends Exception {
     UnsupportedOperatingSystemException(OperatingSystem os) {
         super(os.class.simpleName)
     }
+
 }

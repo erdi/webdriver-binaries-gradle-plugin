@@ -24,4 +24,5 @@ class ConfigureGeckoDriverBinary extends ConfigureBinary {
     ConfigureGeckoDriverBinary() {
         super(GECKODRIVER, 'geckodriver')
     }
+
 }

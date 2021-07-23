@@ -147,4 +147,5 @@ class ConfigureBinary extends DefaultTask {
             .fallbackTo32Bit(fallbackTo32Bit)
             .build()
     }
+
 }

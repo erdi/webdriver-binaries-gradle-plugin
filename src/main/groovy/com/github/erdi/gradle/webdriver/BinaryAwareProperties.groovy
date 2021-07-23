@@ -29,4 +29,5 @@ class BinaryAwareProperties implements DriverBinaryAware {
     void setDriverBinaryPath(String binaryPath) {
         systemProperties[systemPropertyName] = binaryPath
     }
+
 }

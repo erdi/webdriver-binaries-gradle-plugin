@@ -79,12 +79,14 @@ class ExtendedIdeaPluginIntegrationSpec extends PluginSpec {
         """
     }
 
+    @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     private Node parseJunitConf() {
         def node = new XmlParser().parse(new File(testProjectDir.root, "${TEST_PROJECT_NAME}.iws"))
         def runManager = node.component.find { it.@name == 'RunManager' }
         runManager.configuration.find { it.@default == 'true' && it.'@type' == 'JUnit' }
     }
 
+    @SuppressWarnings(['SpaceAfterClosingBrace'])
     private String getJunitConfVmParams() {
         parseJunitConf().option.find { it.@name == 'VM_PARAMETERS' }.@value
     }
