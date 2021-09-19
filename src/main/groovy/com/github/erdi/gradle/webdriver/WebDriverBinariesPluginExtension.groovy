@@ -16,10 +16,10 @@
 package com.github.erdi.gradle.webdriver
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
-import org.gradle.api.Action
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.resources.TextResource
@@ -31,6 +31,7 @@ class WebDriverBinariesPluginExtension {
         'https://raw.githubusercontent.com/webdriverextensions/webdriverextensions-maven-plugin-repository/master/repository-3.0.json'
 
     private final Project project
+    private final ObjectFactory objectFactory
     private final Property<File> downloadRoot
     private final Property<TextResource> driverUrlsConfiguration
     private final Property<Boolean> fallbackTo32Bit
@@ -43,7 +44,7 @@ class WebDriverBinariesPluginExtension {
     WebDriverBinariesPluginExtension(Project project) {
         this.project = project
 
-        def objectFactory = project.objects
+        this.objectFactory = project.objects
         this.driverUrlsConfiguration = objectFactory.property(TextResource)
         this.downloadRoot = objectFactory.property(File)
         this.fallbackTo32Bit = objectFactory.property(Boolean)
@@ -137,23 +138,26 @@ class WebDriverBinariesPluginExtension {
     }
 
     public <T extends Task & JavaForkOptions> void configureTask(T task) {
-        configure(task.&each)
+        def tasks = objectFactory.domainObjectSet(Task) as DomainObjectCollection<T>
+        tasks.add(task)
+        configureTasks(tasks)
     }
 
     public <T extends Task & JavaForkOptions> void configureTasks(DomainObjectCollection<T> tasks) {
-        configure(tasks.&all)
+        configure(tasks)
     }
 
     void setFallbackTo32Bit(boolean fallbackTo32Bit) {
         this.fallbackTo32Bit.set(fallbackTo32Bit)
     }
 
-    private <T extends Task & JavaForkOptions> void configure(Action<Action<T>> taskConfigurationAction) {
-        project.tasks.withType(ConfigureBinary) { ConfigureBinary configureBinaryTask ->
-            taskConfigurationAction.execute { T javaForkOptions ->
-                javaForkOptions.dependsOn(configureBinaryTask)
-                configureBinaryTask.addBinaryAware(new BinaryAwareJavaForkOptions(javaForkOptions, configureBinaryTask.webDriverBinaryMetadata.systemProperty))
-            }
+    private <T extends Task & JavaForkOptions> void configure(DomainObjectCollection<T> tasks) {
+        def configureBinaryTasks = project.tasks.withType(ConfigureBinary)
+        tasks.configureEach { T javaForkOptions ->
+            javaForkOptions.dependsOn(configureBinaryTasks)
+        }
+        configureBinaryTasks.configureEach { ConfigureBinary configureBinary ->
+            configureBinary.addBinaryAware(new BinaryAwareJavaForkOptions(tasks, configureBinary.webDriverBinaryMetadata.systemProperty))
         }
     }
 

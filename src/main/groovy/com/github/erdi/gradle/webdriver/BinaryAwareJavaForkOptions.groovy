@@ -19,17 +19,17 @@ import org.gradle.process.JavaForkOptions
 
 class BinaryAwareJavaForkOptions implements DriverBinaryAware {
 
-    private final JavaForkOptions javaForkOptions
+    private final Collection<JavaForkOptions> javaForkOptions
     private final String propertyName
 
-    BinaryAwareJavaForkOptions(JavaForkOptions javaForkOptions, String propertyName) {
+    BinaryAwareJavaForkOptions(Collection<JavaForkOptions> javaForkOptions, String propertyName) {
         this.javaForkOptions = javaForkOptions
         this.propertyName = propertyName
     }
 
     @Override
     void setDriverBinaryPathAndVersion(String binaryPath, String version) {
-        javaForkOptions.jvmArgumentProviders.add(
+        javaForkOptions*.jvmArgumentProviders*.add(
             new DriverBinaryPathCommandLineArgumentProvider(
                 propertyName: propertyName,
                 version: version,
