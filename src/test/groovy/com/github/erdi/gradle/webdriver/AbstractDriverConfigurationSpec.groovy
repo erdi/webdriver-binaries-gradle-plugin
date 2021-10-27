@@ -15,6 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver
 
+import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
 import org.ysb33r.grolifant.api.core.OperatingSystem
 import spock.lang.Unroll
 
@@ -88,7 +89,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         pluginDownloadedBinaryContents == repository.driverFileContents
 
         where:
-        architecture << [X86, X86_64]
+        architecture << DriverUrlsConfiguration.BITS.keySet()
 
         version = '2.42.0'
         os = OperatingSystem.current()

@@ -46,7 +46,7 @@ Each method takes a closure which delegates to an object with the following prop
 | --- | --- | --- |
 | `version` | String | The exact version of binary to be used by the project. No binary will be downloaded if neither this nor `versionRegexp` property is specified. |
 | `versionRegexp` | String | The regular expression for the version - the highest matching version of binary will be used by the project. No binary will be downloaded if neither this nor `version` property is specified. |
-| `architecture` | String | The architecture of the binary to be used. The allowed values are `X86` and `X86_64`. Defaults to the architecture of the OS running the build. |
+| `architecture` | String | The architecture of the binary to be used. The allowed values are `X86`, `X86_64` and `ARM64`. Defaults to the architecture of the OS running the build. |
 | `fallbackTo32Bit` |`boolean`| Whether or not to fallback to a 32bit version of the driver if a 64bit version is not found. Defaults to `false`. |
 
 Example usage:
