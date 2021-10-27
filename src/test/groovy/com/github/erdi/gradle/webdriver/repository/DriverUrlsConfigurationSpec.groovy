@@ -235,6 +235,7 @@ class DriverUrlsConfigurationSpec extends Specification {
             DriverDownloadSpecification.builder()
                 .os(Linux.INSTANCE)
                 .arch(unsupportedArch)
+                .version(Pattern.quote('1.2.3'))
                 .build()
         )
 
@@ -245,7 +246,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         e.message == unsupportedArch.name()
 
         where:
-        unsupportedArch << (OperatingSystem.Arch.values() - [X86, X86_64])
+        unsupportedArch << (OperatingSystem.Arch.values() - DriverUrlsConfiguration.BITS.keySet())
     }
 
     @Unroll

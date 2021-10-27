@@ -24,13 +24,14 @@ import org.ysb33r.grolifant.api.core.os.Linux
 import org.ysb33r.grolifant.api.core.os.MacOsX
 import org.ysb33r.grolifant.api.core.os.Windows
 
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.ARM64
 import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86
 import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86_64
 
 class DriverUrlsConfiguration {
 
     public static final Map<OperatingSystem, String> PLATFORMS = [(Linux.INSTANCE): 'linux', (Windows.INSTANCE): 'windows', (MacOsX.INSTANCE): 'mac']
-    public static final Map<OperatingSystem.Arch, String> BITS = [(X86): '32', (X86_64): '64']
+    public static final Map<OperatingSystem.Arch, String> BITS = [(X86): '32', (X86_64): '64', (ARM64): 'arm64']
 
     private final List<Map> drivers
 

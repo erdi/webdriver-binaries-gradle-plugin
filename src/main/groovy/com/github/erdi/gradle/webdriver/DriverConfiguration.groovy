@@ -15,6 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver
 
+import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -38,8 +39,11 @@ class DriverConfiguration {
     }
 
     void setArchitecture(String architecture) {
-        if (!(architecture in ['X86', 'X86_64'])) {
-            throw new IllegalArgumentException("Unsupported architecture value '$architecture'. Supported values are 'X86' and 'X86_64'.")
+        def supportedArchitectures = DriverUrlsConfiguration.BITS.keySet()*.toString()
+        if (!(architecture in supportedArchitectures)) {
+            def quotedArchitectures = supportedArchitectures.collect { "'${it}'" }
+            def supportedArchitecturesString = [quotedArchitectures[0..-2].join(", "), quotedArchitectures.last()].join(' and ')
+            throw new IllegalArgumentException("Unsupported architecture value '$architecture'. Supported values are ${supportedArchitecturesString}.")
         }
         this.architecture.set(OperatingSystem.Arch.valueOf(architecture))
     }
