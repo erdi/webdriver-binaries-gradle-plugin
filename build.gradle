@@ -30,7 +30,7 @@ dependencies {
     }
 }
 
-version = '2.6'
+version = '2.7'
 
 codenarc.configFile = file('gradle/codenarc/rulesets.groovy')
 
