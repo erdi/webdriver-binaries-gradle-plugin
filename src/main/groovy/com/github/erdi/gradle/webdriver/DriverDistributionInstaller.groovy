@@ -17,20 +17,21 @@ package com.github.erdi.gradle.webdriver
 
 import com.github.erdi.gradle.webdriver.repository.VersionAndUri
 import org.gradle.api.Project
-import org.ysb33r.grolifant.api.AbstractDistributionInstaller
+import org.ysb33r.grolifant.api.core.ProjectOperations
+import org.ysb33r.grolifant.api.v4.downloader.AbstractDistributionInstaller
 
 class DriverDistributionInstaller extends AbstractDistributionInstaller {
 
     private final URI uri
 
     DriverDistributionInstaller(Project project, File downloadRoot, String driverName, VersionAndUri versionAndUri) {
-        super(driverName, versionAndUri.version, "webdriver/$driverName/$versionAndUri.version", project)
-        this.downloadRoot = downloadRoot
+        super(driverName, "webdriver/$driverName/$versionAndUri.version", ProjectOperations.create(project))
+        this.downloadRoot = downloadRoot ?: projectOperations.gradleUserHomeDir
         this.uri = versionAndUri.uri
     }
 
     @Override
-    protected File getAndVerifyDistributionRoot(File distDir, String distributionDescription) {
+    protected File verifyDistributionRoot(File distDir) {
         distDir
     }
 

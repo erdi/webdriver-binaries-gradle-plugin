@@ -21,7 +21,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 import spock.lang.Specification
 
 import java.nio.charset.StandardCharsets
@@ -57,7 +57,7 @@ class PluginSpec extends Specification {
                     buildDir.mkdirs()
                     def installer = $installerConstructorCode
 
-                    new File(buildDir, '$DISTRIBUTION_ROOT_PATH_FILENAME') << installer.distributionRoot.absolutePath
+                    new File(buildDir, '$DISTRIBUTION_ROOT_PATH_FILENAME') << installer.getDistributionRoot(null).get().absolutePath
                 }
             }
         """

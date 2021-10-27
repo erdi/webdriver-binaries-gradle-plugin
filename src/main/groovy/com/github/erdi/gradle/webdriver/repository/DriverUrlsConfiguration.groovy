@@ -19,13 +19,13 @@ import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import groovy.json.JsonException
 import groovy.json.JsonSlurper
 import org.apache.maven.artifact.versioning.ComparableVersion
-import org.ysb33r.grolifant.api.OperatingSystem
-import org.ysb33r.grolifant.api.os.Linux
-import org.ysb33r.grolifant.api.os.MacOsX
-import org.ysb33r.grolifant.api.os.Windows
+import org.ysb33r.grolifant.api.core.OperatingSystem
+import org.ysb33r.grolifant.api.core.os.Linux
+import org.ysb33r.grolifant.api.core.os.MacOsX
+import org.ysb33r.grolifant.api.core.os.Windows
 
-import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86
-import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86_64
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86_64
 
 class DriverUrlsConfiguration {
 

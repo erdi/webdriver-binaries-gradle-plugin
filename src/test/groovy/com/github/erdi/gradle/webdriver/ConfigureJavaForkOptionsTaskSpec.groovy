@@ -15,7 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 import spock.lang.Unroll
 
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.CHROMEDRIVER

@@ -15,7 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver.repository
 
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 
 class UnsupportedOperatingSystemException extends Exception {
 

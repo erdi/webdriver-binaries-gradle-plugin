@@ -52,6 +52,9 @@ ruleset {
         SpaceBeforeClosingBrace {
             ignoreEmptyBlock = true
         }
+        ClosureStatementOnOpeningLineOfMultipleLineClosure {
+            enabled = false
+        }
     }
     ruleset("rulesets/generic.xml")
     ruleset("rulesets/groovyism.xml")

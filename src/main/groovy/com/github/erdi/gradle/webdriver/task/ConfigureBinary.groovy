@@ -26,8 +26,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.ysb33r.grolifant.api.OperatingSystem
-import org.ysb33r.grolifant.api.OperatingSystem.Arch
+import org.ysb33r.grolifant.api.core.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem.Arch
 
 class ConfigureBinary extends DefaultTask {
 
@@ -123,7 +123,8 @@ class ConfigureBinary extends DefaultTask {
     void configure() {
         def versionAndUri = new DriverUrlsConfiguration(driverUrlsConfiguration.asFile()).versionAndUriFor(downloadSpec())
         def installer = new DriverDistributionInstaller(project, downloadRoot, driverName, versionAndUri)
-        def binaryFile = new File(installer.distributionRoot, operatingSystem.getExecutableName(webDriverBinaryMetadata.binaryName))
+        def distributionRoot = installer.getDistributionRoot(versionAndUri.version).get()
+        def binaryFile = new File(distributionRoot, operatingSystem.getExecutableName(webDriverBinaryMetadata.binaryName))
         def binaryAbsolutePath = binaryFile.absolutePath
         binaryAwares*.setDriverBinaryPathAndVersion(binaryAbsolutePath, versionAndUri.version)
     }

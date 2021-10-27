@@ -19,22 +19,16 @@ import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import groovy.json.JsonException
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.ysb33r.grolifant.api.OperatingSystem
-import org.ysb33r.grolifant.api.os.FreeBSD
-import org.ysb33r.grolifant.api.os.GenericUnix
-import org.ysb33r.grolifant.api.os.Linux
-import org.ysb33r.grolifant.api.os.MacOsX
-import org.ysb33r.grolifant.api.os.NetBSD
-import org.ysb33r.grolifant.api.os.Solaris
-import org.ysb33r.grolifant.api.os.Windows
+import org.ysb33r.grolifant.api.core.OperatingSystem
+import org.ysb33r.grolifant.api.core.os.*
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.regex.Pattern
 
 import static groovy.json.JsonOutput.toJson
-import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86
-import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86_64
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86_64
 
 class DriverUrlsConfigurationSpec extends Specification {
 
@@ -228,7 +222,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         e.message == unsupportedOs.class.simpleName
 
         where:
-        unsupportedOs << [NetBSD.INSTANCE, FreeBSD.INSTANCE, Solaris.INSTANCE, GenericUnix.INSTANCE]
+        unsupportedOs << [NetBSD.INSTANCE, FreeBSD.INSTANCE, GenericUnix.INSTANCE]
     }
 
     @Unroll

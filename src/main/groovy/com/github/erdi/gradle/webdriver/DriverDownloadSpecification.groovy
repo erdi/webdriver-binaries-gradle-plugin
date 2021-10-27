@@ -16,7 +16,7 @@
 package com.github.erdi.gradle.webdriver
 
 import groovy.transform.builder.Builder
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 
 class DriverDownloadSpecification {
 

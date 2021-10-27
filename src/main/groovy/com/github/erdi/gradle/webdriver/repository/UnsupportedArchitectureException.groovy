@@ -15,7 +15,7 @@
  */
 package com.github.erdi.gradle.webdriver.repository
 
-import org.ysb33r.grolifant.api.OperatingSystem.Arch
+import org.ysb33r.grolifant.api.core.OperatingSystem.Arch
 
 class UnsupportedArchitectureException extends Exception {
 

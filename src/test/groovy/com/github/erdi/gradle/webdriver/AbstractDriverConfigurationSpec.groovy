@@ -15,11 +15,11 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import org.ysb33r.grolifant.api.OperatingSystem
+import org.ysb33r.grolifant.api.core.OperatingSystem
 import spock.lang.Unroll
 
-import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86
-import static org.ysb33r.grolifant.api.OperatingSystem.Arch.X86_64
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86_64
 
 abstract class AbstractDriverConfigurationSpec extends PluginSpec {
 
