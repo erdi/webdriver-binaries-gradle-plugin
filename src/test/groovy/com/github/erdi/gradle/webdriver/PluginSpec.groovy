@@ -103,7 +103,8 @@ class PluginSpec extends Specification {
                     platform: DriverUrlsConfiguration.PLATFORMS[operatingSystem],
                     bit: DriverUrlsConfiguration.BITS[arch],
                     version: version,
-                    url: driverZip.toURI().toString()
+                    url: driverZip.toURI().toString(),
+                    arch: DriverUrlsConfiguration.ARCHS[arch]
                 ]
             ]
         )

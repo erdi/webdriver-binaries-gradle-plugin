@@ -31,7 +31,10 @@ import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86_64
 class DriverUrlsConfiguration {
 
     public static final Map<OperatingSystem, String> PLATFORMS = [(Linux.INSTANCE): 'linux', (Windows.INSTANCE): 'windows', (MacOsX.INSTANCE): 'mac']
-    public static final Map<OperatingSystem.Arch, String> BITS = [(X86): '32', (X86_64): '64', (ARM64): 'arm64']
+
+    @SuppressWarnings('DuplicateStringLiteral')
+    public static final Map<OperatingSystem.Arch, String> BITS = [(X86): '32', (X86_64): '64', (ARM64): '64']
+    public static final Map<OperatingSystem.Arch, String> ARCHS = [(X86): 'x86', (X86_64): 'amd64', (ARM64): 'aarch64']
 
     private final List<Map> drivers
 
@@ -52,19 +55,21 @@ class DriverUrlsConfiguration {
             architectures << X86
         }
         def platform = platform(spec.os)
-        def bits = architectures.collect { bit(it) }
+        def bits = architectures.collect { bit(it) } as Set
+        def archs = architectures.collect { arch(it) } as Set
         def versionPattern = ~spec.version
 
         def matchingDrivers = drivers.findAll {
             it.name == spec.name &&
                 it.platform == platform &&
                 versionPattern.matcher(it.version.toString()).matches() &&
-                bits.contains(it.bit)
+                bits.contains(it.bit) &&
+                (it.arch == null || archs.contains(it.arch))
         }.sort { left, right ->
             def leftComparableVersion = new ComparableVersion(left.version.toString())
             def rightComparableVersion = new ComparableVersion(right.version.toString())
 
-            rightComparableVersion <=> leftComparableVersion ?: (right.bit <=> left.bit)
+            rightComparableVersion <=> leftComparableVersion ?: (right.arch <=> left.arch) ?: (right.bit <=> left.bit)
         }
 
         if (!matchingDrivers) {
@@ -73,6 +78,7 @@ class DriverUrlsConfiguration {
                 .version(spec.version)
                 .platform(platform)
                 .bits(bits)
+                .archs(archs)
                 .build()
         }
 
@@ -102,6 +108,11 @@ class DriverUrlsConfiguration {
             def message = '''Each driver entry in driver urls configuration file should contain a 'url' key with a string value'''
             throw new InvalidDriverUrlsConfigurationException(message)
         }
+    }
+
+    private String arch(OperatingSystem.Arch arch) {
+        Optional.ofNullable(ARCHS[arch])
+        .orElseThrow { new UnsupportedArchitectureException(arch) }
     }
 
     private String bit(OperatingSystem.Arch arch) {

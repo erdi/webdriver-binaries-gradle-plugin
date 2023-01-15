@@ -28,6 +28,7 @@ import java.util.regex.Pattern
 import static groovy.json.JsonOutput.toJson
 import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86
 import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86_64
+import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.ARM64
 
 class DriverUrlsConfigurationSpec extends Specification {
 
@@ -164,13 +165,14 @@ class DriverUrlsConfigurationSpec extends Specification {
         DriverUrlNotFoundException e = thrown()
 
         and:
-        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "$platform", bit: "$bit"/
+        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "$platform", bit: "$bit", arch: "$archString"/
 
         where:
-        name                     | version  | os               | platform  | arch   | bit
-        'chromedriver'           | '2.42.0' | Linux.INSTANCE   | 'linux'   | X86    | '32'
-        'geckodriver'            | '0.22.0' | MacOsX.INSTANCE  | 'mac'     | X86_64 | '64'
-        'internetexplorerdriver' | '3.14.0' | Windows.INSTANCE | 'windows' | X86_64 | '64'
+        name                     | version  | os               | platform  | arch   | archString | bit
+        'chromedriver'           | '2.42.0' | Linux.INSTANCE   | 'linux'   | X86    | 'x86'      | '32'
+        'geckodriver'            | '0.22.0' | MacOsX.INSTANCE  | 'mac'     | X86_64 | 'amd64'    | '64'
+        'geckodriver'            | '0.22.0' | MacOsX.INSTANCE  | 'mac'     | ARM64  | 'aarch64'  | '64'
+        'internetexplorerdriver' | '3.14.0' | Windows.INSTANCE | 'windows' | X86_64 | 'amd64'    | '64'
     }
 
     @Unroll
@@ -193,12 +195,13 @@ class DriverUrlsConfigurationSpec extends Specification {
         DriverUrlNotFoundException e = thrown()
 
         and:
-        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "$platform", bit: "$bit"/
+        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "$platform", bit: "$bit", arch: "$archString"/
 
         where:
-        name           | version  | os              | platform | arch   | bit
-        'chromedriver' | '2.42.0' | Linux.INSTANCE  | 'linux'  | X86    | '32'
-        'geckodriver'  | '0.22.0' | MacOsX.INSTANCE | 'mac'    | X86_64 | '64 or 32'
+        name           | version  | os              | platform | arch   | archString       | bit
+        'chromedriver' | '2.42.0' | Linux.INSTANCE  | 'linux'  | X86    | 'x86'            | '32'
+        'geckodriver'  | '0.22.0' | MacOsX.INSTANCE | 'mac'    | X86_64 | 'amd64 or x86'   | '64 or 32'
+        'geckodriver'  | '0.22.0' | MacOsX.INSTANCE | 'mac'    | ARM64  | 'aarch64 or x86' | '64 or 32'
     }
 
     @Unroll
@@ -245,7 +248,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         e.message == unsupportedArch.name()
 
         where:
-        unsupportedArch << (OperatingSystem.Arch.values() - DriverUrlsConfiguration.BITS.keySet())
+        unsupportedArch << (OperatingSystem.Arch.values() - DriverUrlsConfiguration.ARCHS.keySet())
     }
 
     @Unroll
@@ -489,7 +492,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         DriverUrlNotFoundException e = thrown()
 
         and:
-        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "${baseDriverProperties.platform}", bit: "${DriverUrlsConfiguration.BITS[arch]}"/
+        e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "${baseDriverProperties.platform}", bit: "${DriverUrlsConfiguration.BITS[arch]}", arch: "${DriverUrlsConfiguration.ARCHS[arch]}"/
 
         where:
         arch = X86_64
@@ -501,6 +504,70 @@ class DriverUrlsConfigurationSpec extends Specification {
             version: version,
             platform: DriverUrlsConfiguration.PLATFORMS[os]
         ]
+    }
+
+    def 'the url that matches the architecture is used when urls for multiple 64 bit architectures are available'() {
+        given:
+        def drivers = [
+            baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[ARM64], arch: DriverUrlsConfiguration.ARCHS[ARM64], url: urlFor64BitArm],
+            baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86_64], url: 'https://amd.64bit.com']
+        ]
+
+        and:
+        configuration(drivers: drivers)
+
+        expect:
+        parseConfiguration().versionAndUriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(Pattern.quote(version))
+                .os(os)
+                .arch(ARM64)
+                .build()
+        ).uri.toString() == urlFor64BitArm
+
+        where:
+        name = 'chromedriver'
+        version = '2.42.0'
+        os = Linux.INSTANCE
+        baseDriverProperties = [
+            name: name,
+            version: version,
+            platform: DriverUrlsConfiguration.PLATFORMS[os]
+        ]
+        urlFor64BitArm = 'https://arm.64bit.com'
+    }
+
+    def 'the generic url is used over incompatible architectures when urls for multiple 64 bit architectures are available'() {
+        given:
+        def drivers = [
+            baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[ARM64], arch: DriverUrlsConfiguration.ARCHS[ARM64], url: 'https://arm.64bit.com'],
+            baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86_64], url: urlFor64BitAmd]
+        ]
+
+        and:
+        configuration(drivers: drivers)
+
+        expect:
+        parseConfiguration().versionAndUriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(Pattern.quote(version))
+                .os(os)
+                .arch(X86_64)
+                .build()
+        ).uri.toString() == urlFor64BitAmd
+
+        where:
+        name = 'chromedriver'
+        version = '2.42.0'
+        os = Linux.INSTANCE
+        baseDriverProperties = [
+            name: name,
+            version: version,
+            platform: DriverUrlsConfiguration.PLATFORMS[os]
+        ]
+        urlFor64BitAmd = 'https://amd.64bit.com'
     }
 
     DriverUrlsConfiguration parseConfiguration() {

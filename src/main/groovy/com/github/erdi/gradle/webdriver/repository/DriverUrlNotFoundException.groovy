@@ -21,8 +21,8 @@ class DriverUrlNotFoundException extends Exception {
 
     @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     @Builder
-    private DriverUrlNotFoundException(String name, String version, String platform, Collection<String> bits) {
-        super(/Driver url not found for name: "$name", version regexp: "$version", platform: "$platform", bit: "${bits.join(' or ')}"/)
+    private DriverUrlNotFoundException(String name, String version, String platform, Collection<String> bits, Collection<String> archs) {
+        super(/Driver url not found for name: "$name", version regexp: "$version", platform: "$platform", bit: "${bits.join(' or ')}", arch: "${archs.join(' or ')}"/)
     }
 
 }
