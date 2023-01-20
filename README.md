@@ -138,8 +138,7 @@ The above will ensure that locations of driver binaries are picked up when runni
 
 ### Importing into IDE
 
-The project is setup to generate IntelliJ configuration files.
-Simply run `./gradlew idea` and open the generated `*.ipr` file in IntelliJ.
+The project is setup to work with IntelliJ IDEA, simply import it using the native IntelliJ IDEA import for Gradle projects.
 
 ### Tests
 

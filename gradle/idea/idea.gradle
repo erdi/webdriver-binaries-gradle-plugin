@@ -1,7 +1,0 @@
-idea {
-    extended {
-        workspace.junit.tasks = ['classes', 'pluginUnderTestMetadata']
-
-        project.components.file "gradle/idea/codeStyle.xml"
-    }
-}
