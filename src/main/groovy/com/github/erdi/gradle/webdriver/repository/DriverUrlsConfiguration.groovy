@@ -51,7 +51,7 @@ class DriverUrlsConfiguration {
 
     VersionAndUri versionAndUriFor(DriverDownloadSpecification spec) {
         def architectures = [spec.arch] as Set
-        if (spec.fallbackTo32Bit) {
+        if (spec.fallbackTo32Bit && architectures.contains(X86_64)) {
             architectures << X86
         }
         def platform = platform(spec.os)
@@ -64,12 +64,12 @@ class DriverUrlsConfiguration {
                 it.platform == platform &&
                 versionPattern.matcher(it.version.toString()).matches() &&
                 bits.contains(it.bit) &&
-                (it.arch == null || archs.contains(it.arch))
+                ((it.arch == null && architectures.intersect([X86, X86_64])) || archs.contains(it.arch))
         }.sort { left, right ->
             def leftComparableVersion = new ComparableVersion(left.version.toString())
             def rightComparableVersion = new ComparableVersion(right.version.toString())
 
-            rightComparableVersion <=> leftComparableVersion ?: (right.arch <=> left.arch) ?: (right.bit <=> left.bit)
+            rightComparableVersion <=> leftComparableVersion ?: (right.bit <=> left.bit)
         }
 
         if (!matchingDrivers) {

@@ -198,10 +198,10 @@ class DriverUrlsConfigurationSpec extends Specification {
         e.message == /Driver url not found for name: "$name", version regexp: "${Pattern.quote(version)}", platform: "$platform", bit: "$bit", arch: "$archString"/
 
         where:
-        name           | version  | os              | platform | arch   | archString       | bit
-        'chromedriver' | '2.42.0' | Linux.INSTANCE  | 'linux'  | X86    | 'x86'            | '32'
-        'geckodriver'  | '0.22.0' | MacOsX.INSTANCE | 'mac'    | X86_64 | 'amd64 or x86'   | '64 or 32'
-        'geckodriver'  | '0.22.0' | MacOsX.INSTANCE | 'mac'    | ARM64  | 'aarch64 or x86' | '64 or 32'
+        name           | version  | os              | platform | arch   | archString     | bit
+        'chromedriver' | '2.42.0' | Linux.INSTANCE  | 'linux'  | X86    | 'x86'          | '32'
+        'geckodriver'  | '0.22.0' | MacOsX.INSTANCE | 'mac'    | X86_64 | 'amd64 or x86' | '64 or 32'
+        'geckodriver'  | '0.22.0' | MacOsX.INSTANCE | 'mac'    | ARM64  | 'aarch64'      | '64'
     }
 
     @Unroll
@@ -385,8 +385,10 @@ class DriverUrlsConfigurationSpec extends Specification {
     @Unroll
     def 'urls are searched based on architecture'() {
         given:
-        def drivers = DriverUrlsConfiguration.BITS.values().collect { bit ->
-            baseDriverProperties + [bit: bit, url: "http://${bit}.com"]
+        def drivers = DriverUrlsConfiguration.ARCHS.keySet().collect {
+            def archString = DriverUrlsConfiguration.ARCHS[it]
+            def bit = DriverUrlsConfiguration.BITS[it]
+            baseDriverProperties + [bit: bit, arch: archString, url: "http://${archString}.${bit}.com"]
         }
 
         and:
@@ -400,10 +402,10 @@ class DriverUrlsConfigurationSpec extends Specification {
                 .os(os)
                 .arch(arch)
                 .build()
-        ).uri.toString() == "http://${DriverUrlsConfiguration.BITS[arch]}.com"
+        ).uri.toString() == "http://${DriverUrlsConfiguration.ARCHS[arch]}.${DriverUrlsConfiguration.BITS[arch]}.com"
 
         where:
-        arch << DriverUrlsConfiguration.BITS.keySet()
+        arch << DriverUrlsConfiguration.ARCHS.keySet()
         name = 'chromedriver'
         version = '2.42.0'
         os = Linux.INSTANCE
@@ -568,6 +570,75 @@ class DriverUrlsConfigurationSpec extends Specification {
             platform: DriverUrlsConfiguration.PLATFORMS[os]
         ]
         urlFor64BitAmd = 'https://amd.64bit.com'
+    }
+
+    def 'url selection does not fall back to the generic architecture when the arm architecture is requested'() {
+        given:
+        def drivers = [
+            [
+                name: name,
+                version: version,
+                platform: DriverUrlsConfiguration.PLATFORMS[os],
+                bit: DriverUrlsConfiguration.BITS[X86_64],
+                url: 'http://fallback.com'
+            ]
+        ]
+
+        and:
+        configuration(drivers: drivers)
+
+        when:
+        parseConfiguration().versionAndUriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(Pattern.quote(version))
+                .os(os)
+                .arch(ARM64)
+                .build()
+        )
+
+        then:
+        thrown(DriverUrlNotFoundException)
+
+        where:
+        name = 'chromedriver'
+        version = '2.42.0'
+        os = Linux.INSTANCE
+    }
+
+    def 'url selection does not fall back to intel 32 bit architecture when the arm architecture is requested with 32 bit falback enabled'() {
+        given:
+        def drivers = [
+            [
+                name: name,
+                version: version,
+                platform: DriverUrlsConfiguration.PLATFORMS[os],
+                bit: DriverUrlsConfiguration.BITS[X86],
+                url: 'http://fallback.com'
+            ]
+        ]
+
+        and:
+        configuration(drivers: drivers)
+
+        when:
+        parseConfiguration().versionAndUriFor(
+            DriverDownloadSpecification.builder()
+                .name(name)
+                .version(Pattern.quote(version))
+                .os(os)
+                .arch(ARM64)
+                .fallbackTo32Bit(true)
+                .build()
+        )
+
+        then:
+        thrown(DriverUrlNotFoundException)
+
+        where:
+        name = 'chromedriver'
+        version = '2.42.0'
+        os = Linux.INSTANCE
     }
 
     DriverUrlsConfiguration parseConfiguration() {
