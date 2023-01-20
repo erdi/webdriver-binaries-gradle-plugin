@@ -61,7 +61,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
             plugins {
                 id 'com.github.erdi.webdriver-binaries'
                 id 'groovy'
-                id 'io.ratpack.ratpack-java' version '1.7.6'
+                id 'io.ratpack.ratpack-java' version '1.9.0'
             }
 
             repositories {
