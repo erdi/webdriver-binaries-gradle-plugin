@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+import org.gradle.internal.enterprise.GradleEnterprisePluginConfig
 
 plugins {
     idea
@@ -14,11 +15,10 @@ repositories {
 }
 
 dependencies {
-    codenarc("org.codenarc:CodeNarc:2.1.0") {
+    codenarc("org.codenarc:CodeNarc:3.2.0") {
         exclude(module = "GMetrics")
-        exclude(group = "org.codehaus.groovy")
     }
-    codenarc("org.codehaus.groovy:groovy-all:3.0.7")
+    codenarc("org.codehaus.groovy:groovy-all:3.0.13")
 
     implementation("org.ysb33r.gradle:grolifant50:1.3.3")
     implementation("org.apache.maven:maven-artifact:3.6.3")
