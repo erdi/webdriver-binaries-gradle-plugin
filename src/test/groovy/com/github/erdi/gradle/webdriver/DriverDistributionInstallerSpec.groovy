@@ -18,6 +18,7 @@ package com.github.erdi.gradle.webdriver
 import org.ysb33r.grolifant.api.core.OperatingSystem
 import org.ysb33r.grolifant.api.core.OperatingSystem.Arch
 import org.ysb33r.grolifant.api.core.os.MacOsX
+import spock.lang.Rollup
 
 import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86
 
@@ -37,6 +38,7 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         """
     }
 
+    @Rollup
     def 'can successfully install a version of a driver'() {
         given:
         def repository = setupRepository(driverName, driverName, version, os, arch)

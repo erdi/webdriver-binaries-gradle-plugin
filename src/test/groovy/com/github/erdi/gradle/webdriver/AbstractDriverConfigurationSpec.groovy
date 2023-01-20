@@ -17,6 +17,7 @@ package com.github.erdi.gradle.webdriver
 
 import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
 import org.ysb33r.grolifant.api.core.OperatingSystem
+import spock.lang.Rollup
 import spock.lang.Unroll
 
 import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86
@@ -36,6 +37,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         driverName
     }
 
+    @Rollup
     def 'can set driver urls configuration resource'() {
         given:
         def repository = setupRepository(driverName, driverExecutableName, version, os, arch)
@@ -95,6 +97,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         os = OperatingSystem.current()
     }
 
+    @Rollup
     def 'can globally enable fallback to 32 bit drivers when the 64 bit one is not found'() {
         given:
         def repository = setupRepository(driverName, driverExecutableName, version, os, X86)
@@ -125,6 +128,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         os = OperatingSystem.current()
     }
 
+    @Rollup
     def 'can enable fallback to 32 bit driver when the 64 bit one is not found on a per driver basis'() {
         given:
         def repository = setupRepository(driverName, driverExecutableName, version, os, X86)

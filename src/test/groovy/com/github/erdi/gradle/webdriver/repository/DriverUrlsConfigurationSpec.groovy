@@ -19,6 +19,7 @@ import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import groovy.json.JsonException
 import org.ysb33r.grolifant.api.core.OperatingSystem
 import org.ysb33r.grolifant.api.core.os.*
+import spock.lang.Rollup
 import spock.lang.Specification
 import spock.lang.TempDir
 import spock.lang.Unroll
@@ -416,6 +417,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         ]
     }
 
+    @Rollup
     def 'urls are searched with fallback to 32 bit'() {
         given:
         configuration(drivers: [baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: urlFor32Bit]])
@@ -443,6 +445,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         urlFor32Bit = 'http://fallback.com'
     }
 
+    @Rollup
     def 'the 64 bit urls are used when urls for both 32 and 64 bits are available and searching with fallback to 32 bit'() {
         given:
         def drivers = [
@@ -476,6 +479,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         urlFor64Bit = 'http://64bit.com'
     }
 
+    @Rollup
     def 'urls for 32 bit are ignored when searching for 64 bit urls and fallback to 32 bit is not enabled'() {
         given:
         configuration(drivers: [baseDriverProperties + [bit: DriverUrlsConfiguration.BITS[X86], url: 'http://32bit.com']])
@@ -508,6 +512,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         ]
     }
 
+    @Rollup
     def 'the url that matches the architecture is used when urls for multiple 64 bit architectures are available'() {
         given:
         def drivers = [
@@ -540,6 +545,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         urlFor64BitArm = 'https://arm.64bit.com'
     }
 
+    @Rollup
     def 'the generic url is used over incompatible architectures when urls for multiple 64 bit architectures are available'() {
         given:
         def drivers = [
@@ -572,6 +578,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         urlFor64BitAmd = 'https://amd.64bit.com'
     }
 
+    @Rollup
     def 'url selection does not fall back to the generic architecture when the arm architecture is requested'() {
         given:
         def drivers = [
@@ -606,6 +613,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         os = Linux.INSTANCE
     }
 
+    @Rollup
     def 'url selection does not fall back to intel 32 bit architecture when the arm architecture is requested with 32 bit falback enabled'() {
         given:
         def drivers = [
