@@ -20,7 +20,7 @@ dependencies {
     }
     codenarc("org.codehaus.groovy:groovy-all:3.0.7")
 
-    implementation("org.ysb33r.gradle:grolifant50:1.3.2")
+    implementation("org.ysb33r.gradle:grolifant50:1.3.3")
     implementation("org.apache.maven:maven-artifact:3.6.3")
 
     testImplementation("org.spockframework:spock-core:2.0-groovy-3.0") {
