@@ -112,7 +112,7 @@ class DriverUrlsConfiguration {
 
     private String arch(OperatingSystem.Arch arch) {
         Optional.ofNullable(ARCHS[arch])
-        .orElseThrow { new UnsupportedArchitectureException(arch) }
+            .orElseThrow { new UnsupportedArchitectureException(arch) }
     }
 
     private String bit(OperatingSystem.Arch arch) {
