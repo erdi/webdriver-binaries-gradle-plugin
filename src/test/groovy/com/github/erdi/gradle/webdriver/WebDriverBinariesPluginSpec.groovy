@@ -16,13 +16,28 @@
 package com.github.erdi.gradle.webdriver
 
 import org.ysb33r.grolifant.api.core.OperatingSystem
-import spock.lang.Requires
 import spock.lang.Unroll
 
-import static BinariesVersions.*
-import static com.github.erdi.gradle.webdriver.BinariesVersions.TESTED_EDGEDRIVER_VERSION
+import static com.github.erdi.gradle.webdriver.BinariesVersions.*
 
 class WebDriverBinariesPluginSpec extends PluginSpec {
+
+    static List<List<?>> parameters() {
+        def parameters = [
+            ['geckodriver', TESTED_GECKODRVIER_VERSION, 'selenium-firefox-driver']
+        ]
+        if (OperatingSystem.current().windows) {
+            parameters += [
+                ['iedriverserver', TESTED_IEDRIVERSERVER_VERSION, 'selenium-ie-driver'],
+                ['edgedriver', TESTED_EDGEDRIVER_VERSION, 'selenium-edge-driver']
+            ]
+        } else {
+            parameters << [
+                'chromedriver', TESTED_CHROMEDRIVER_VERSION, 'selenium-chrome-driver'
+            ]
+        }
+        parameters
+    }
 
     @Unroll('#binaryName binary is downloaded and test task is configured as per plugin config')
     void 'binary is downloaded and test task is configured as per plugin config'() {
@@ -38,29 +53,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
         noExceptionThrown()
 
         where:
-        binaryName     | binaryVersion               | seleniumModule
-        'chromedriver' | TESTED_CHROMEDRIVER_VERSION | 'selenium-chrome-driver'
-        'geckodriver'  | TESTED_GECKODRVIER_VERSION  | 'selenium-firefox-driver'
-    }
-
-    @Requires({ OperatingSystem.current().windows })
-    @Unroll('#binaryName binary is downloaded and test task is configured as per plugin config')
-    void 'windows specific binary is downloaded and test task is configured as per plugin config'() {
-        given:
-        writeBuild(binaryName, binaryVersion, seleniumModule)
-        writeRatpackApplication()
-        writeGebSpec()
-
-        when:
-        runTasks 'test'
-
-        then:
-        noExceptionThrown()
-
-        where:
-        binaryName       | binaryVersion                 | seleniumModule
-        'iedriverserver' | TESTED_IEDRIVERSERVER_VERSION | 'selenium-ie-driver'
-        'edgedriver'     | TESTED_EDGEDRIVER_VERSION     | 'selenium-edge-driver'
+        [binaryName, binaryVersion, seleniumModule] << parameters()
     }
 
     private void writeBuild(String binaryName, String binaryVersion, String seleniumModule) {
