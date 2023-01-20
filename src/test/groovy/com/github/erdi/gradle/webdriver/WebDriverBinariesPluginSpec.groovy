@@ -69,7 +69,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
             }
 
             dependencies {
-                testImplementation 'org.seleniumhq.selenium:$seleniumModule:3.5.3'
+                testImplementation 'org.seleniumhq.selenium:$seleniumModule:4.7.2'
             }
 
             webdriverBinaries {
@@ -81,6 +81,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
             }
 
             test {
+                useJUnitPlatform()
                 testLogging {
                     exceptionFormat 'full'
                 }
@@ -123,9 +124,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
     private void writeGebSpec() {
         buildScript << '''
             dependencies {
-                testImplementation 'org.codehaus.groovy:groovy-all:2.4.12'
-                testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
-                testImplementation 'org.gebish:geb-spock:1.1.1'
+                testImplementation 'org.gebish:geb-spock:7.0'
             }
         '''
         def testDir = new File(testProjectDir, 'src/test/groovy')
