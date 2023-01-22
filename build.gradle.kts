@@ -6,7 +6,7 @@ plugins {
     `java-gradle-plugin`
     groovy
     codenarc
-    id("com.gradle.plugin-publish") version "0.12.0"
+    id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 repositories {
@@ -56,18 +56,15 @@ tasks.withType<GroovyCompile>().configureEach {
 }
 
 gradlePlugin {
+    vcsUrl.set("https://github.com/erdi/webdriver-binaries-gradle-plugin")
+    website.set("https://github.com/erdi/webdriver-binaries-gradle-plugin/blob/master/README.md")
     plugins {
         create("webDriverBinariesPlugin") {
             id = "com.github.erdi.webdriver-binaries"
             implementationClass = "com.github.erdi.gradle.webdriver.WebDriverBinariesPlugin"
             displayName = "WebDriver Binaries Plugin"
             description = "A plugin that downloads and caches WebDriver binaries specific to the OS the build runs on."
+            tags.set(setOf("WebDriver", "selenium", "test", "chromedriver", "geckodriver"))
         }
     }
-}
-
-pluginBundle {
-    vcsUrl = "https://github.com/erdi/webdriver-binaries-gradle-plugin"
-    website = "https://github.com/erdi/webdriver-binaries-gradle-plugin/blob/master/README.md"
-    tags = listOf("WebDriver", "selenium", "test", "chromedriver", "geckodriver")
 }
