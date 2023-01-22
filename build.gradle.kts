@@ -1,5 +1,4 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-import org.gradle.internal.enterprise.GradleEnterprisePluginConfig
 
 plugins {
     idea
