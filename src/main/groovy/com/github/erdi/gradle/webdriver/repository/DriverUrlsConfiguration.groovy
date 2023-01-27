@@ -57,12 +57,11 @@ class DriverUrlsConfiguration {
         def platform = platform(spec.os)
         def bits = architectures.collect { bit(it) } as Set
         def archs = architectures.collect { arch(it) } as Set
-        def versionPattern = ~spec.version
 
         def matchingDrivers = drivers.findAll {
             it.name == spec.name &&
                 it.platform == platform &&
-                versionPattern.matcher(it.version.toString()).matches() &&
+                spec.version.matcher(it.version.toString()).matches() &&
                 bits.contains(it.bit) &&
                 ((it.arch == null && architectures.intersect([X86, X86_64])) || archs.contains(it.arch))
         }.sort { left, right ->

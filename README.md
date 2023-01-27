@@ -28,9 +28,9 @@ This plugin exposes the following optional properties through the extension name
 Example usage:
 
     webdriverBinaries {
-        chromedriver '2.32'
-        geckodriver '0.19.0'
-        edgedriver '86.0.601.0'
+        chromedriver = '2.32'
+        geckodriver = '0.19.0'
+        edgedriver = '86.0.601.0'
     }
 
 ### Extension methods
@@ -38,7 +38,7 @@ Example usage:
 #### Detailed binaries configuration methods
 
 Additionally to properties which can be used for specifying driver binaries versions, the plugin exposes `chromedriver()`, `geckodriver()`, and `edgedriver()` configuration methods through the the extension named `webdriverBinaries`.
-Each method takes a closure which delegates to an object with the following properties: 
+Each method takes an action which operates on an object with the following properties: 
 
 | Name | Type | Description | 
 | --- | --- | --- |
@@ -69,7 +69,7 @@ Example usage which shows how to configure the plugin to use the latest version 
 
     webdriverBinaries {
         chromedriver {
-            versionRegexp = '.*'
+            version = ~'.*'
         }
     }
 

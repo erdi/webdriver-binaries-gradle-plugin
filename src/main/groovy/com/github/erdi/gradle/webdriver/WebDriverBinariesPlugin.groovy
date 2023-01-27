@@ -35,7 +35,7 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
     private static final String EXTENDED_IDEA_EXTENSION_NAME = 'extended'
 
     void apply(Project project) {
-        def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension, project)
+        def extension = project.extensions.create(EXTENSION_NAME, WebDriverBinariesPluginExtension)
         extension.configureTasks(project.tasks.withType(Test))
         registerConfigureChromeDriverBinary(project, extension)
         registerConfigureGeckoDriverBinary(project, extension)
@@ -60,9 +60,9 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
         def configureTask = project.tasks.register(taskType.simpleName.uncapitalize(), taskType) {
             downloadRoot.convention(extension.downloadRoot)
             driverUrlsConfiguration.convention(extension.driverUrlsConfiguration)
-            version.convention(driverConfiguration.versionProvider)
-            architecture.convention(driverConfiguration.architectureProvider)
-            fallbackTo32Bit.convention(driverConfiguration.fallbackTo32BitProvider)
+            version.convention(driverConfiguration.versionProperty)
+            architecture.convention(driverConfiguration.architectureProperty)
+            fallbackTo32Bit.convention(driverConfiguration.fallbackTo32Bit)
         }
         configureIdeaWithWebDriverBinary(project, configureTask)
         configureTask

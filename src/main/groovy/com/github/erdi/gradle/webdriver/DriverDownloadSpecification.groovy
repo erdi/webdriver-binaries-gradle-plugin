@@ -18,16 +18,18 @@ package com.github.erdi.gradle.webdriver
 import groovy.transform.builder.Builder
 import org.ysb33r.grolifant.api.core.OperatingSystem
 
+import java.util.regex.Pattern
+
 class DriverDownloadSpecification {
 
     final String name
-    final String version
+    final Pattern version
     final OperatingSystem os
     final OperatingSystem.Arch arch
     final boolean fallbackTo32Bit
 
     @Builder
-    DriverDownloadSpecification(String name, String version, OperatingSystem os, OperatingSystem.Arch arch, boolean fallbackTo32Bit) {
+    DriverDownloadSpecification(String name, Pattern version, OperatingSystem os, OperatingSystem.Arch arch, boolean fallbackTo32Bit) {
         this.name = name
         this.version = version
         this.os = os

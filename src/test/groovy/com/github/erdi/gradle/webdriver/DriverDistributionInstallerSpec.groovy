@@ -63,7 +63,7 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         def configurationFilePath = configurationFile.absolutePath
         def osCode = "${os.class.simpleName}.INSTANCE"
         def archCode = "OperatingSystem.Arch.${arch.name()}"
-        def downloadSpecCode = "DriverDownloadSpecification.builder().name('$driverName').version('$version').os($osCode).arch($archCode).build()"
+        def downloadSpecCode = "DriverDownloadSpecification.builder().name('$driverName').version(~'$version').os($osCode).arch($archCode).build()"
         def versionAndUriCode = "new DriverUrlsConfiguration(resources.text.fromFile('$configurationFilePath').asFile()).versionAndUriFor($downloadSpecCode)"
         def code = """
             new DriverDistributionInstaller(

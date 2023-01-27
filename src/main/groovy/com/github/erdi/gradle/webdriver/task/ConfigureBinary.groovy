@@ -29,6 +29,8 @@ import org.gradle.api.tasks.TaskAction
 import org.ysb33r.grolifant.api.core.OperatingSystem
 import org.ysb33r.grolifant.api.core.OperatingSystem.Arch
 
+import java.util.regex.Pattern
+
 abstract class ConfigureBinary extends DefaultTask {
 
     private final String driverName
@@ -51,7 +53,7 @@ abstract class ConfigureBinary extends DefaultTask {
     abstract DirectoryProperty getDownloadRoot()
 
     @Internal
-    abstract Property<String> getVersion()
+    abstract Property<Pattern> getVersion()
 
     @Internal
     abstract Property<Arch> getArchitecture()

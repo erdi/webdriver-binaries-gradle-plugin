@@ -16,6 +16,7 @@
 package com.github.erdi.gradle.webdriver
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
+import org.gradle.api.Action
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -23,7 +24,11 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.resources.TextResource
+import org.gradle.api.tasks.Nested
 import org.gradle.process.JavaForkOptions
+
+import javax.inject.Inject
+import java.util.regex.Pattern
 
 @SuppressWarnings(['AbstractClassWithPublicConstructor'])
 abstract class WebDriverBinariesPluginExtension {
@@ -34,17 +39,11 @@ abstract class WebDriverBinariesPluginExtension {
     private final Project project
     private final ObjectFactory objectFactory
 
-    final DriverConfiguration chromedriverConfiguration
-    final DriverConfiguration geckodriverConfiguration
-    final DriverConfiguration edgedriverConfiguration
-
+    @Inject
     WebDriverBinariesPluginExtension(Project project) {
         this.project = project
 
         this.objectFactory = project.objects
-        this.chromedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
-        this.geckodriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
-        this.edgedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
 
         this.downloadRoot.convention(
             project.layout.dir(
@@ -53,52 +52,59 @@ abstract class WebDriverBinariesPluginExtension {
         )
         this.driverUrlsConfiguration.convention(project.resources.text.fromUri(DRIVER_URLS_CONFIG_URL))
         this.fallbackTo32Bit.convention(false)
+
+        [chromedriverConfiguration, geckodriverConfiguration, edgedriverConfiguration].each {
+            it.fallbackTo32Bit.convention(this.fallbackTo32Bit)
+        }
     }
 
     abstract DirectoryProperty getDownloadRoot()
     abstract Property<TextResource> getDriverUrlsConfiguration()
     abstract Property<Boolean> getFallbackTo32Bit()
 
-    void chromedriver(String configuredVersion) {
-        chromedriver {
-            version = configuredVersion
-        }
-    }
+    @Nested
+    abstract DriverConfiguration getChromedriverConfiguration()
+
+    @Nested
+    abstract DriverConfiguration getGeckodriverConfiguration()
+
+    @Nested
+    abstract DriverConfiguration getEdgedriverConfiguration()
 
     void setChromedriver(String configuredVersion) {
-        chromedriver(configuredVersion)
+        chromedriver = ~Pattern.quote(configuredVersion)
     }
 
-    void chromedriver(@DelegatesTo(DriverConfiguration) Closure configuration) {
-        project.configure(chromedriverConfiguration, configuration)
+    void setChromedriver(Pattern configuredVersion) {
+        chromedriverConfiguration.versionProperty.set(configuredVersion)
     }
 
-    void geckodriver(String configuredVersion) {
-        geckodriver {
-            version = configuredVersion
-        }
+    void chromedriver(Action<DriverConfiguration> action) {
+        action.execute(chromedriverConfiguration)
     }
 
     void setGeckodriver(String configuredVersion) {
-        geckodriver(configuredVersion)
+        geckodriver = ~Pattern.quote(configuredVersion)
     }
 
-    void geckodriver(@DelegatesTo(DriverConfiguration) Closure configuration) {
-        project.configure(geckodriverConfiguration, configuration)
+    void setGeckodriver(Pattern configuredVersion) {
+        geckodriverConfiguration.versionProperty.set(configuredVersion)
     }
 
-    void edgedriver(String configuredVersion) {
-        edgedriver {
-            version = configuredVersion
-        }
+    void geckodriver(Action<DriverConfiguration> action) {
+        action.execute(geckodriverConfiguration)
     }
 
     void setEdgedriver(String configuredVersion) {
-        edgedriver(configuredVersion)
+        edgedriver = ~Pattern.quote(configuredVersion)
     }
 
-    void edgedriver(@DelegatesTo(DriverConfiguration) Closure configuration) {
-        project.configure(edgedriverConfiguration, configuration)
+    void setEdgedriver(Pattern configuredVersion) {
+        edgedriverConfiguration.versionProperty.set(configuredVersion)
+    }
+
+    void edgedriver(Action<DriverConfiguration> action) {
+        action.execute(edgedriverConfiguration)
     }
 
     public <T extends Task & JavaForkOptions> void configureTask(T task) {

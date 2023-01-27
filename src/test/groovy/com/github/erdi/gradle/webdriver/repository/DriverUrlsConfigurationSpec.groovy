@@ -156,7 +156,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .build()
@@ -185,7 +185,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .fallbackTo32Bit(true)
@@ -238,7 +238,7 @@ class DriverUrlsConfigurationSpec extends Specification {
             DriverDownloadSpecification.builder()
                 .os(Linux.INSTANCE)
                 .arch(unsupportedArch)
-                .version(Pattern.quote('1.2.3'))
+                .version(~Pattern.quote('1.2.3'))
                 .build()
         )
 
@@ -266,7 +266,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(driverName)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .build()
@@ -298,7 +298,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(driverVersion))
+                .version(~Pattern.quote(driverVersion))
                 .os(os)
                 .arch(arch)
                 .build()
@@ -330,7 +330,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(versionString)
+                .version(~versionString)
                 .os(os)
                 .arch(arch)
                 .build()
@@ -365,7 +365,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(version)
+                .version(~version)
                 .os(os)
                 .arch(arch)
                 .build()
@@ -399,7 +399,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .build()
@@ -426,7 +426,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(X86_64)
                 .fallbackTo32Bit(true)
@@ -460,7 +460,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(X86_64)
                 .fallbackTo32Bit(true)
@@ -488,7 +488,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(arch)
                 .build()
@@ -527,7 +527,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(ARM64)
                 .build()
@@ -560,7 +560,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(X86_64)
                 .build()
@@ -598,7 +598,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(ARM64)
                 .build()
@@ -633,7 +633,7 @@ class DriverUrlsConfigurationSpec extends Specification {
         parseConfiguration().versionAndUriFor(
             DriverDownloadSpecification.builder()
                 .name(name)
-                .version(Pattern.quote(version))
+                .version(~Pattern.quote(version))
                 .os(os)
                 .arch(ARM64)
                 .fallbackTo32Bit(true)

@@ -17,11 +17,13 @@ package com.github.erdi.gradle.webdriver.repository
 
 import groovy.transform.builder.Builder
 
+import java.util.regex.Pattern
+
 class DriverUrlNotFoundException extends Exception {
 
     @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     @Builder
-    private DriverUrlNotFoundException(String name, String version, String platform, Collection<String> bits, Collection<String> archs) {
+    private DriverUrlNotFoundException(String name, Pattern version, String platform, Collection<String> bits, Collection<String> archs) {
         super(/Driver url not found for name: "$name", version regexp: "$version", platform: "$platform", bit: "${join(bits)}", arch: "${join(archs)}"/)
     }
 

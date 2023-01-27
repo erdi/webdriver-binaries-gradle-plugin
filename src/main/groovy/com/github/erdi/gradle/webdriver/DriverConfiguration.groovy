@@ -16,26 +16,30 @@
 package com.github.erdi.gradle.webdriver
 
 import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
-import org.gradle.api.Project
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.ysb33r.grolifant.api.core.OperatingSystem
 
+import javax.inject.Inject
 import java.util.regex.Pattern
 
-class DriverConfiguration {
+@SuppressWarnings(['AbstractClassWithPublicConstructor'])
+abstract class DriverConfiguration {
 
-    private final Property<String> version
-    private final Property<OperatingSystem.Arch> architecture
-    private final Property<Boolean> fallbackTo32Bit
+    @Inject
+    DriverConfiguration() {
+        this.architectureProperty.convention(OperatingSystem.current().arch)
+    }
 
-    DriverConfiguration(Project project, Provider<Boolean> globalFallbackTo32Bit) {
-        def objectFactory = project.objects
-        this.version = objectFactory.property(String)
-        this.architecture = objectFactory.property(OperatingSystem.Arch)
-        this.architecture.set(OperatingSystem.current().arch)
-        this.fallbackTo32Bit = objectFactory.property(Boolean)
-        this.fallbackTo32Bit.set(globalFallbackTo32Bit)
+    abstract Property<Pattern> getVersionProperty()
+    abstract Property<OperatingSystem.Arch> getArchitectureProperty()
+    abstract Property<Boolean> getFallbackTo32Bit()
+
+    void setVersion(String version) {
+        this.version = ~Pattern.quote(version)
+    }
+
+    void setVersion(Pattern version) {
+        this.versionProperty.set(version)
     }
 
     void setArchitecture(String architecture) {
@@ -45,39 +49,11 @@ class DriverConfiguration {
             def supportedArchitecturesString = [quotedArchitectures[0..-2].join(', '), quotedArchitectures.last()].join(' and ')
             throw new IllegalArgumentException("Unsupported architecture value '$architecture'. Supported values are ${supportedArchitecturesString}.")
         }
-        this.architecture.set(OperatingSystem.Arch.valueOf(architecture))
+        this.architecture = OperatingSystem.Arch.valueOf(architecture)
     }
 
-    OperatingSystem.Arch getArchitecture() {
-        architecture.get()
-    }
-
-    Provider<OperatingSystem.Arch> getArchitectureProvider() {
-        architecture
-    }
-
-    String getVersion() {
-        version.get()
-    }
-
-    void setVersion(String version) {
-        this.version.set(Pattern.quote(version))
-    }
-
-    void setVersionRegexp(String version) {
-        this.version.set(version)
-    }
-
-    Provider<String> getVersionProvider() {
-        version
-    }
-
-    void setFallbackTo32Bit(boolean fallbackTo32Bit) {
-        this.fallbackTo32Bit.set(fallbackTo32Bit)
-    }
-
-    Provider<Boolean> getFallbackTo32BitProvider() {
-        fallbackTo32Bit
+    void setArchitecture(OperatingSystem.Arch architecture) {
+        this.architectureProperty.set(architecture)
     }
 
 }

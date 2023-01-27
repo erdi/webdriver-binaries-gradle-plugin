@@ -34,7 +34,7 @@ class ExtendedIdeaPluginIntegrationSpec extends PluginSpec {
         buildScript << """
             webdriverBinaries {
                 driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
-                $driverConfigurationBlockName '$version'
+                $driverConfigurationBlockName = '$version'
             }
         """
 
