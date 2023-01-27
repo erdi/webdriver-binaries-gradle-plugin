@@ -19,7 +19,6 @@ enum WebDriverBinaryMetadata {
 
     CHROMEDRIVER('chromedriver', 'webdriver.chrome.driver'),
     GECKODRIVER('geckodriver', 'webdriver.gecko.driver'),
-    IEDRIVERSERVER('IEDriverServer', 'webdriver.ie.driver'),
     EDGEDRIVER('msedgedriver', 'webdriver.edge.driver')
 
     final String binaryName

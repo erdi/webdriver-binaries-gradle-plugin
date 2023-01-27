@@ -20,7 +20,6 @@ This plugin exposes the following optional properties through the extension name
 | --- | --- | --- |
 | `chromedriver` | `String` | The exact version of ChromeDriver binary to be used by the project. No ChromeDriver binary will be downloaded if this property is not specified. |
 | `geckodriver` | `String` | The exact version of GeckoDriver binary to be used by the project. No GeckoDriver binary will be downloaded if this property is not specified. |
-| `iedriverserver` | `String` | The exact version of IEDriverServer binary to be used by the project. No IEDriverServer binary will be downloaded if this property is not specified. |
 | `edgedriver` | `String` | The exact version of EdgeDriver binary to be used by the project. No EdgeDriver binary will be downloaded if this property is not specified. |
 | `downloadRoot` |`File`| The location into which the binaries should be downloaded. If not specified the binaries are downloaded into the Gradle user home directory. Should not be specified under normal circumstances to benefit from caching of the binaries between multiple project builds. |
 | `driverUrlsConfiguration` |`org.gradle.api.resources.TextResource`| The text resource which contains mapping from a binary version to a URL. If not specified then the default is to use [WebDriver Extensions Maven Plugin's `package.json` file](https://github.com/webdriverextensions/webdriverextensions-maven-plugin-repository/blob/master/repository-3.0.json) from `https://raw.githubusercontent.com/webdriverextensions/webdriverextensions-maven-plugin-repository/master/repository-3.0.json`. |
@@ -31,7 +30,6 @@ Example usage:
     webdriverBinaries {
         chromedriver '2.32'
         geckodriver '0.19.0'
-        iedriverserver '3.8.0'
         edgedriver '86.0.601.0'
     }
 
@@ -39,7 +37,7 @@ Example usage:
 
 #### Detailed binaries configuration methods
 
-Additionally to properties which can be used for specifying driver binaries versions, the plugin exposes `chromedriver()`, `geckodriver()`, `iedriverserver()` and `edgedriver()` configuration methods through the the extension named `webdriverBinaries`.
+Additionally to properties which can be used for specifying driver binaries versions, the plugin exposes `chromedriver()`, `geckodriver()`, and `edgedriver()` configuration methods through the the extension named `webdriverBinaries`.
 Each method takes a closure which delegates to an object with the following properties: 
 
 | Name | Type | Description | 
@@ -59,11 +57,6 @@ Example usage:
         geckodriver {
             version = '0.19.0'
             architecture = 'X86'
-        }
-        iedriverserver {
-            version = '3.8.0'
-            architecture = 'X86'
-            fallbackTo32Bit = true
         }
         edgedriver {
             version = '86.0.601.0'
@@ -100,7 +93,6 @@ Example usage:
 This plugin adds the following tasks to the project:
  * `configureChromeDriverBinary` - downloads, caches and configures the build to use a ChromeDriver binary
  * `configureGeckoDriverBinary` - downloads, caches and configures the build to use a GeckoDriver binary
- * `configureIeDriverServerBinary` - downloads, caches and configures the build to use a IEDriverServer binary
  * `configureEdgeDriverBinary` - downloads, caches and configures the build to use a EdgeDriver binary
 
 There is no need to call the above tasks directly because the plugin interweaves them into the build lifecycle by configuring all `org.gradle.api.tasks.testing.Test` tasks to depend on them.
@@ -129,7 +121,7 @@ Note that the `driverUrlsConfiguration` property is a `org.gradle.api.resources.
 ### Integration with Idea configuration extensions plugin (com.github.erdi.extended-idea)
 
 If [Idea configuration extensions plugin](https://github.com/erdi/idea-gradle-plugins#idea-configuration-extensions-plugin) is applied to the project together with this plugin it will do the following:
-* configure the `ideaWorkspace` task added to the build by [Gradle's built-in IDEA plugin](https://docs.gradle.org/current/userguide/idea_plugin.html) to depend on `configureChromeDriverBinary`, `configureGeckoDriverBinary` and `configureIeDriverServerBinary` tasks
+* configure the `ideaWorkspace` task added to the build by [Gradle's built-in IDEA plugin](https://docs.gradle.org/current/userguide/idea_plugin.html) to depend on `configureChromeDriverBinary` and `configureGeckoDriverBinary` tasks
 * add system properties specific for the drivers, setting the path to the downloaded binaries as their values, to default default JUnit run configuration in IntelliJ when the configuration tasks are executed
 
 The above will ensure that locations of driver binaries are picked up when running tests from IntelliJ.   

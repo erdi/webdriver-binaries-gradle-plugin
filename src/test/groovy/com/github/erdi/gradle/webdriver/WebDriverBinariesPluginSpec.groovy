@@ -27,9 +27,8 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
             ['geckodriver', TESTED_GECKODRVIER_VERSION, 'selenium-firefox-driver']
         ]
         if (OperatingSystem.current().windows) {
-            parameters += [
-                ['iedriverserver', TESTED_IEDRIVERSERVER_VERSION, 'selenium-ie-driver'],
-                ['edgedriver', TESTED_EDGEDRIVER_VERSION, 'selenium-edge-driver']
+            parameters << [
+                'edgedriver', TESTED_EDGEDRIVER_VERSION, 'selenium-edge-driver'
             ]
         } else {
             parameters << [

@@ -34,7 +34,6 @@ abstract class WebDriverBinariesPluginExtension {
     private final Project project
     private final ObjectFactory objectFactory
 
-    final DriverConfiguration ieDriverServerConfiguration
     final DriverConfiguration chromedriverConfiguration
     final DriverConfiguration geckodriverConfiguration
     final DriverConfiguration edgedriverConfiguration
@@ -43,7 +42,6 @@ abstract class WebDriverBinariesPluginExtension {
         this.project = project
 
         this.objectFactory = project.objects
-        this.ieDriverServerConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.chromedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.geckodriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.edgedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
@@ -60,20 +58,6 @@ abstract class WebDriverBinariesPluginExtension {
     abstract DirectoryProperty getDownloadRoot()
     abstract Property<TextResource> getDriverUrlsConfiguration()
     abstract Property<Boolean> getFallbackTo32Bit()
-
-    void iedriverserver(String configuredVersion) {
-        iedriverserver {
-            version = configuredVersion
-        }
-    }
-
-    void setIedriverserver(String configuredVersion) {
-        iedriverserver(configuredVersion)
-    }
-
-    void iedriverserver(@DelegatesTo(DriverConfiguration) Closure configuration) {
-        project.configure(ieDriverServerConfiguration, configuration)
-    }
 
     void chromedriver(String configuredVersion) {
         chromedriver {
