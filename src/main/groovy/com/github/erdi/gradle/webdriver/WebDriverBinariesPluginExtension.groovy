@@ -19,22 +19,20 @@ import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.resources.TextResource
 import org.gradle.process.JavaForkOptions
 
-class WebDriverBinariesPluginExtension {
+@SuppressWarnings(['AbstractClassWithPublicConstructor'])
+abstract class WebDriverBinariesPluginExtension {
 
     public static final String DRIVER_URLS_CONFIG_URL =
         'https://raw.githubusercontent.com/webdriverextensions/webdriverextensions-maven-plugin-repository/master/repository-3.0.json'
 
     private final Project project
     private final ObjectFactory objectFactory
-    private final Property<File> downloadRoot
-    private final Property<TextResource> driverUrlsConfiguration
-    private final Property<Boolean> fallbackTo32Bit
 
     final DriverConfiguration ieDriverServerConfiguration
     final DriverConfiguration chromedriverConfiguration
@@ -45,17 +43,18 @@ class WebDriverBinariesPluginExtension {
         this.project = project
 
         this.objectFactory = project.objects
-        this.driverUrlsConfiguration = objectFactory.property(TextResource)
-        this.downloadRoot = objectFactory.property(File)
-        this.fallbackTo32Bit = objectFactory.property(Boolean)
         this.ieDriverServerConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.chromedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.geckodriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.edgedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
 
-        this.driverUrlsConfiguration.set(project.resources.text.fromUri(DRIVER_URLS_CONFIG_URL))
-        this.fallbackTo32Bit.set(false)
+        this.driverUrlsConfiguration.convention(project.resources.text.fromUri(DRIVER_URLS_CONFIG_URL))
+        this.fallbackTo32Bit.convention(false)
     }
+
+    abstract DirectoryProperty getDownloadRoot()
+    abstract Property<TextResource> getDriverUrlsConfiguration()
+    abstract Property<Boolean> getFallbackTo32Bit()
 
     void iedriverserver(String configuredVersion) {
         iedriverserver {
@@ -113,30 +112,6 @@ class WebDriverBinariesPluginExtension {
         project.configure(edgedriverConfiguration, configuration)
     }
 
-    void setDownloadRoot(File downloadRoot) {
-        this.downloadRoot.set(downloadRoot)
-    }
-
-    File getDownloadRoot() {
-        downloadRoot.get()
-    }
-
-    Provider<File> getDownloadRootProvider() {
-        downloadRoot
-    }
-
-    void setDriverUrlsConfiguration(TextResource driverUrlsConfiguration) {
-        this.driverUrlsConfiguration.set(driverUrlsConfiguration)
-    }
-
-    TextResource getDriverUrlsConfiguration() {
-        driverUrlsConfiguration.get()
-    }
-
-    Provider<TextResource> getDriverUrlsConfigurationProvider() {
-        driverUrlsConfiguration
-    }
-
     public <T extends Task & JavaForkOptions> void configureTask(T task) {
         def tasks = objectFactory.domainObjectSet(Task) as DomainObjectCollection<T>
         tasks.add(task)
@@ -145,10 +120,6 @@ class WebDriverBinariesPluginExtension {
 
     public <T extends Task & JavaForkOptions> void configureTasks(DomainObjectCollection<T> tasks) {
         configure(tasks)
-    }
-
-    void setFallbackTo32Bit(boolean fallbackTo32Bit) {
-        this.fallbackTo32Bit.set(fallbackTo32Bit)
     }
 
     private <T extends Task & JavaForkOptions> void configure(DomainObjectCollection<T> tasks) {

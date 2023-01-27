@@ -64,8 +64,8 @@ class WebDriverBinariesPlugin implements Plugin<Project> {
         Class<T> taskType, Project project, WebDriverBinariesPluginExtension extension, DriverConfiguration driverConfiguration
     ) {
         def configureTask = project.tasks.register(taskType.simpleName.uncapitalize(), taskType) {
-            downloadRoot.fileProvider(extension.downloadRootProvider)
-            driverUrlsConfiguration.convention(extension.driverUrlsConfigurationProvider)
+            downloadRoot.convention(extension.downloadRoot)
+            driverUrlsConfiguration.convention(extension.driverUrlsConfiguration)
             version.convention(driverConfiguration.versionProvider)
             architecture.convention(driverConfiguration.architectureProvider)
             fallbackTo32Bit.convention(driverConfiguration.fallbackTo32BitProvider)
