@@ -17,10 +17,14 @@ package com.github.erdi.gradle.webdriver.ie
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 
+import javax.inject.Inject
+
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.IEDRIVERSERVER
 
-class ConfigureIeDriverServerBinary extends ConfigureBinary {
+@SuppressWarnings(['AbstractClassWithPublicConstructor', 'AbstractClassWithoutAbstractMethod'])
+abstract class ConfigureIeDriverServerBinary extends ConfigureBinary {
 
+    @Inject
     ConfigureIeDriverServerBinary() {
         super(IEDRIVERSERVER, 'internetexplorerdriver')
     }

@@ -17,10 +17,14 @@ package com.github.erdi.gradle.webdriver.gecko
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 
+import javax.inject.Inject
+
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.GECKODRIVER
 
-class ConfigureGeckoDriverBinary extends ConfigureBinary {
+@SuppressWarnings(['AbstractClassWithPublicConstructor', 'AbstractClassWithoutAbstractMethod'])
+abstract class ConfigureGeckoDriverBinary extends ConfigureBinary {
 
+    @Inject
     ConfigureGeckoDriverBinary() {
         super(GECKODRIVER, 'geckodriver')
     }

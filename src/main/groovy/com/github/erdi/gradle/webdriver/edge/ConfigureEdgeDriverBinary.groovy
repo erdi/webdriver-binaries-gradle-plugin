@@ -17,10 +17,14 @@ package com.github.erdi.gradle.webdriver.edge
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 
+import javax.inject.Inject
+
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.EDGEDRIVER
 
-class ConfigureEdgeDriverBinary extends ConfigureBinary {
+@SuppressWarnings(['AbstractClassWithPublicConstructor', 'AbstractClassWithoutAbstractMethod'])
+abstract class ConfigureEdgeDriverBinary extends ConfigureBinary {
 
+    @Inject
     ConfigureEdgeDriverBinary() {
         super(EDGEDRIVER, 'edgedriver')
     }

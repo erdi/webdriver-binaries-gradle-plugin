@@ -17,10 +17,14 @@ package com.github.erdi.gradle.webdriver.chrome
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
 
+import javax.inject.Inject
+
 import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.CHROMEDRIVER
 
-class ConfigureChromeDriverBinary extends ConfigureBinary {
+@SuppressWarnings(['AbstractClassWithPublicConstructor', 'AbstractClassWithoutAbstractMethod'])
+abstract class ConfigureChromeDriverBinary extends ConfigureBinary {
 
+    @Inject
     ConfigureChromeDriverBinary() {
         super(CHROMEDRIVER, 'chromedriver')
     }
