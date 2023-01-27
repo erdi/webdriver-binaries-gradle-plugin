@@ -68,7 +68,7 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         def code = """
             new DriverDistributionInstaller(
                 project,
-                null,
+                gradle.gradleUserHomeDir,
                 '$driverName',
                 $versionAndUriCode
             )

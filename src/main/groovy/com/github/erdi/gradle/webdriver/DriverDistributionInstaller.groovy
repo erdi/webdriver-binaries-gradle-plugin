@@ -26,7 +26,7 @@ class DriverDistributionInstaller extends AbstractDistributionInstaller {
 
     DriverDistributionInstaller(Project project, File downloadRoot, String driverName, VersionAndUri versionAndUri) {
         super(driverName, "webdriver/$driverName/$versionAndUri.version", ProjectOperations.create(project))
-        this.downloadRoot = downloadRoot ?: projectOperations.gradleUserHomeDir
+        this.downloadRoot = downloadRoot
         this.uri = versionAndUri.uri
     }
 

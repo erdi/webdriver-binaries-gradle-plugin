@@ -48,6 +48,11 @@ abstract class WebDriverBinariesPluginExtension {
         this.geckodriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
         this.edgedriverConfiguration = new DriverConfiguration(project, this.fallbackTo32Bit)
 
+        this.downloadRoot.convention(
+            project.layout.dir(
+                project.providers.provider { project.gradle.gradleUserHomeDir }
+            )
+        )
         this.driverUrlsConfiguration.convention(project.resources.text.fromUri(DRIVER_URLS_CONFIG_URL))
         this.fallbackTo32Bit.convention(false)
     }
