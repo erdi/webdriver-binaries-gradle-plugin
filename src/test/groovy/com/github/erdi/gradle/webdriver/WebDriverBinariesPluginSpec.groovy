@@ -77,6 +77,7 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
                     version = '$binaryVersion'
                     ${architectureCode(binaryName)}
                 }
+                configureTask(tasks.named("test"))
             }
 
             test {

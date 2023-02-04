@@ -18,26 +18,23 @@ package com.github.erdi.gradle.webdriver
 import org.ysb33r.grolifant.api.core.OperatingSystem
 import spock.lang.Unroll
 
-import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.CHROMEDRIVER
-import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.EDGEDRIVER
-import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.GECKODRIVER
+import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.*
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class ConfigureJavaForkOptionsTaskSpec extends PluginSpec {
 
     private final static String BINARY_PATH_FILENAME = 'binaryPath.txt'
 
     @Unroll
-    def 'can configure additional tasks implementing JavaForkOptions'() {
+    def 'can configure tasks implementing JavaForkOptions'() {
         given:
         def repository = setupRepository(driverName, driverExecutableName, version, os, arch)
 
         and:
-        writeMainClass()
+        writeMainClassOutputtingConfiguredPathContentsToAFile()
 
         and:
         buildScript << """
-            import com.github.erdi.gradle.webdriver.task.ConfigureBinary
-
             plugins {
                 id 'java'
                 id 'com.github.erdi.webdriver-binaries'
@@ -76,10 +73,105 @@ class ConfigureJavaForkOptionsTaskSpec extends PluginSpec {
         arch = os.arch
     }
 
-    private void writeMainClass() {
-        def sourceDir = new File(testProjectDir, 'src/main/java')
-        sourceDir.mkdirs()
-        new File(sourceDir, 'Main.java') << """
+    def "resolve binaries tasks are not part of the task graph when no driver versions are specified"() {
+        given:
+        writeEmptyMainClass()
+
+        and:
+        buildScript << """
+            plugins {
+                id 'java'
+                id 'com.github.erdi.webdriver-binaries'
+            }
+
+            task exec(type: JavaExec) {
+                classpath = sourceSets.main.runtimeClasspath
+
+                main = 'Main'
+            }
+
+            webdriverBinaries.configureTask(exec)
+        """
+
+        when:
+        def result = runTasks 'exec'
+
+        then:
+        result.tasks*.path == [':compileJava', ':processResources', ':classes', ':exec']
+    }
+
+    @Unroll
+    @SuppressWarnings(['GStringExpressionWithinString'])
+    def "binary path is not an input for a configured JavaForkOptions task"() {
+        given:
+        def repository = setupRepository(driverName, driverExecutableName, version, os, arch)
+
+        and:
+        writeEmptyMainClass()
+
+        and:
+        buildScript << """
+            plugins {
+                id 'java'
+                id 'com.github.erdi.webdriver-binaries'
+            }
+
+            webdriverBinaries {
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                $driverConfigurationBlockName = '${version}'
+            }
+
+            task exec(type: JavaExec) {
+                classpath = sourceSets.main.runtimeClasspath
+
+                main = 'Main'
+
+                outputs.upToDateWhen { true }
+            }
+
+            webdriverBinaries.configureTask(exec)
+        """
+
+        and:
+        runTasks 'exec'
+
+        and:
+        buildScript << '''
+            import com.github.erdi.gradle.webdriver.task.ResolveDriverBinary
+
+            tasks.withType(ResolveDriverBinary).configureEach { task ->
+                task.driverBinary.set(project.layout.buildDirectory.file("${task.name}/binary-copy"))
+            }
+        '''
+
+        when:
+        def subsequentBuildResult = runTasks 'exec'
+
+        then:
+        subsequentBuildResult.task(':exec').outcome == UP_TO_DATE
+
+        where:
+        driverName               | driverExecutableName | driverConfigurationBlockName | systemProperty
+        'chromedriver'           | 'chromedriver'       | 'chromedriver'               | CHROMEDRIVER.systemProperty
+        'geckodriver'            | 'geckodriver'        | 'geckodriver'                | GECKODRIVER.systemProperty
+        'edgedriver'             | 'msedgedriver'       | 'edgedriver'                 | EDGEDRIVER.systemProperty
+
+        version = '2.42.0'
+        os = OperatingSystem.current()
+        arch = os.arch
+    }
+
+    private void writeEmptyMainClass() {
+        writeMainClass '''
+            public class Main {
+                public static void main(String[] args) throws Exception {
+                }
+            }
+        '''
+    }
+
+    private void writeMainClassOutputtingConfiguredPathContentsToAFile() {
+        writeMainClass '''
             import java.nio.file.Files;
             import java.nio.file.Paths;
 
@@ -89,7 +181,13 @@ class ConfigureJavaForkOptionsTaskSpec extends PluginSpec {
                     Files.write(Paths.get(args[0]), configuredSystemProperty.getBytes());
                 }
             }
-        """
+        '''
+    }
+
+    private void writeMainClass(String code) {
+        def sourceDir = new File(testProjectDir, 'src/main/java')
+        sourceDir.mkdirs()
+        new File(sourceDir, 'Main.java') << code
     }
 
     private String getPluginDownloadedBinaryContents() {

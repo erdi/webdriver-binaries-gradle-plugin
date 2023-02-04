@@ -59,6 +59,19 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         arch = X86
     }
 
+    private void writeOutputBinaryPathTask(String installerConstructorCode) {
+        buildScript << """
+            task outputBinaryPath {
+                doLast {
+                    buildDir.mkdirs()
+                    def installer = $installerConstructorCode
+
+                    new File(buildDir, '$DISTRIBUTION_ROOT_PATH_FILENAME') << installer.getDistributionRoot(null).get().absolutePath
+                }
+            }
+        """
+    }
+
     private void writeOutputBinaryPathTask(File configurationFile, String driverName, String version, OperatingSystem os, Arch arch) {
         def configurationFilePath = configurationFile.absolutePath
         def osCode = "${os.class.simpleName}.INSTANCE"

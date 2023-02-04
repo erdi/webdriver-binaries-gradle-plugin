@@ -29,4 +29,8 @@ enum WebDriverBinaryMetadata {
         this.systemProperty = systemProperty
     }
 
+    String getDriverName() {
+        name().toLowerCase()
+    }
+
 }

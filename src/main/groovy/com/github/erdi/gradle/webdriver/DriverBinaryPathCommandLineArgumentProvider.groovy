@@ -15,25 +15,42 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Optional
 import org.gradle.process.CommandLineArgumentProvider
 
 class DriverBinaryPathCommandLineArgumentProvider implements CommandLineArgumentProvider {
 
-    @Input
-    String propertyName
+    @Classpath
+    @Optional
+    final Provider<Directory> driverBinaryPropertiesDirectory
 
-    @Input
-    String version
-
-    @Internal
-    String path
+    DriverBinaryPathCommandLineArgumentProvider(Provider<Directory> driverBinaryPropertiesDirectory) {
+        this.driverBinaryPropertiesDirectory = driverBinaryPropertiesDirectory
+    }
 
     @Override
     @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
     Iterable<String> asArguments() {
-        ["-D${propertyName}=${path}"]
+        if (!driverBinaryPropertiesDirectory.present) {
+            return []
+        }
+
+        def properties = loadProperties()
+
+        ["-D${properties['systemPropertyName']}=${properties['path']}"]
+    }
+
+    private Properties loadProperties() {
+        driverBinaryPropertiesDirectory.map { propertiesDirectory ->
+            propertiesDirectory.asFileTree.singleFile.withInputStream { inputStream ->
+                new Properties().tap { properties ->
+                    properties.load(inputStream)
+                }
+            } as Properties
+        }.get()
     }
 
 }

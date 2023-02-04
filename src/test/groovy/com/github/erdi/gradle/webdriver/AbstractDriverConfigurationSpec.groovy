@@ -25,7 +25,8 @@ import static org.ysb33r.grolifant.api.core.OperatingSystem.Arch.X86_64
 
 abstract class AbstractDriverConfigurationSpec extends PluginSpec {
 
-    private final static String BINARY_PATH_FILENAME = 'binaryPath.txt'
+    private final static String BINARY_CONTENT_DIR = 'webdriverBinary'
+    private final static String BINARY_CONTENT_FILENAME = 'binaryContents.txt'
 
     abstract String getDriverName()
 
@@ -54,7 +55,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         """
 
         when:
-        runTasksWithUniqueGradleHomeDir 'configureBinaries'
+        runTasksWithUniqueGradleHomeDir "resolve${driverName.capitalize()}Binary"
 
         then:
         pluginDownloadedBinaryContents == repository.driverFileContents
@@ -85,7 +86,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         """
 
         when:
-        runTasksWithUniqueGradleHomeDir 'configureBinaries'
+        runTasksWithUniqueGradleHomeDir "resolve${driverName.capitalize()}Binary"
 
         then:
         pluginDownloadedBinaryContents == repository.driverFileContents
@@ -118,7 +119,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         """
 
         when:
-        runTasksWithUniqueGradleHomeDir 'configureBinaries'
+        runTasksWithUniqueGradleHomeDir "resolve${driverName.capitalize()}Binary"
 
         then:
         pluginDownloadedBinaryContents == repository.driverFileContents
@@ -149,7 +150,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         """
 
         when:
-        runTasksWithUniqueGradleHomeDir 'configureBinaries'
+        runTasksWithUniqueGradleHomeDir "resolve${driverName.capitalize()}Binary"
 
         then:
         pluginDownloadedBinaryContents == repository.driverFileContents
@@ -161,28 +162,26 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
 
     private File writeBuildScript() {
         buildScript << """
-            import com.github.erdi.gradle.webdriver.task.ConfigureBinary
+            import com.github.erdi.gradle.webdriver.task.ResolveDriverBinary
 
             plugins {
                 id 'com.github.erdi.webdriver-binaries'
             }
 
-            tasks.withType(ConfigureBinary).all { task ->
-                task.addBinaryAware { binaryPath ->
-                    buildDir.mkdirs()
-                    new File(buildDir, '$BINARY_PATH_FILENAME') << binaryPath
+            tasks.withType(ResolveDriverBinary).all { task ->
+                def finalizer = tasks.create("\${task.name}Finalizer", Copy) {
+                    from(task.driverBinary)
+                    into("\${buildDir}/$BINARY_CONTENT_DIR")
+                    rename { '$BINARY_CONTENT_FILENAME' }
                 }
-            }
 
-            task configureBinaries {
-                dependsOn tasks.withType(ConfigureBinary)
+                task.finalizedBy(finalizer)
             }
         """
     }
 
     private String getPluginDownloadedBinaryContents() {
-        def path = new File(testProjectDir, "build/$BINARY_PATH_FILENAME").text
-        new File(path).text
+        new File(testProjectDir, "build/$BINARY_CONTENT_DIR/$BINARY_CONTENT_FILENAME").text
     }
 
 }

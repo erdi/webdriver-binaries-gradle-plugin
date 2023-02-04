@@ -29,7 +29,7 @@ import java.util.zip.ZipOutputStream
 
 class PluginSpec extends Specification {
 
-    private final static String DISTRIBUTION_ROOT_PATH_FILENAME = 'distributionRootPath.txt'
+    protected final static String DISTRIBUTION_ROOT_PATH_FILENAME = 'distributionRootPath.txt'
 
     @TempDir
     protected File testProjectDir
@@ -47,19 +47,6 @@ class PluginSpec extends Specification {
 
     void setup() {
         buildScript = new File(testProjectDir, 'build.gradle')
-    }
-
-    protected writeOutputBinaryPathTask(String installerConstructorCode) {
-        buildScript << """
-            task outputBinaryPath {
-                doLast {
-                    buildDir.mkdirs()
-                    def installer = $installerConstructorCode
-
-                    new File(buildDir, '$DISTRIBUTION_ROOT_PATH_FILENAME') << installer.getDistributionRoot(null).get().absolutePath
-                }
-            }
-        """
     }
 
     protected BuildResult runTasksWithUniqueGradleHomeDir(String... taskNames) {
