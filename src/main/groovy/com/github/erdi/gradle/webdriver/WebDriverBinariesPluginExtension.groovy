@@ -25,8 +25,10 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.resources.TextResource
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.process.JavaForkOptions
+import org.ysb33r.grolifant.api.core.OperatingSystem
 
 import javax.inject.Inject
 import java.util.regex.Pattern
@@ -66,6 +68,7 @@ abstract class WebDriverBinariesPluginExtension {
         )
         this.driverUrlsConfiguration.convention(project.resources.text.fromUri(DRIVER_URLS_CONFIG_URL))
         this.fallbackTo32Bit.convention(false)
+        this.architectureProperty.backing.convention(OperatingSystem.current().arch)
 
         chromedriverConfiguration = this.objectFactory.newInstance(DriverConfiguration, CHROMEDRIVER)
         geckodriverConfiguration = this.objectFactory.newInstance(DriverConfiguration, GECKODRIVER)
@@ -75,12 +78,16 @@ abstract class WebDriverBinariesPluginExtension {
             it.fallbackTo32Bit.convention(this.fallbackTo32Bit)
             it.downloadRoot.convention(this.downloadRoot)
             it.driverUrlsConfiguration.convention(this.driverUrlsConfiguration)
+            it.architectureProperty.set(this.architectureProperty.backing)
         }
     }
 
     abstract DirectoryProperty getDownloadRoot()
     abstract Property<TextResource> getDriverUrlsConfiguration()
     abstract Property<Boolean> getFallbackTo32Bit()
+
+    @Nested
+    abstract ArchitectureProperty getArchitectureProperty()
 
     void setChromedriver(String configuredVersion) {
         chromedriver = ~Pattern.quote(configuredVersion)
@@ -116,6 +123,10 @@ abstract class WebDriverBinariesPluginExtension {
 
     void edgedriver(Action<DriverConfiguration> action) {
         action.execute(edgedriverConfiguration)
+    }
+
+    void setArchitecture(String architecture) {
+        this.architectureProperty.set(architecture)
     }
 
     <T extends JavaForkOptions> void configureTask(TaskProvider<T> task) {

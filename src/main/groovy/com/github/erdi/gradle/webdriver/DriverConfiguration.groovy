@@ -15,7 +15,6 @@
  */
 package com.github.erdi.gradle.webdriver
 
-import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
 import com.github.erdi.gradle.webdriver.task.CopyIntoDirectory
 import com.github.erdi.gradle.webdriver.task.ResolveDriverBinary
 import org.gradle.api.file.Directory
@@ -24,9 +23,9 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.resources.TextResource
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import org.ysb33r.grolifant.api.core.OperatingSystem
 
 import javax.inject.Inject
 import java.util.regex.Pattern
@@ -44,8 +43,6 @@ abstract class DriverConfiguration {
         this.tasks = tasks
         this.projectLayout = projectLayout
 
-        this.architectureProperty.convention(OperatingSystem.current().arch)
-
         def resolveBinary = registerResolveDriverBinary(webDriverBinaryMetadata)
 
         def writeClasspathDirectory = registerWritePropertiesClasspathDir(webDriverBinaryMetadata)
@@ -61,7 +58,10 @@ abstract class DriverConfiguration {
     abstract DirectoryProperty getDownloadRoot()
     abstract Property<TextResource> getDriverUrlsConfiguration()
     abstract Property<Pattern> getVersionProperty()
-    abstract Property<OperatingSystem.Arch> getArchitectureProperty()
+
+    @Nested
+    abstract ArchitectureProperty getArchitectureProperty()
+
     abstract Property<Boolean> getFallbackTo32Bit()
 
     void setVersion(String version) {
@@ -73,16 +73,6 @@ abstract class DriverConfiguration {
     }
 
     void setArchitecture(String architecture) {
-        def supportedArchitectures = DriverUrlsConfiguration.BITS.keySet()*.toString()
-        if (!(architecture in supportedArchitectures)) {
-            def quotedArchitectures = supportedArchitectures.collect { "'${it}'" }
-            def supportedArchitecturesString = [quotedArchitectures[0..-2].join(', '), quotedArchitectures.last()].join(' and ')
-            throw new IllegalArgumentException("Unsupported architecture value '$architecture'. Supported values are ${supportedArchitecturesString}.")
-        }
-        this.architecture = OperatingSystem.Arch.valueOf(architecture)
-    }
-
-    void setArchitecture(OperatingSystem.Arch architecture) {
         this.architectureProperty.set(architecture)
     }
 
@@ -93,7 +83,7 @@ abstract class DriverConfiguration {
                 downloadRoot.convention(this.downloadRoot)
                 driverUrlsConfiguration.convention(this.driverUrlsConfiguration)
                 version.convention(this.versionProperty)
-                architecture.convention(this.architectureProperty)
+                architecture.convention(this.architectureProperty.backing)
                 fallbackTo32Bit.convention(this.fallbackTo32Bit)
             }
         }

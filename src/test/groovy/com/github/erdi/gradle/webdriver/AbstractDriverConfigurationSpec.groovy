@@ -66,6 +66,38 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         arch = os.arch
     }
 
+    @Unroll('can globally set architecture to #architecture')
+    def 'can globally set architecture'() {
+        given:
+        def repository = setupRepository(driverName, driverExecutableName, version, os, architecture)
+
+        and:
+        writeBuildScript()
+
+        and:
+        buildScript << """
+            webdriverBinaries {
+                architecture = '${architecture.name()}'
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                $driverConfigurationBlockName {
+                    version = '${version}'
+                }
+            }
+        """
+
+        when:
+        runTasksWithUniqueGradleHomeDir "resolve${driverName.capitalize()}Binary"
+
+        then:
+        pluginDownloadedBinaryContents == repository.driverFileContents
+
+        where:
+        architecture << DriverUrlsConfiguration.BITS.keySet()
+
+        version = '2.42.0'
+        os = OperatingSystem.current()
+    }
+
     @Unroll('can set architecture to #architecture')
     def 'can set architecture'() {
         given:
