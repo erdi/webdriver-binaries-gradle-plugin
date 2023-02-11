@@ -159,7 +159,7 @@ see [javadoc for `org.gradle.api.resources.TextResourceFactory`](https://docs.gr
 
 ### Importing into IDE
 
-The project is setup to work with IntelliJ IDEA, simply import it using the native IntelliJ IDEA import for Gradle projects.
+The project is set up to work with IntelliJ IDEA, simply import it using the native IntelliJ IDEA import for Gradle projects.
 
 ### Tests
 
