@@ -27,7 +27,7 @@ dependencies {
 }
 
 group = "com.github.erdi"
-version = "3.0"
+version = "3.1"
 
 idea {
     project {
