@@ -20,6 +20,7 @@ import com.github.erdi.gradle.webdriver.DriverDistributionInstaller
 import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata
 import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
+import groovy.io.FileType
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
@@ -69,6 +70,12 @@ abstract class ConfigureBinary extends DefaultTask {
         def installer = new DriverDistributionInstaller(project, downloadRoot.asFile.get(), driverName, versionAndUri)
         def distributionRoot = installer.getDistributionRoot(versionAndUri.version).get()
         def binaryFile = new File(distributionRoot, operatingSystem.getExecutableName(webDriverBinaryMetadata.binaryName))
+        if (!binaryFile.exists()) {
+            //Some versions of chromedriver hide the binary deeper, so we traverse the directory to find the binary
+            distributionRoot.traverse(type: FileType.FILES, nameFilter: webDriverBinaryMetadata.binaryName) { file ->
+                binaryFile = file
+            }
+        }
         def binaryAbsolutePath = binaryFile.absolutePath
         binaryAwares*.setDriverBinaryPathAndVersion(binaryAbsolutePath, versionAndUri.version)
     }
