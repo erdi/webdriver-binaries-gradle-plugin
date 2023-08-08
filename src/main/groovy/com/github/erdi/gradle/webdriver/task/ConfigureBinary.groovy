@@ -20,15 +20,17 @@ import com.github.erdi.gradle.webdriver.DriverDistributionInstaller
 import com.github.erdi.gradle.webdriver.DriverDownloadSpecification
 import com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata
 import com.github.erdi.gradle.webdriver.repository.DriverUrlsConfiguration
-import groovy.io.FileType
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.ysb33r.grolifant.api.core.OperatingSystem
 import org.ysb33r.grolifant.api.core.OperatingSystem.Arch
+
+import javax.inject.Inject
 
 abstract class ConfigureBinary extends DefaultTask {
 
@@ -39,7 +41,11 @@ abstract class ConfigureBinary extends DefaultTask {
     @Internal
     final WebDriverBinaryMetadata webDriverBinaryMetadata
 
-    protected ConfigureBinary(WebDriverBinaryMetadata webDriverBinaryMetadata, String driverName) {
+    private final ObjectFactory objectFactory
+
+    @Inject
+    protected ConfigureBinary(ObjectFactory objectFactory, WebDriverBinaryMetadata webDriverBinaryMetadata, String driverName) {
+        this.objectFactory = objectFactory
         this.webDriverBinaryMetadata = webDriverBinaryMetadata
         this.driverName = driverName
         onlyIf { versionConfigured }
@@ -70,7 +76,7 @@ abstract class ConfigureBinary extends DefaultTask {
         def installer = new DriverDistributionInstaller(project, downloadRoot.asFile.get(), driverName, versionAndUri)
         def distributionRoot = installer.getDistributionRoot(versionAndUri.version).get()
         def platformIndependentBinaryName = operatingSystem.getExecutableName(webDriverBinaryMetadata.binaryName)
-        def binaryFile = project.objects.fileTree().tap {
+        def binaryFile = objectFactory.fileTree().tap {
             from(distributionRoot)
             include("**/$platformIndependentBinaryName")
         }.singleFile

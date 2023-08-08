@@ -16,6 +16,7 @@
 package com.github.erdi.gradle.webdriver.edge
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
+import org.gradle.api.model.ObjectFactory
 
 import javax.inject.Inject
 
@@ -25,8 +26,8 @@ import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.EDGEDRIVE
 abstract class ConfigureEdgeDriverBinary extends ConfigureBinary {
 
     @Inject
-    ConfigureEdgeDriverBinary() {
-        super(EDGEDRIVER, 'edgedriver')
+    ConfigureEdgeDriverBinary(ObjectFactory objectFactory) {
+        super(objectFactory, EDGEDRIVER, 'edgedriver')
     }
 
 }

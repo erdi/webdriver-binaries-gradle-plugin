@@ -16,6 +16,7 @@
 package com.github.erdi.gradle.webdriver.gecko
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
+import org.gradle.api.model.ObjectFactory
 
 import javax.inject.Inject
 
@@ -25,8 +26,8 @@ import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.GECKODRIV
 abstract class ConfigureGeckoDriverBinary extends ConfigureBinary {
 
     @Inject
-    ConfigureGeckoDriverBinary() {
-        super(GECKODRIVER, 'geckodriver')
+    ConfigureGeckoDriverBinary(ObjectFactory objectFactory) {
+        super(objectFactory, GECKODRIVER, 'geckodriver')
     }
 
 }

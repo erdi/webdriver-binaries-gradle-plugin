@@ -16,6 +16,7 @@
 package com.github.erdi.gradle.webdriver.chrome
 
 import com.github.erdi.gradle.webdriver.task.ConfigureBinary
+import org.gradle.api.model.ObjectFactory
 
 import javax.inject.Inject
 
@@ -25,8 +26,8 @@ import static com.github.erdi.gradle.webdriver.WebDriverBinaryMetadata.CHROMEDRI
 abstract class ConfigureChromeDriverBinary extends ConfigureBinary {
 
     @Inject
-    ConfigureChromeDriverBinary() {
-        super(CHROMEDRIVER, 'chromedriver')
+    ConfigureChromeDriverBinary(ObjectFactory objectFactory) {
+        super(objectFactory, CHROMEDRIVER, 'chromedriver')
     }
 
 }
