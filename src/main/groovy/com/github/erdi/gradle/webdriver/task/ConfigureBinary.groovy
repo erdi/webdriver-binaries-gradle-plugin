@@ -70,13 +70,10 @@ abstract class ConfigureBinary extends DefaultTask {
         def installer = new DriverDistributionInstaller(project, downloadRoot.asFile.get(), driverName, versionAndUri)
         def distributionRoot = installer.getDistributionRoot(versionAndUri.version).get()
         def platformIndependentBinaryName = operatingSystem.getExecutableName(webDriverBinaryMetadata.binaryName)
-        def binaryFile = new File(distributionRoot, platformIndependentBinaryName)
-        if (!binaryFile.exists()) {
-            //Some versions of chromedriver hide the binary deeper, so we traverse the directory to find the binary
-            distributionRoot.traverse(type: FileType.FILES, nameFilter: platformIndependentBinaryName) { file ->
-                binaryFile = file
-            }
-        }
+        def binaryFile = project.objects.fileTree().tap {
+            from(distributionRoot)
+            include("**/$platformIndependentBinaryName")
+        }.singleFile
         def binaryAbsolutePath = binaryFile.absolutePath
         binaryAwares*.setDriverBinaryPathAndVersion(binaryAbsolutePath, versionAndUri.version)
     }
