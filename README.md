@@ -6,9 +6,15 @@
 This project contains a Gradle plugin that downloads WebDriver binaries specific to the operating system the build runs on.
 The plugin also as configures various parts of the build to use the downloaded binaries.
 
+**THIS PROJECT IS NO LONGER MAINTAINED AND HAS BEEN ARCHIVED**.
+
+Future updates (v4.0+) are now maintained at the [YSF](https://gitlab.com/ysb33rOrg/gradle/webdriver-binaries-gradle-plugin)
+
+---
+
 ## Installation
 
-For installation instructions please see [this plugin's page on Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.github.erdi.webdriver-binaries).
+For installation instructions up to v3.2, please see [the legacy plugin's page on Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.github.erdi.webdriver-binaries).
 
 ## Usage
 
