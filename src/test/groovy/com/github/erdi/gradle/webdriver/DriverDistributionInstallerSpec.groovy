@@ -50,7 +50,7 @@ class DriverDistributionInstallerSpec extends PluginSpec {
         runTasksWithUniqueGradleHomeDir 'outputBinaryPath'
 
         then:
-        downloadedBinaryFile(os.getExecutableName(driverName), os).text == repository.driverFileContents
+        downloadedBinaryFile(os.getExecutableNames(driverName)?.first(), os).text == repository.driverFileContents
 
         where:
         driverName = 'testdriver'
@@ -60,7 +60,7 @@ class DriverDistributionInstallerSpec extends PluginSpec {
     }
 
     private void writeOutputBinaryPathTask(File configurationFile, String driverName, String version, OperatingSystem os, Arch arch) {
-        def configurationFilePath = configurationFile.absolutePath
+        def configurationFilePath = configurationFile.absolutePath.replaceAll('\\\\', '/')
         def osCode = "${os.class.simpleName}.INSTANCE"
         def archCode = "OperatingSystem.Arch.${arch.name()}"
         def downloadSpecCode = "DriverDownloadSpecification.builder().name('$driverName').version('$version').os($osCode).arch($archCode).build()"

@@ -44,7 +44,7 @@ class ConfigureJavaForkOptionsTaskSpec extends PluginSpec {
             }
 
             webdriverBinaries {
-                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath.replaceAll('\\\\', '/')}')
                 $driverConfigurationBlockName = '${version}'
             }
 

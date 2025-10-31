@@ -26,15 +26,17 @@ class WebDriverBinariesPluginSpec extends PluginSpec {
         def parameters = [
             ['geckodriver', TESTED_GECKODRVIER_VERSION, 'selenium-firefox-driver']
         ]
-        if (OperatingSystem.current().windows) {
-            parameters << [
-                'edgedriver', TESTED_EDGEDRIVER_VERSION, 'selenium-edge-driver'
-            ]
-        } else {
-            parameters << [
-                'chromedriver', TESTED_CHROMEDRIVER_VERSION, 'selenium-chrome-driver'
-            ]
-        }
+        // there are no current chrome or edge versions in https://github.com/webdriverextensions/webdriverextensions-maven-plugin-repository/blob/master/repository-3.0.json
+
+//        if (OperatingSystem.current().windows) {
+//            parameters << [
+//                'edgedriver', TESTED_EDGEDRIVER_VERSION, 'selenium-edge-driver'
+//            ]
+//        } else {
+//            parameters << [
+//                'chromedriver', TESTED_CHROMEDRIVER_VERSION, 'selenium-chrome-driver'
+//            ]
+//        }
         parameters
     }
 

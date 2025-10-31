@@ -18,7 +18,7 @@ package com.github.erdi.gradle.webdriver
 import com.github.erdi.gradle.webdriver.repository.VersionAndUri
 import org.gradle.api.Project
 import org.ysb33r.grolifant.api.core.ProjectOperations
-import org.ysb33r.grolifant.api.v4.downloader.AbstractDistributionInstaller
+import org.ysb33r.grolifant.api.core.downloader.AbstractDistributionInstaller
 
 class DriverDistributionInstaller extends AbstractDistributionInstaller {
 

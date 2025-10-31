@@ -48,7 +48,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         and:
         buildScript << """
             webdriverBinaries {
-                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath.replaceAll('\\\\', '/')}')
                 $driverConfigurationBlockName = '${version}'
             }
         """
@@ -76,7 +76,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         and:
         buildScript << """
             webdriverBinaries {
-                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath.replaceAll('\\\\', '/')}')
                 $driverConfigurationBlockName {
                     version = '${version}'
                     architecture = '${architecture.name()}'
@@ -109,7 +109,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         buildScript << """
             webdriverBinaries {
                 fallbackTo32Bit = true
-                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath.replaceAll('\\\\', '/')}')
                 $driverConfigurationBlockName {
                     version = '${version}'
                     architecture = '${X86_64.name()}'
@@ -139,7 +139,7 @@ abstract class AbstractDriverConfigurationSpec extends PluginSpec {
         and:
         buildScript << """
             webdriverBinaries {
-                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath}')
+                driverUrlsConfiguration = resources.text.fromFile('${repository.configurationFile.absolutePath.replaceAll('\\\\', '/')}')
                 $driverConfigurationBlockName {
                     version = '${version}'
                     architecture = '${X86_64.name()}'

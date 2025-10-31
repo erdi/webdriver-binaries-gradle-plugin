@@ -85,7 +85,7 @@ class PluginSpec extends Specification {
     }
 
     protected File downloadedBinaryFile(String binaryName, OperatingSystem operatingSystem = OperatingSystem.current()) {
-        new File(distributionRoot, operatingSystem.getExecutableName(binaryName))
+        new File(distributionRoot, operatingSystem.getExecutableNames(binaryName)?.first())
     }
 
     @SuppressWarnings(['SpaceAfterClosingBrace', 'SpaceBeforeClosingBrace'])
@@ -94,7 +94,7 @@ class PluginSpec extends Specification {
         OperatingSystem.Arch arch = OperatingSystem.current().arch
     ) {
         String driverFileContents = "${name}_${operatingSystem.class.simpleName}_${arch.name()}_$version"
-        def driverZip = writeDriverZip(operatingSystem.getExecutableName(binaryName), driverFileContents)
+        def driverZip = writeDriverZip(operatingSystem.getExecutableNames(binaryName)?.first(), driverFileContents)
 
         def configurationFile = new File(driverRepository, 'repository.json') << JsonOutput.toJson(
             drivers: [
